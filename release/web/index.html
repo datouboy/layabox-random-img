@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 	<meta charset='utf-8' />
@@ -18,14 +18,8 @@
 		document.documentElement.style.fontSize=document.documentElement.clientWidth/750*100+"px";
 		const ossUrl = "./";
 	</script>
-	<style type="text/css">
-	* {padding: 0; margin: 0;}
-	</style>
 </head>
 <body>
-	<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
-	<script type="text/javascript" src="res/js/html2canvas.min.js"></script>
-	<script type="text/javascript" src="res/js/canvas2image.js"></script>
 	<!--以下引用了常用类库，如果不使用，可以删除-->
 	
 	<!--核心包，封装了显示对象渲染，事件，时间管理，时间轴动画，缓动，消息交互,socket，本地存储，鼠标触摸，声音，加载，颜色滤镜，位图字体等-->
@@ -49,10 +43,8 @@
 	<!--自定义的js(src文件夹下)文件自动添加到下面jsfile模块标签里面里，js的顺序可以手动修改，修改后保留修改的顺序，新增加的js会默认依次追加到标签里-->
 	<!--删除标签，ide不会自动添加js文件，请谨慎操作-->
 	<!--jsfile--startTag-->
-	<script src="../src/start.js"></script>
-	<script src="../src/LayaSample.js"></script>
+	<script src="js/start.js"></script>
+	<script src="js/LayaSample.js"></script>
 	<!--jsfile--endTag-->
-	<div id="printImg">
-	</div>
 </body>
 </html>

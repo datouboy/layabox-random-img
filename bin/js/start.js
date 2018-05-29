@@ -104,15 +104,6 @@
                 switch_OnOff = false;
                 start_menu.graphics.loadImage(ossUrl+"res/images/menu_2_"+changeNum+".png");
                 changeNum--;
-
-                $('#layaCanvas').css('transform','matrix(1, 0, 0, 1, 0, 0)');
-                html2canvas(document.querySelector("#layaCanvas")).then(canvas => {
-                    //document.body.appendChild(canvas);
-                    document.getElementById('printImg').appendChild(canvas);
-                    //Canvas2Image.saveAsPNG(canvas, pageWidth, pageHeight);
-                    Canvas2Image.saveAsPNG(canvas, 750, (750/pageWidth)*pageHeight);
-                    $('#layaCanvas').css('transform','matrix(0.5, 0, 0, 0.5, 0, 0)');
-                });
             }else{
                 if(changeNum > 0){
                     switch_OnOff = true;
