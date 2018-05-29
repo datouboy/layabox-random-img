@@ -97,25 +97,13 @@
         start_menu.on(Event.CLICK, this, gameMenuClick);
 
         //图片切换按钮点击
-        var changeNum = 3;//3次机会
+        var changeNum = 4;//3次机会
         function gameMenuClick(){
             start_menu.graphics.clear();
             if(switch_OnOff){
                 switch_OnOff = false;
-                start_menu.graphics.loadImage(ossUrl+"res/images/menu_2_"+changeNum+".png");
+                start_menu.graphics.loadImage(ossUrl+"res/images/menu_2_"+(changeNum-1)+".png");
                 changeNum--;
-
-                html2canvas(document.querySelector("#layaCanvas")).then(canvas => {
-                    var pngb64;
-                    try {  
-                        pngb64 = canvas.toDataURL("image/png");  
-                    } catch (err) {  
-                        console.log(err)  
-                    }
-                    $('#printImg').html('<img src="'+pngb64+'" />');
-                });
-
-
             }else{
                 if(changeNum > 0){
                     switch_OnOff = true;
