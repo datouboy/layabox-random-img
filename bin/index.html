@@ -20,6 +20,8 @@
 	</script>
 	<style type="text/css">
 	* {padding: 0; margin: 0;}
+	#imgPrint {position: absolute; z-index: 999; width: 100%; height: 80%; overflow: hidden; display: none;}
+	#imgPrint img {display: block; width: 100%; opacity: 0;}
 	</style>
 </head>
 <body>
@@ -50,5 +52,8 @@
 	<script src="../src/start.js"></script>
 	<script src="../src/LayaSample.js"></script>
 	<!--jsfile--endTag-->
+	<div id="imgPrint">
+		<img src="./res/images/z_1.jpg" />
+	</div>
 </body>
 </html>
