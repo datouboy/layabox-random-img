@@ -1,1 +1,6060 @@
-!function(t,e,i){i.un,i.uns;var a=i.static,s=i.class,r=i.getset,n=i.__newvec,h=laya.maths.Bezier,l=laya.utils.Browser,o=laya.utils.Byte,u=(laya.events.Event,laya.events.EventDispatcher),c=laya.display.Graphics,d=laya.resource.HTMLCanvas,_=laya.utils.Handler,p=laya.net.Loader,f=laya.maths.MathUtil,m=laya.maths.Matrix,y=(laya.display.Node,laya.maths.Point,laya.maths.Rectangle),x=laya.renders.Render,g=(laya.renders.RenderContext,laya.resource.Resource),v=laya.utils.RunDriver,M=laya.display.Sprite,D=laya.utils.Stat,I=laya.resource.Texture,N=laya.net.URL,b=laya.utils.Utils,T=function(){function t(){this.nodes=null,this.name=null,this.playTime=NaN,this.bone3DMap=null,this.totalKeyframeDatasLength=0}return s(t,"laya.ani.AnimationContent"),t}(),A=function(){function t(){this.name=null,this.parentIndex=0,this.parent=null,this.keyframeWidth=0,this.lerpType=0,this.interpolationMethod=null,this.childs=null,this.keyFrame=null,this.playTime=NaN,this.extenData=null,this.dataOffset=0}return s(t,"laya.ani.AnimationNodeContent"),t}(),C=function(){function t(){}return s(t,"laya.ani.AnimationParser01"),t.parse=function(t,e){var i=e.__getBuffer(),a=0,s=0,r=0,n=0,h=0,l=0,u=0,c=e.readUTFString();t._aniClassName=c;var d,_=e.readUTFString().split("\n"),p=e.getUint8(),f=e.getUint32(),m=e.getUint32();f>0&&(d=i.slice(f,m));var y=new o(d);for(m>0&&(t._publicExtData=i.slice(m,i.byteLength)),t._useParent=!!e.getUint8(),t._anis.length=p,a=0;a<p;a++){var x=t._anis[a]=new T;x.nodes=new Array;var g=x.name=_[e.getUint16()];t._aniMap[g]=a,x.bone3DMap={},x.playTime=e.getFloat32();var v=x.nodes.length=e.getUint8();for(x.totalKeyframeDatasLength=0,s=0;s<v;s++){var M=x.nodes[s]=new A;M.childs=[];var D=e.getInt16();D>=0&&(M.name=_[D],x.bone3DMap[M.name]=s),M.keyFrame=new Array,M.parentIndex=e.getInt16(),-1==M.parentIndex?M.parent=null:M.parent=x.nodes[M.parentIndex],M.lerpType=e.getUint8();var I=e.getUint32();y.pos=I;var N=M.keyframeWidth=y.getUint16();if(x.totalKeyframeDatasLength+=N,0===M.lerpType||1===M.lerpType)for(M.interpolationMethod=[],M.interpolationMethod.length=N,r=0;r<N;r++)M.interpolationMethod[r]=it.interpolation[y.getUint8()];null!=M.parent&&M.parent.childs.push(M);var b=e.getUint16();b>0&&(M.extenData=i.slice(e.pos,e.pos+b),e.pos+=b);var C=e.getUint16();M.keyFrame.length=C;var w,S=0;for(r=0,n=C;r<n;r++){if(w=M.keyFrame[r]=new j,w.duration=e.getFloat32(),w.startTime=S,2===M.lerpType){w.interpolationData=[];var F=e.getUint8(),k=0;switch(k=e.getFloat32()){case 254:for(w.interpolationData.length=N,u=0;u<N;u++)w.interpolationData[u]=0;break;case 255:for(w.interpolationData.length=N,u=0;u<N;u++)w.interpolationData[u]=5;break;default:for(w.interpolationData.push(k),l=1;l<F;l++)w.interpolationData.push(e.getFloat32())}}for(w.data=new Float32Array(N),h=0;h<N;h++)w.data[h]=e.getFloat32(),w.data[h]>-1e-8&&w.data[h]<1e-8&&(w.data[h]=0);S+=w.duration}w.startTime=x.playTime,M.playTime=x.playTime,t._calculateKeyFrame(M,C,N)}}},t}(),w=function(){function t(){}return s(t,"laya.ani.AnimationParser02"),t.READ_DATA=function(){t._DATA.offset=t._reader.getUint32(),t._DATA.size=t._reader.getUint32()},t.READ_BLOCK=function(){for(var e=t._BLOCK.count=t._reader.getUint16(),i=t._BLOCK.blockStarts=[],a=t._BLOCK.blockLengths=[],s=0;s<e;s++)i.push(t._reader.getUint32()),a.push(t._reader.getUint32())},t.READ_STRINGS=function(){var e=t._reader.getUint32(),i=t._reader.getUint16(),a=t._reader.pos;t._reader.pos=e+t._DATA.offset;for(var s=0;s<i;s++)t._strings[s]=t._reader.readUTFString();t._reader.pos=a},t.parse=function(e,i){t._templet=e,t._reader=i;i.__getBuffer();t.READ_DATA(),t.READ_BLOCK(),t.READ_STRINGS();for(var a=0,s=t._BLOCK.count;a<s;a++){var r=i.getUint16(),n=t._strings[r],h=t["READ_"+n];if(null==h)throw new Error("model file err,no this function:"+r+" "+n);h.call()}},t.READ_ANIMATIONS=function(){var e=t._reader,i=e.__getBuffer(),a=0,s=0,r=0,n=0,h=e.getUint16(),l=[];for(l.length=h,a=0;a<h;a++)l[a]=it.interpolation[e.getByte()];var o=e.getUint8();for(t._templet._anis.length=o,a=0;a<o;a++){var u=t._templet._anis[a]={};u.nodes=new Array;var c=u.name=t._strings[e.getUint16()];t._templet._aniMap[c]=a,u.bone3DMap={},u.playTime=e.getFloat32();var d=u.nodes.length=e.getInt16();for(u.totalKeyframeDatasLength=0,s=0;s<d;s++){var _=u.nodes[s]={};_.keyframeWidth=h,_.childs=[];var p=e.getUint16();p>=0&&(_.name=t._strings[p],u.bone3DMap[_.name]=s),_.keyFrame=new Array,_.parentIndex=e.getInt16(),-1==_.parentIndex?_.parent=null:_.parent=u.nodes[_.parentIndex],u.totalKeyframeDatasLength+=h,_.interpolationMethod=l,null!=_.parent&&_.parent.childs.push(_);var f=e.getUint16();_.keyFrame.length=f;var m=null,y=null;for(r=0,n=f;r<n;r++){(m=_.keyFrame[r]={}).startTime=e.getFloat32(),y&&(y.duration=m.startTime-y.startTime);var x=t._DATA.offset,g=e.getUint32(),v=4*h,M=i.slice(x+g,x+g+v);m.data=new Float32Array(M),y=m}m.duration=0,_.playTime=u.playTime,t._templet._calculateKeyFrame(_,f,h)}}},t._templet=null,t._reader=null,t._strings=[],a(t,["_BLOCK",function(){return this._BLOCK={count:0}},"_DATA",function(){return this._DATA={offset:0,size:0}}]),t}(),S=(function(){function t(){}s(t,"laya.ani.AnimationState"),t.stopped=0,t.paused=1,t.playing=2}(),function(){function t(){this.name=null,this.root=null,this.parentBone=null,this.length=10,this.transform=null,this.inheritScale=!0,this.inheritRotation=!0,this.rotation=NaN,this.resultRotation=NaN,this.d=-1,this._tempMatrix=null,this._sprite=null,this.resultTransform=new Q,this.resultMatrix=new m,this._children=[]}s(t,"laya.ani.bone.Bone");var e=t.prototype;return e.setTempMatrix=function(t){this._tempMatrix=t;var e=0,i=0;for(e=0,i=this._children.length;e<i;e++)this._children[e].setTempMatrix(this._tempMatrix)},e.update=function(t){this.rotation=this.transform.skX;var e;if(t)e=this.resultTransform.getMatrix(),m.mul(e,t,this.resultMatrix),this.resultRotation=this.rotation;else if(this.resultRotation=this.rotation+this.parentBone.resultRotation,this.parentBone)if(this.inheritRotation&&this.inheritScale)e=this.resultTransform.getMatrix(),m.mul(e,this.parentBone.resultMatrix,this.resultMatrix);else{var i=this.parentBone,a=NaN,s=NaN,r=NaN,n=this.parentBone.resultMatrix;e=this.resultTransform.getMatrix();var h=n.a*e.tx+n.c*e.ty+n.tx,l=n.b*e.tx+n.d*e.ty+n.ty,o=new m;this.inheritRotation?(a=Math.atan2(i.resultMatrix.b,i.resultMatrix.a),s=Math.cos(a),r=Math.sin(a),o.setTo(s,r,-r,s,0,0),m.mul(this._tempMatrix,o,m.TEMP),m.TEMP.copyTo(o),e=this.resultTransform.getMatrix(),m.mul(e,o,this.resultMatrix),this.resultTransform.scX*this.resultTransform.scY<0&&this.resultMatrix.rotate(.5*Math.PI),this.resultMatrix.tx=h,this.resultMatrix.ty=l):(this.inheritScale,e=this.resultTransform.getMatrix(),m.TEMP.identity(),m.TEMP.d=this.d,m.mul(e,m.TEMP,this.resultMatrix),this.resultMatrix.tx=h,this.resultMatrix.ty=l)}else(e=this.resultTransform.getMatrix()).copyTo(this.resultMatrix);var u=0,c=0;for(u=0,c=this._children.length;u<c;u++)this._children[u].update()},e.updateChild=function(){var t=0,e=0;for(t=0,e=this._children.length;t<e;t++)this._children[t].update()},e.setRotation=function(t){this._sprite&&(this._sprite.rotation=180*t/Math.PI)},e.updateDraw=function(e,a){t.ShowBones&&!t.ShowBones[this.name]||(this._sprite?(this._sprite.x=e+this.resultMatrix.tx,this._sprite.y=a+this.resultMatrix.ty):(this._sprite=new M,this._sprite.graphics.drawCircle(0,0,5,"#ff0000"),this._sprite.graphics.drawLine(0,0,this.length,0,"#00ff00"),this._sprite.graphics.fillText(this.name,0,0,"20px Arial","#00ff00","center"),i.stage.addChild(this._sprite),this._sprite.x=e+this.resultMatrix.tx,this._sprite.y=a+this.resultMatrix.ty));var s=0,r=0;for(s=0,r=this._children.length;s<r;s++)this._children[s].updateDraw(e,a)},e.addChild=function(t){this._children.push(t),t.parentBone=this},e.findBone=function(t){if(this.name==t)return this;var e,i,a=0,s=0;for(a=0,s=this._children.length;a<s;a++)if(e=this._children[a],i=e.findBone(t))return i;return null},e.localToWorld=function(t){var e=t[0],i=t[1];t[0]=e*this.resultMatrix.a+i*this.resultMatrix.c+this.resultMatrix.tx,t[1]=e*this.resultMatrix.b+i*this.resultMatrix.d+this.resultMatrix.ty},t.ShowBones={},t}()),F=function(){function t(){this.name=null,this.parent=null,this.attachmentName=null,this.srcDisplayIndex=-1,this.type="src",this.templet=null,this.currSlotData=null,this.currTexture=null,this.currDisplayData=null,this.displayIndex=-1,this._diyTexture=null,this._parentMatrix=null,this._resultMatrix=null,this._replaceDic={},this._curDiyUV=null,this._curDiyVS=null,this._skinSprite=null,this.deformData=null,this._mVerticleArr=null}s(t,"laya.ani.bone.BoneSlot");var e=t.prototype;return e.showSlotData=function(t,e){void 0===e&&(e=!0),this.currSlotData=t,e&&(this.displayIndex=this.srcDisplayIndex),this.currDisplayData=null,this.currTexture=null},e.showDisplayByName=function(t){this.currSlotData&&this.showDisplayByIndex(this.currSlotData.getDisplayByName(t))},e.replaceDisplayByName=function(t,e){if(this.currSlotData){var i=0;i=this.currSlotData.getDisplayByName(t);var a=0;a=this.currSlotData.getDisplayByName(e),this.replaceDisplayByIndex(i,a)}},e.replaceDisplayByIndex=function(t,e){this.currSlotData&&(this._replaceDic[t]=e,this.displayIndex==t&&this.showDisplayByIndex(t))},e.showDisplayByIndex=function(t){if(null!=this._replaceDic[t]&&(t=this._replaceDic[t]),this.currSlotData&&t>-1&&t<this.currSlotData.displayArr.length){if(this.displayIndex=t,this.currDisplayData=this.currSlotData.displayArr[t],this.currDisplayData){var e=this.currDisplayData.name;this.currTexture=this.templet.getTexture(e),this.currTexture&&0==this.currDisplayData.type&&this.currDisplayData.uvs&&(!x.isConchApp||x.isConchApp&&M.RUNTIMEVERION>"0.9.15")&&(this.currTexture=this.currDisplayData.createTexture(this.currTexture))}}else this.displayIndex=-1,this.currDisplayData=null,this.currTexture=null},e.replaceSkin=function(t){this._diyTexture=t,this._curDiyUV&&(this._curDiyUV.length=0),this.currDisplayData&&this._diyTexture==this.currDisplayData.texture&&(this._diyTexture=null)},e.setParentMatrix=function(t){this._parentMatrix=t},e.draw=function(e,i,a,s){if(void 0===a&&(a=!1),void 0===s&&(s=1),(null!=this._diyTexture||null!=this.currTexture)&&null!=this.currDisplayData||this.currDisplayData&&3==this.currDisplayData.type){var r=this.currTexture;this._diyTexture&&(r=this._diyTexture);var n;switch(this.currDisplayData.type){case 0:if(e){var h=this.getDisplayMatrix();if(this._parentMatrix){var l=!1;if(h){m.mul(h,this._parentMatrix,m.TEMP);var o;if(a?(null==this._resultMatrix&&(this._resultMatrix=new m),o=this._resultMatrix):o=new m,!x.isWebGL&&this.currDisplayData.uvs||x.isWebGL&&this._diyTexture&&this.currDisplayData.uvs){var u=t._tempMatrix;u.identity(),this.currDisplayData.uvs[1]>this.currDisplayData.uvs[5]&&(u.d=-1),this.currDisplayData.uvs[0]>this.currDisplayData.uvs[4]&&this.currDisplayData.uvs[1]>this.currDisplayData.uvs[5]&&(l=!0,u.rotate(-Math.PI/2)),m.mul(u,m.TEMP,o)}else m.TEMP.copyTo(o);l?e.drawTexture(r,-this.currDisplayData.height/2,-this.currDisplayData.width/2,this.currDisplayData.height,this.currDisplayData.width,o):e.drawTexture(r,-this.currDisplayData.width/2,-this.currDisplayData.height/2,this.currDisplayData.width,this.currDisplayData.height,o)}}}break;case 1:if(a?(null==this._skinSprite&&(this._skinSprite=t.createSkinMesh()),n=this._skinSprite):n=t.createSkinMesh(),null==n)return;var c;if(null==this.currDisplayData.bones){var d=this.currDisplayData.weights;this.deformData&&(d=this.deformData);var _;this._diyTexture?(this._curDiyUV||(this._curDiyUV=[]),0==this._curDiyUV.length&&(this._curDiyUV=Z.getRelativeUV(this.currTexture.uv,this.currDisplayData.uvs,this._curDiyUV),this._curDiyUV=Z.getAbsoluteUV(this._diyTexture.uv,this._curDiyUV,this._curDiyUV)),_=this._curDiyUV):_=this.currDisplayData.uvs,this._mVerticleArr=d;this.currDisplayData.triangles.length;c=this.currDisplayData.triangles,n.init2(r,null,c,this._mVerticleArr,_);var p=this.getDisplayMatrix();if(this._parentMatrix&&p){m.mul(p,this._parentMatrix,m.TEMP);var f;a?(null==this._resultMatrix&&(this._resultMatrix=new m),f=this._resultMatrix):f=new m,m.TEMP.copyTo(f),n.transform=f}}else this.skinMesh(i,n,s);e.drawSkin(n);break;case 2:if(a?(null==this._skinSprite&&(this._skinSprite=t.createSkinMesh()),n=this._skinSprite):n=t.createSkinMesh(),null==n)return;this.skinMesh(i,n,s),e.drawSkin(n)}}},e.skinMesh=function(t,e,i){var a,s=this.currTexture,r=this.currDisplayData.bones;this._diyTexture?(s=this._diyTexture,this._curDiyUV||(this._curDiyUV=[]),0==this._curDiyUV.length&&(this._curDiyUV=Z.getRelativeUV(this.currTexture.uv,this.currDisplayData.uvs,this._curDiyUV),this._curDiyUV=Z.getAbsoluteUV(this._diyTexture.uv,this._curDiyUV,this._curDiyUV)),a=this._curDiyUV):a=this.currDisplayData.uvs;var n,h,l=this.currDisplayData.weights,o=this.currDisplayData.triangles,u=0,c=0,d=0,_=NaN,p=NaN,f=0,m=0,y=[],x=0,g=0;if(this.deformData&&this.deformData.length>0){var v=0;for(x=0,g=r.length;x<g;){for(d=r[x++]+x,u=0,c=0;x<d;x++)h=t[r[x]],_=l[f]+this.deformData[v++],p=l[f+1]+this.deformData[v++],m=l[f+2],u+=(_*h.a+p*h.c+h.tx)*m,c+=(_*h.b+p*h.d+h.ty)*m,f+=3;y.push(u,c)}}else for(x=0,g=r.length;x<g;){for(d=r[x++]+x,u=0,c=0;x<d;x++)h=t[r[x]],_=l[f],p=l[f+1],m=l[f+2],u+=(_*h.a+p*h.c+h.tx)*m,c+=(_*h.b+p*h.d+h.ty)*m,f+=3;y.push(u,c)}this._mVerticleArr=y,n=o,e.init2(s,null,n,this._mVerticleArr,a)},e.drawBonePoint=function(t){t&&this._parentMatrix&&t.drawCircle(this._parentMatrix.tx,this._parentMatrix.ty,5,"#ff0000")},e.getDisplayMatrix=function(){return this.currDisplayData?this.currDisplayData.transform.getMatrix():null},e.getMatrix=function(){return this._resultMatrix},e.copy=function(){var e=new t;return e.type="copy",e.name=this.name,e.attachmentName=this.attachmentName,e.srcDisplayIndex=this.srcDisplayIndex,e.parent=this.parent,e.displayIndex=this.displayIndex,e.templet=this.templet,e.currSlotData=this.currSlotData,e.currTexture=this.currTexture,e.currDisplayData=this.currDisplayData,e},t.createSkinMesh=function(){return x.isWebGL||x.isConchApp?v.skinAniSprite():x.isWebGL?null:st.useSimpleMeshInCanvas?new at:new et},a(t,["_tempMatrix",function(){return this._tempMatrix=new m}]),t}(),k=function(){function t(){this.mesh=null,this.transform=null,this.context=null,this.mode=0}s(t,"laya.ani.bone.canvasmesh.CanvasMeshRender");var e=t.prototype;return e.renderToContext=function(t){this.context=t.ctx||t,this.mesh&&(0==this.mode?this._renderWithIndexes(this.mesh):this._renderNoIndexes(this.mesh))},e._renderNoIndexes=function(t){var e=0,i=t.vertices.length/2,a=0;for(e=0;e<i-2;e++)a=2*e,this._renderDrawTriangle(t,a,a+2,a+4)},e._renderWithIndexes=function(t){var e=t.indexes,i=0,a=e.length;for(i=0;i<a;i+=3){var s=2*e[i],r=2*e[i+1],n=2*e[i+2];this._renderDrawTriangle(t,s,r,n)}},e._renderDrawTriangle=function(t,e,i,a){var s=this.context,r=t.uvs,n=t.vertices,h=t.texture,l=h.bitmap,o=l.source,u=h.width,c=h.height,d=l.width,_=l.height,p=NaN,f=NaN,m=NaN,y=NaN,x=NaN,g=NaN;if(t.useUvTransform){var v=t.uvTransform;p=(r[e]*v.a+r[e+1]*v.c+v.tx)*d,f=(r[i]*v.a+r[i+1]*v.c+v.tx)*d,m=(r[a]*v.a+r[a+1]*v.c+v.tx)*d,y=(r[e]*v.b+r[e+1]*v.d+v.ty)*_,x=(r[i]*v.b+r[i+1]*v.d+v.ty)*_,g=(r[a]*v.b+r[a+1]*v.d+v.ty)*_}else p=r[e]*d,f=r[i]*d,m=r[a]*d,y=r[e+1]*_,x=r[i+1]*_,g=r[a+1]*_;var M=n[e],D=n[i],I=n[a],N=n[e+1],b=n[i+1],T=n[a+1];if(t.canvasPadding>0){var A=t.canvasPadding,C=t.canvasPadding,w=(M+D+I)/3,S=(N+b+T)/3,F=M-w,k=N-S,P=Math.sqrt(F*F+k*k);M=w+F/P*(P+A),N=S+k/P*(P+C),k=b-S,D=w+(F=D-w)/(P=Math.sqrt(F*F+k*k))*(P+A),b=S+k/P*(P+C),k=T-S,I=w+(F=I-w)/(P=Math.sqrt(F*F+k*k))*(P+A),T=S+k/P*(P+C)}if(s.save(),this.transform){var B=this.transform;s.transform(B.a,B.b,B.c,B.d,B.tx,B.ty)}s.beginPath(),s.moveTo(M,N),s.lineTo(D,b),s.lineTo(I,T),s.closePath(),s.clip();var U=1/(p*x+y*m+f*g-x*m-y*f-p*g),L=M*x+y*I+D*g-x*I-y*D-M*g,R=p*D+M*m+f*I-D*m-M*f-p*I,O=p*x*I+y*D*m+M*f*g-M*x*m-y*f*I-p*D*g,E=N*x+y*T+b*g-x*T-y*b-N*g,K=p*b+N*m+f*T-b*m-N*f-p*T,Y=p*x*T+y*b*m+N*f*g-N*x*m-y*f*T-p*b*g;s.transform(L*U,E*U,R*U,K*U,O*U,Y*U),s.drawImage(o,h.uv[0]*d,h.uv[1]*_,u,c,h.uv[0]*d,h.uv[1]*_,u,c),s.restore()},t}(),P=function(){function t(){this.texture=null,this.uvs=[0,0,1,0,1,1,0,1],this.vertices=[0,0,100,0,100,100,0,100],this.indexes=[0,1,3,3,1,2],this.uvTransform=null,this.useUvTransform=!1,this.canvasPadding=1}s(t,"laya.ani.bone.canvasmesh.MeshData");return t.prototype.getBounds=function(){return y._getWrapRec(this.vertices)},t}(),B=function(){function t(){this.skinName=null,this.deformSlotDataList=[]}return s(t,"laya.ani.bone.DeformAniData"),t}(),U=function(){function t(){this.deformSlotDisplayList=[]}return s(t,"laya.ani.bone.DeformSlotData"),t}(),L=function(){function t(){this.boneSlot=null,this.slotIndex=-1,this.attachment=null,this.deformData=null,this.frameIndex=0,this.timeList=[],this.vectices=[],this.tweenKeyList=[]}s(t,"laya.ani.bone.DeformSlotDisplayData");var e=t.prototype;return e.binarySearch1=function(t,e){var i=0,a=t.length-2;if(0==a)return 1;for(var s=a>>>1;;){if(t[Math.floor(s+1)]<=e?i=s+1:a=s,i==a)return i+1;s=i+a>>>1}return 0},e.apply=function(t,e,i){if(void 0===i&&(i=1),t+=.05,!(this.timeList.length<=0)){var a=0;if(!(t<this.timeList[0])){var s=this.vectices[0].length,r=[],n=this.binarySearch1(this.timeList,t);if(this.frameIndex=n,t>=this.timeList[this.timeList.length-1]){var h=this.vectices[this.vectices.length-1];if(i<1)for(a=0;a<s;a++)r[a]+=(h[a]-r[a])*i;else for(a=0;a<s;a++)r[a]=h[a];this.deformData=r}else{this.tweenKeyList[this.frameIndex];var l=this.vectices[this.frameIndex-1],o=this.vectices[this.frameIndex],u=this.timeList[this.frameIndex-1],c=this.timeList[this.frameIndex];i=this.tweenKeyList[n-1]?(t-u)/(c-u):0;var d=NaN;for(a=0;a<s;a++)d=l[a],r[a]=d+(o[a]-d)*i;this.deformData=r}}}},t}(),R=function(){function t(){this.time=NaN,this.drawOrder=[]}return s(t,"laya.ani.bone.DrawOrderData"),t}(),O=function(){function t(){this.name=null,this.intValue=0,this.floatValue=NaN,this.stringValue=null,this.time=NaN}return s(t,"laya.ani.bone.EventData"),t}(),E=function(){function t(t,e){this._targetBone=null,this._bones=null,this._data=null,this.name=null,this.mix=NaN,this.bendDirection=NaN,this.isSpine=!0,this._sp=null,this.isDebug=!1,this._data=t,this._targetBone=e[t.targetBoneIndex],this.isSpine=t.isSpine,null==this._bones&&(this._bones=[]),this._bones.length=0;for(var i=0,a=t.boneIndexs.length;i<a;i++)this._bones.push(e[t.boneIndexs[i]]);this.name=t.name,this.mix=t.mix,this.bendDirection=t.bendDirection}s(t,"laya.ani.bone.IkConstraint");var e=t.prototype;return e.apply=function(){switch(this._bones.length){case 1:this._applyIk1(this._bones[0],this._targetBone.resultMatrix.tx,this._targetBone.resultMatrix.ty,this.mix);break;case 2:this.isSpine?this._applyIk2(this._bones[0],this._bones[1],this._targetBone.resultMatrix.tx,this._targetBone.resultMatrix.ty,this.bendDirection,this.mix):this._applyIk3(this._bones[0],this._bones[1],this._targetBone.resultMatrix.tx,this._targetBone.resultMatrix.ty,this.bendDirection,this.mix)}},e._applyIk1=function(e,i,a,s){var r=e.parentBone,n=1/(r.resultMatrix.a*r.resultMatrix.d-r.resultMatrix.b*r.resultMatrix.c),h=i-r.resultMatrix.tx,l=a-r.resultMatrix.ty,o=(h*r.resultMatrix.d-l*r.resultMatrix.c)*n-e.transform.x,u=(l*r.resultMatrix.a-h*r.resultMatrix.b)*n-e.transform.y,c=Math.atan2(u,o)*t.radDeg-0-e.transform.skX;e.transform.scX<0&&(c+=180),c>180?c-=360:c<-180&&(c+=360),e.transform.skX=e.transform.skY=e.transform.skX+c*s,e.update()},e.updatePos=function(t,e){this._sp&&this._sp.pos(t,e)},e._applyIk2=function(e,a,s,r,n,h){if(0!=h){var l=e.resultTransform.x,o=e.resultTransform.y,u=e.transform.scX,c=e.transform.scY,d=a.transform.scX,_=0,p=0,f=0;u<0?(u=-u,_=180,f=-1):(_=0,f=1),c<0&&(c=-c,f=-f),d<0?(d=-d,p=180):p=0;var m=a.resultTransform.x,y=NaN,x=NaN,g=NaN,v=e.resultMatrix.a,D=e.resultMatrix.c,I=e.resultMatrix.b,N=e.resultMatrix.d,b=Math.abs(u-c)<=1e-4;b?(x=v*m+D*(y=a.resultTransform.y)+e.resultMatrix.tx,g=I*m+N*y+e.resultMatrix.ty):(y=0,x=v*m+e.resultMatrix.tx,g=I*m+e.resultMatrix.ty),this.isDebug&&(this._sp||(this._sp=new M,i.stage.addChild(this._sp)),this._sp.graphics.clear(),this._sp.graphics.drawCircle(s,r,15,"#ffff00"),this._sp.graphics.drawCircle(x,g,15,"#ff00ff")),e.setRotation(Math.atan2(g-e.resultMatrix.ty,x-e.resultMatrix.tx));var T=e.parentBone;v=T.resultMatrix.a,D=T.resultMatrix.c,I=T.resultMatrix.b;var A=1/(v*(N=T.resultMatrix.d)-D*I),C=s-T.resultMatrix.tx,w=r-T.resultMatrix.ty,S=(C*N-w*D)*A-l,F=(w*v-C*I)*A-o,k=((C=x-T.resultMatrix.tx)*N-(w=g-T.resultMatrix.ty)*D)*A-l,P=(w*v-C*I)*A-o,B=Math.sqrt(k*k+P*P),U=a.length*d,L=NaN,R=NaN;if(b){var O=(S*S+F*F-B*B-(U*=u)*U)/(2*B*U);O<-1?O=-1:O>1&&(O=1),R=Math.acos(O)*n,v=B+U*O,D=U*Math.sin(R),L=Math.atan2(F*v-S*D,S*v+F*D)}else{var E=(v=u*U)*v,K=(D=c*U)*D,Y=S*S+F*F,V=Math.atan2(F,S),W=-2*K*B,X=K-E;if((N=W*W-4*X*(I=K*B*B+E*Y-E*K))>0){var z=Math.sqrt(N);W<0&&(z=-z);var q=(z=-(W+z)/2)/X,G=I/z,H=Math.abs(q)<Math.abs(G)?q:G;H*H<=Y&&(w=Math.sqrt(Y-H*H)*n,L=V-Math.atan2(w,H),R=Math.atan2(w/c,(H-B)/u))}var Q=0,Z=Number.MAX_VALUE,j=0,$=0,J=0,tt=0,et=0,it=0;(N=(C=B+v)*C)>tt&&(J=0,tt=N,et=C),(N=(C=B-v)*C)<Z&&(Q=Math.PI,Z=N,j=C);var at=Math.acos(-v*B/(E-K));(N=(C=v*Math.cos(at)+B)*C+(w=D*Math.sin(at))*w)<Z&&(Q=at,Z=N,j=C,$=w),N>tt&&(J=at,tt=N,et=C,it=w),Y<=(Z+tt)/2?(L=V-Math.atan2($*n,j),R=Q*n):(L=V-Math.atan2(it*n,et),R=J*n)}var st=Math.atan2(y,m)*f,rt=e.resultTransform.skX;(L=(L-st)*t.radDeg+_-rt)>180?L-=360:L<-180&&(L+=360),e.resultTransform.x=l,e.resultTransform.y=o,e.resultTransform.skX=e.resultTransform.skY=rt+L*h,rt=a.resultTransform.skX,(R=((R+st)*t.radDeg-0)*f+p-(rt%=360))>180?R-=360:R<-180&&(R+=360),a.resultTransform.x=m,a.resultTransform.y=y,a.resultTransform.skX=a.resultTransform.skY=a.resultTransform.skY+R*h,e.update()}},e._applyIk3=function(e,a,s,r,n,h){if(0!=h){var l=NaN,o=NaN,u=a.resultMatrix.a*a.length,c=a.resultMatrix.b*a.length,d=u*u+c*c,_=Math.sqrt(d),p=e.resultMatrix.tx,f=e.resultMatrix.ty,m=a.resultMatrix.tx,y=a.resultMatrix.ty,x=m-p,g=y-f,v=x*x+g*g,D=Math.sqrt(v),I=(x=s-e.resultMatrix.tx)*x+(g=r-e.resultMatrix.ty)*g,N=Math.sqrt(I);if(_+D<=N||N+_<=D||N+D<=_){var b=NaN;m=p+(b=_+D<=N?1:-1)*(s-p)*D/N,y=f+b*(r-f)*D/N}else{var T=(v-d+I)/(2*I),A=Math.sqrt(v-T*T*I)/N,C=p+x*T,w=f+g*T,S=-g*A,F=x*A;n>0?(m=C-S,y=w-F):(m=C+S,y=w+F)}l=m,o=y,this.isDebug&&(this._sp||(this._sp=new M,i.stage.addChild(this._sp)),this._sp.graphics.clear(),this._sp.graphics.drawCircle(p,f,15,"#ff00ff"),this._sp.graphics.drawCircle(s,r,15,"#ffff00"),this._sp.graphics.drawCircle(l,o,15,"#ff00ff"));var k=NaN;k=Math.atan2(o-e.resultMatrix.ty,l-e.resultMatrix.tx),e.setRotation(k);var P;(P=t._tempMatrix).identity(),P.rotate(k),P.scale(e.resultMatrix.getScaleX(),e.resultMatrix.getScaleY()),P.translate(e.resultMatrix.tx,e.resultMatrix.ty),P.copyTo(e.resultMatrix),e.updateChild();var B=NaN;B=Math.atan2(r-o,s-l),a.setRotation(B);var U;(U=t._tempMatrix).identity(),U.rotate(B),U.scale(a.resultMatrix.getScaleX(),a.resultMatrix.getScaleY()),U.translate(l,o),P.copyTo(a.resultMatrix),a.updateChild()}},a(t,["radDeg",function(){return this.radDeg=180/Math.PI},"degRad",function(){return this.degRad=Math.PI/180},"_tempMatrix",function(){return this._tempMatrix=new m}]),t}(),K=function(){function t(){this.name=null,this.targetBoneName=null,this.bendDirection=1,this.mix=1,this.isSpine=!0,this.targetBoneIndex=-1,this.boneNames=[],this.boneIndexs=[]}return s(t,"laya.ani.bone.IkConstraintData"),t}(),Y=function(){function t(){}return s(t,"laya.ani.bone.MeshTools"),t.findEdge=function(t,e,i){void 0===e&&(e=0),void 0===i&&(i=!0);var a=0,s=0,r=0;for(s=t.length,r=-1,a=0;a<s;a+=2)(r<0||i==t[r+e]<t[a+e])&&(r=a);return r},t.findBestTriangle=function(e){var i=0;i=t.findEdge(e,1,!0);var a=0;a=t.findEdge(e,1,!1);var s=0;s=t.findEdge(e,0,!0);var r=0;r=t.findEdge(e,0,!1);var n;return n=t._bestTriangle,n.length=0,n.push(s,r),n.indexOf(i)<0&&n.push(i),n.indexOf(a)<0&&n.push(a),n},t.solveMesh=function(e,i){(i=i||[]).length=0;var a;a=e.uvs;var s;s=e.vertices;var r,n,h=0,l=0,o=0;h=(n=t.findBestTriangle(a))[0],l=n[1],o=n[2],t._absArr.length=0;return t.isNormalUV(e.texture.uv)&&t.adptTexture(e),r=t.solvePoints(e.texture.uv,a[h],a[h+1],a[l]-a[h],a[l+1]-a[h+1],a[o]-a[h],a[o+1]-a[h+1],t._absArr),t.transPoints(r,s[h],s[h+1],s[l]-s[h],s[l+1]-s[h+1],s[o]-s[h],s[o+1]-s[h+1],i)},t.findWrapRect=function(e){var i=0;i=t.findEdge(e,1,!0);var a=0;a=t.findEdge(e,1,!1);var s=0;s=t.findEdge(e,0,!0);var r=0;r=t.findEdge(e,0,!1);var n=NaN;n=e[s];var h=NaN;h=e[r];var l=NaN;l=e[i+1];var o=NaN;return[h,o=e[a+1],n-h,l-o]},t.adptTexture=function(e){var i;i=t.findWrapRect(e.uvs);var a,s,r=(a=e.texture).width,n=a.height;s=I.create(a,i[0]*r,i[1]*n,i[2]*r,i[3]*n),e.texture=s},t.isNormalUV=function(t){return 0==t[0]&&0==t[1]&&1==t[4]&&1==t[5]},t.solvePoints=function(e,i,a,s,r,n,h,l){l=l||[];var o=0,u=0;u=e.length;var c;for(o=0;o<u;o+=2)c=t.solve2(e[o],e[o+1],i,a,s,r,n,h),l.push(c[0],c[1]);return l},t.transPoints=function(e,i,a,s,r,n,h,l){l=l||[];var o=0,u=0;u=e.length;for(o=0;o<u;o+=2)t.transPoint(e[o],e[o+1],i,a,s,r,n,h,l);return l},t.transPoint=function(t,e,i,a,s,r,n,h,l){var o=NaN,u=NaN;return o=i+s*t+n*e,u=a+r*t+h*e,(l=l||[]).push(o,u),l},t.solve2=function(e,i,a,s,r,n,h,l,o,u){void 0===o&&(o=!1),u=u||[];var c=NaN,d=NaN;if(0==r)return t.solve2(e,i,a,s,h,l,r,n,!0,u);var _=NaN,p=NaN;return _=e-a,p=i-s,d=(p-_*n/r)/(l-h*n/r),c=(_-d*h)/r,o?u.push(d,c):u.push(c,d),u},t.solve=function(e,i,a,s){return t.solve2(e.x,e.y,i.x,i.y,a.x,a.y,s.x,s.y)},t._bestTriangle=[],t._absArr=[],t}(),V=function(){function t(t,e){this.target=null,this.data=null,this.bones=null,this.position=NaN,this.spacing=NaN,this.rotateMix=NaN,this.translateMix=NaN,this._debugKey=!1,this._spaces=null,this._segments=[],this._curves=[],this.data=t,this.position=t.position,this.spacing=t.spacing,this.rotateMix=t.rotateMix,this.translateMix=t.translateMix,this.bones=[];for(var i=this.data.bones,a=0,s=i.length;a<s;a++)this.bones.push(e[i[a]])}s(t,"laya.ani.bone.PathConstraint");var e=t.prototype;return e.apply=function(t,e){if(this.target){var i=this.translateMix,a=this.translateMix,s=a>0,r=this.data.spacingMode,n="length"==r,h=this.data.rotateMode,l="tangent"==h,o="chainScale"==h,u=[],c=this.bones.length,d=l?c:c+1,_=[];this._spaces=_,_[0]=this.position;var p=this.spacing;if(o||n)for(var f=0,m=d-1;f<m;){var y=this.bones[f],x=y.length,g=x*y.resultMatrix.a,v=x*y.resultMatrix.b;x=Math.sqrt(g*g+v*v),o&&(u[f]=x),_[++f]=n?Math.max(0,x+p):p}else for(f=1;f<d;f++)_[f]=p;var M=this.computeWorldPositions(this.target,t,e,d,l,"percent"==this.data.positionMode,"percent"==r);if(this._debugKey){for(f=0;f<M.length;f++)e.drawCircle(M[f++],M[f++],5,"#00ff00");var D=[];for(f=0;f<M.length;f++)D.push(M[f++],M[f++]);e.drawLines(0,0,D,"#ff0000")}var I=M[0],N=M[1],b=this.data.offsetRotation,T="chain"==h&&0==b,A=NaN;for(f=0,A=3;f<c;f++,A+=3){(y=this.bones[f]).resultMatrix.tx+=(I-y.resultMatrix.tx)*i,y.resultMatrix.ty+=(N-y.resultMatrix.ty)*i;var C=(g=M[A])-I,w=(v=M[A+1])-N;if(o&&0!=(x=u[f])){var S=(Math.sqrt(C*C+w*w)/x-1)*a+1;y.resultMatrix.a*=S,y.resultMatrix.c*=S}if(I=g,N=v,s){var F=y.resultMatrix.a,k=y.resultMatrix.c,P=y.resultMatrix.b,B=y.resultMatrix.d,U=NaN,L=NaN,R=NaN;U=l?M[A-1]:0==_[f+1]?M[A+2]:Math.atan2(w,C),U-=Math.atan2(P,F)-b/180*Math.PI,T&&(L=Math.cos(U),R=Math.sin(U),I+=((x=y.length)*(L*F-R*P)-C)*a,N+=(x*(R*F+L*P)-w)*a),U>Math.PI?U-=2*Math.PI:U<-Math.PI&&(U+=2*Math.PI),U*=a,L=Math.cos(U),R=Math.sin(U),y.resultMatrix.a=L*F-R*P,y.resultMatrix.c=L*k-R*B,y.resultMatrix.b=R*F+L*P,y.resultMatrix.d=R*k+L*B}}}},e.computeWorldVertices2=function(e,i,a,s,r,n){var h,l,o=e.currDisplayData.bones,u=e.currDisplayData.weights,c=e.currDisplayData.triangles,d=0,_=0,p=0,f=0,m=0,y=0,x=0,g=0,v=0,M=0,D=0;if(null!=o){for(d=0;d<a;d+=2)_+=(f=o[_])+1,p+=f;var I=i;for(m=n,y=3*p;m<s;m+=2){for(x=0,g=0,f=o[_++],f+=_;_<f;_++,y+=3){h=I[o[_]].resultMatrix,v=u[y],M=u[y+1];var N=u[y+2];x+=(v*h.a+M*h.c+h.tx)*N,g+=(v*h.b+M*h.d+h.ty)*N}r[m]=x,r[m+1]=g}}else{c||(c=u),e.deformData&&(c=e.deformData);var b;if(b=e.parent,i)for(D=i.length,d=0;d<D;d++)if(i[d].name==b){l=i[d];break}var T;l&&(T=l.resultMatrix),T||(T=t._tempMt);var A=T.tx,C=T.ty,w=T.a,S=T.b,F=T.c,k=T.d;for(l&&(k*=l.d),_=a,m=n;m<s;_+=2,m+=2)v=c[_],M=c[_+1],r[m]=v*w+M*S+A,r[m+1]=-(v*F+M*k+C)}},e.computeWorldPositions=function(t,e,i,a,s,r,n){t.currDisplayData.bones,t.currDisplayData.weights,t.currDisplayData.triangles;var h=[],l=0,o=t.currDisplayData.verLen,u=this.position,c=this._spaces,d=[],_=[],p=o/6,f=-1,m=NaN,y=0,x=0,g=NaN,v=NaN,M=NaN,D=NaN;if(p--,o-=4,this.computeWorldVertices2(t,e,2,o,h,0),this._debugKey)for(l=0;l<h.length;)i.drawCircle(h[l++],h[l++],10,"#ff0000");d=h,this._curves.length=p;var I=this._curves;m=0;var N=d[0],b=d[1],T=0,A=0,C=0,w=0,S=0,F=0,k=NaN,P=NaN,B=NaN,U=NaN,L=NaN,R=NaN,O=NaN,E=NaN,K=0;for(l=0,K=2;l<p;l++,K+=6)T=d[K],A=d[K+1],C=d[K+2],w=d[K+3],L=2*(k=.1875*(N-2*T+C))+(B=.09375*(3*(T-C)-N+(S=d[K+4]))),R=2*(P=.1875*(b-2*A+w))+(U=.09375*(3*(A-w)-b+(F=d[K+5]))),O=.75*(T-N)+k+.16666667*B,E=.75*(A-b)+P+.16666667*U,m+=Math.sqrt(O*O+E*E),O+=L,E+=R,L+=B,R+=U,m+=Math.sqrt(O*O+E*E),O+=L,E+=R,m+=Math.sqrt(O*O+E*E),O+=L+B,E+=R+U,m+=Math.sqrt(O*O+E*E),I[l]=m,N=S,b=F;if(r&&(u*=m),n)for(l=0;l<a;l++)c[l]*=m;var Y=this._segments,V=0,W=0;for(l=0,y=0,x=0,W=0;l<a;l++,y+=3)if(v=c[l],u+=v,(g=u)<0)this.addBeforePosition(g,d,0,_,y);else if(g>m)this.addAfterPosition(g-m,d,o-4,_,y);else{for(;;x++)if(D=I[x],!(g>D)){0==x?g/=D:g=(g-(M=I[x-1]))/(D-M);break}if(x!=f){f=x;var X=6*x;for(N=d[X],b=d[X+1],T=d[X+2],A=d[X+3],C=d[X+4],w=d[X+5],L=2*(k=.03*(N-2*T+C))+(B=.006*(3*(T-C)-N+(S=d[X+6]))),R=2*(P=.03*(b-2*A+w))+(U=.006*(3*(A-w)-b+(F=d[X+7]))),O=.3*(T-N)+k+.16666667*B,E=.3*(A-b)+P+.16666667*U,V=Math.sqrt(O*O+E*E),Y[0]=V,X=1;X<8;X++)O+=L,E+=R,L+=B,R+=U,V+=Math.sqrt(O*O+E*E),Y[X]=V;O+=L,E+=R,V+=Math.sqrt(O*O+E*E),Y[8]=V,O+=L+B,E+=R+U,V+=Math.sqrt(O*O+E*E),Y[9]=V,W=0}for(g*=V;;W++)if(D=Y[W],!(g>D)){0==W?g/=D:g=W+(g-(M=Y[W-1]))/(D-M);break}this.addCurvePosition(.1*g,N,b,T,A,C,w,S,F,_,y,s||l>0&&0==v)}return _},e.addBeforePosition=function(t,e,i,a,s){var r=e[i],n=e[i+1],h=e[i+2]-r,l=e[i+3]-n,o=Math.atan2(l,h);a[s]=r+t*Math.cos(o),a[s+1]=n+t*Math.sin(o),a[s+2]=o},e.addAfterPosition=function(t,e,i,a,s){var r=e[i+2],n=e[i+3],h=r-e[i],l=n-e[i+1],o=Math.atan2(l,h);a[s]=r+t*Math.cos(o),a[s+1]=n+t*Math.sin(o),a[s+2]=o},e.addCurvePosition=function(t,e,i,a,s,r,n,h,l,o,u,c){0==t&&(t=1e-4);var d=t*t,_=d*t,p=1-t,f=p*p,m=f*p,y=p*t,x=3*y,g=p*x,v=x*t,M=e*m+a*g+r*v+h*_,D=i*m+s*g+n*v+l*_;o[u]=M,o[u+1]=D,o[u+2]=c?Math.atan2(D-(i*f+s*y*2+n*d),M-(e*f+a*y*2+r*d)):0},t.NONE=-1,t.BEFORE=-2,t.AFTER=-3,a(t,["_tempMt",function(){return this._tempMt=new m}]),t}(),W=function(){function t(){this.name=null,this.target=null,this.positionMode=null,this.spacingMode=null,this.rotateMode=null,this.offsetRotation=NaN,this.position=NaN,this.spacing=NaN,this.rotateMix=NaN,this.translateMix=NaN,this.bones=[]}return s(t,"laya.ani.bone.PathConstraintData"),t}(),X=function(){function t(){this.name=null,this.slotArr=[]}return s(t,"laya.ani.bone.SkinData"),t}(),z=function(){function t(){this.name=null,this.attachmentName=null,this.type=0,this.transform=null,this.width=NaN,this.height=NaN,this.texture=null,this.bones=null,this.uvs=null,this.weights=null,this.triangles=null,this.vertices=null,this.lengths=null,this.verLen=0}s(t,"laya.ani.bone.SkinSlotDisplayData");var e=t.prototype;return e.createTexture=function(t){return this.texture?this.texture:(this.texture=new I(t.bitmap,this.uvs),this.uvs[0]>this.uvs[4]&&this.uvs[1]>this.uvs[5]?(this.texture.width=t.height,this.texture.height=t.width,this.texture.offsetX=-t.offsetX,this.texture.offsetY=-t.offsetY,this.texture.sourceWidth=t.sourceHeight,this.texture.sourceHeight=t.sourceWidth):(this.texture.width=t.width,this.texture.height=t.height,this.texture.offsetX=-t.offsetX,this.texture.offsetY=-t.offsetY,this.texture.sourceWidth=t.sourceWidth,this.texture.sourceHeight=t.sourceHeight),x.isWebGL||this.uvs[1]>this.uvs[5]&&(this.texture.offsetY=this.texture.sourceHeight-this.texture.height-this.texture.offsetY),this.texture)},e.destory=function(){this.texture&&this.texture.destroy()},t}(),q=function(){function t(){this.name=null,this.displayArr=[]}s(t,"laya.ani.bone.SlotData");return t.prototype.getDisplayByName=function(t){for(var e=0,i=this.displayArr.length;e<i;e++)if(this.displayArr[e].attachmentName==t)return e;return-1},t}(),G=function(){function t(t,e){this._data=null,this._bones=null,this.target=null,this.rotateMix=NaN,this.translateMix=NaN,this.scaleMix=NaN,this.shearMix=NaN,this._temp=n(2,0),this._data=t,null==this._bones&&(this._bones=[]),this.target=e[t.targetIndex];var i=0,a=0;for(i=0,a=t.boneIndexs.length;i<a;i++)this._bones.push(e[t.boneIndexs[i]]);this.rotateMix=t.rotateMix,this.translateMix=t.translateMix,this.scaleMix=t.scaleMix,this.shearMix=t.shearMix}s(t,"laya.ani.bone.TfConstraint");return t.prototype.apply=function(){for(var t,e=this.target.resultMatrix.a,i=this.target.resultMatrix.b,a=this.target.resultMatrix.c,s=this.target.resultMatrix.d,r=0,n=this._bones.length;r<n;r++){if(t=this._bones[r],this.rotateMix>0){var h=t.resultMatrix.a,l=t.resultMatrix.b,o=t.resultMatrix.c,u=t.resultMatrix.d,c=Math.atan2(a,e)-Math.atan2(o,h)+this._data.offsetRotation*Math.PI/180;c>Math.PI?c-=2*Math.PI:c<-Math.PI&&(c+=2*Math.PI),c*=this.rotateMix;var d=Math.cos(c),_=Math.sin(c);t.resultMatrix.a=d*h-_*o,t.resultMatrix.b=d*l-_*u,t.resultMatrix.c=_*h+d*o,t.resultMatrix.d=_*l+d*u}if(this.translateMix&&(this._temp[0]=this._data.offsetX,this._temp[1]=this._data.offsetY,this.target.localToWorld(this._temp),t.resultMatrix.tx+=(this._temp[0]-t.resultMatrix.tx)*this.translateMix,t.resultMatrix.ty+=(this._temp[1]-t.resultMatrix.ty)*this.translateMix,t.updateChild()),this.scaleMix>0){var p=Math.sqrt(t.resultMatrix.a*t.resultMatrix.a+t.resultMatrix.c*t.resultMatrix.c),f=Math.sqrt(e*e+a*a),m=p>1e-5?(p+(f-p+this._data.offsetScaleX)*this.scaleMix)/p:0;t.resultMatrix.a*=m,t.resultMatrix.c*=m,p=Math.sqrt(t.resultMatrix.b*t.resultMatrix.b+t.resultMatrix.d*t.resultMatrix.d),f=Math.sqrt(i*i+s*s),m=p>1e-5?(p+(f-p+this._data.offsetScaleY)*this.scaleMix)/p:0,t.resultMatrix.b*=m,t.resultMatrix.d*=m}if(this.shearMix>0){l=t.resultMatrix.b,u=t.resultMatrix.d;var y=Math.atan2(u,l);(c=Math.atan2(s,i)-Math.atan2(a,e)-(y-Math.atan2(t.resultMatrix.c,t.resultMatrix.a)))>Math.PI?c-=2*Math.PI:c<-Math.PI&&(c+=2*Math.PI),c=y+(c+this._data.offsetShearY*Math.PI/180)*this.shearMix,m=Math.sqrt(l*l+u*u),t.resultMatrix.b=Math.cos(c)*m,t.resultMatrix.d=Math.sin(c)*m}}},t}(),H=function(){function t(){this.name=null,this.targetIndex=0,this.rotateMix=NaN,this.translateMix=NaN,this.scaleMix=NaN,this.shearMix=NaN,this.offsetRotation=NaN,this.offsetX=NaN,this.offsetY=NaN,this.offsetScaleX=NaN,this.offsetScaleY=NaN,this.offsetShearY=NaN,this.boneIndexs=[]}return s(t,"laya.ani.bone.TfConstraintData"),t}(),Q=function(){function t(){this.skX=0,this.skY=0,this.scX=1,this.scY=1,this.x=0,this.y=0,this.skewX=0,this.skewY=0,this.mMatrix=null}s(t,"laya.ani.bone.Transform");var e=t.prototype;return e.initData=function(t){void 0!=t.x&&(this.x=t.x),void 0!=t.y&&(this.y=t.y),void 0!=t.skX&&(this.skX=t.skX),void 0!=t.skY&&(this.skY=t.skY),void 0!=t.scX&&(this.scX=t.scX),void 0!=t.scY&&(this.scY=t.scY)},e.getMatrix=function(){var t;return(t=this.mMatrix?this.mMatrix:this.mMatrix=new m).identity(),t.scale(this.scX,this.scY),(this.skewX||this.skewY)&&this.skew(t,this.skewX*Math.PI/180,this.skewY*Math.PI/180),t.rotate(this.skX*Math.PI/180),t.translate(this.x,this.y),t},e.skew=function(t,e,i){var a=Math.sin(i),s=Math.cos(i),r=Math.sin(e),n=Math.cos(e);return t.setTo(t.a*n-t.b*a,t.a*r+t.b*s,t.c*n-t.d*a,t.c*r+t.d*s,t.tx*n-t.ty*a,t.tx*r+t.ty*s),t},t}(),Z=function(){function t(){}return s(t,"laya.ani.bone.UVTools"),t.getRelativeUV=function(t,e,i){var a=t[0],s=t[2]-t[0],r=t[1],n=t[5]-t[1];i||(i=[]),i.length=e.length;var h=0,l=0;l=i.length;var o=1/s,u=1/n;for(h=0;h<l;h+=2)i[h]=(e[h]-a)*o,i[h+1]=(e[h+1]-r)*u;return i},t.getAbsoluteUV=function(t,e,i){if(0==t[0]&&0==t[1]&&1==t[4]&&1==t[5])return i?(b.copyArray(i,e),i):e;var a=t[0],s=t[2]-t[0],r=t[1],n=t[5]-t[1];i||(i=[]),i.length=e.length;var h=0,l=0;for(l=i.length,h=0;h<l;h+=2)i[h]=e[h]*s+a,i[h+1]=e[h+1]*n+r;return i},t}(),j=function(){function t(){this.startTime=NaN,this.duration=NaN,this.interpolationData=null,this.data=null,this.nextData=null}return s(t,"laya.ani.KeyFramesContent"),t}(),$=function(){function t(){}return s(t,"laya.ani.math.BezierLerp"),t.getBezierRate=function(e,i,a,s,r){var n=t._getBezierParamKey(i,a,s,r),h=100*n+e;if(t._bezierResultCache[h])return t._bezierResultCache[h];var l=t._getBezierPoints(i,a,s,r,n),o=0,u=0;for(u=l.length,o=0;o<u;o+=2)if(e<=l[o])return t._bezierResultCache[h]=l[o+1],l[o+1];return t._bezierResultCache[h]=1,1},t._getBezierParamKey=function(t,e,i,a){return 100*(100*(100*(100*t+e)+i)+a)},t._getBezierPoints=function(e,i,a,s,r){if(t._bezierPointsCache[r])return t._bezierPointsCache[r];var n;n=[0,0,e,i,a,s,1,1];var l;return l=(new h).getBezierPoints(n,100,3),t._bezierPointsCache[r]=l,l},t._bezierResultCache={},t._bezierPointsCache={},t}(),J=function(t){function e(){this._destroyed=!1,this._templet=null,this._currentTime=NaN,this._currentFrameTime=NaN,this._playStart=NaN,this._playEnd=NaN,this._playDuration=NaN,this._overallDuration=NaN,this._stopWhenCircleFinish=!1,this._elapsedPlaybackTime=NaN,this._startUpdateLoopCount=NaN,this._currentAnimationClipIndex=0,this._currentKeyframeIndex=0,this._paused=!1,this._cacheFrameRate=0,this._cacheFrameRateInterval=NaN,this._cachePlayRate=NaN,this._fullFrames=null,this.isCache=!0,this.playbackRate=1,this.returnToZeroStopped=!1,e.__super.call(this),this._destroyed=!1,this._currentAnimationClipIndex=-1,this._currentKeyframeIndex=-1,this._currentTime=0,this._overallDuration=Number.MAX_VALUE,this._stopWhenCircleFinish=!1,this._elapsedPlaybackTime=0,this._startUpdateLoopCount=-1,this._cachePlayRate=1,this.cacheFrameRate=60,this.returnToZeroStopped=!1}s(e,"laya.ani.AnimationPlayer",u);var a=e.prototype;return i.imps(a,{"laya.resource.IDestroy":!0}),a._onTempletLoadedComputeFullKeyframeIndices=function(t,e,i){this._templet===i&&this._cachePlayRate===t&&this._cacheFrameRate===e&&this._computeFullKeyframeIndices()},a._computeFullKeyframeIndices=function(){for(var t=this._fullFrames=[],e=this._templet,i=this._cacheFrameRateInterval*this._cachePlayRate,a=0,s=e.getAnimationCount();a<s;a++){for(var r=[],n=0,h=e.getAnimation(a).nodes.length;n<h;n++){for(var l=e.getAnimation(a).nodes[n],o=Math.floor(l.playTime/i+.01),u=new Uint16Array(o+1),c=-1,d=0,_=l.keyFrame.length;d<_;d++){var p=l.keyFrame[d],f=p.startTime,m=f+p.duration+i;do{for(var y=Math.floor(f/i+.5),x=c+1;x<y;x++)u[x]=d;c=y,u[y]=d,f+=i}while(f<=m)}r.push(u)}t.push(r)}},a._onAnimationTempletLoaded=function(){this.destroyed||this._calculatePlayDuration()},a._calculatePlayDuration=function(){if(0!==this.state){var t=this._templet.getAniDuration(this._currentAnimationClipIndex);0===this._playEnd&&(this._playEnd=t),this._playEnd>t&&(this._playEnd=t),this._playDuration=this._playEnd-this._playStart}},a._setPlayParams=function(t,e){this._currentTime=t,this._currentKeyframeIndex=Math.max(Math.floor(this.currentPlayTime/e+.01),0),this._currentFrameTime=this._currentKeyframeIndex*e},a._setPlayParamsWhenStop=function(t,e){this._currentTime=t,this._currentKeyframeIndex=Math.max(Math.floor(t/e+.01),0),this._currentFrameTime=this._currentKeyframeIndex*e,this._currentAnimationClipIndex=-1},a._update=function(t){if(-1!==this._currentAnimationClipIndex&&!this._paused&&this._templet&&this._templet.loaded){var e=this._cacheFrameRateInterval*this._cachePlayRate,i=0;this._startUpdateLoopCount!==D.loopCount&&(i=t*this.playbackRate,this._elapsedPlaybackTime+=i);var a=this.playDuration;if(0!==this._overallDuration&&this._elapsedPlaybackTime>=this._overallDuration||0===this._overallDuration&&this._elapsedPlaybackTime>=a)return this._setPlayParamsWhenStop(a,e),void this.event("stopped");if(i+=this._currentTime,a>0)if(i>=a)do{if(i-=a,this._stopWhenCircleFinish)return this._setPlayParamsWhenStop(a,e),this._stopWhenCircleFinish=!1,void this.event("stopped");i<a&&(this._setPlayParams(i,e),this.event("complete"))}while(i>=a);else this._setPlayParams(i,e);else{if(this._stopWhenCircleFinish)return this._setPlayParamsWhenStop(a,e),this._stopWhenCircleFinish=!1,void this.event("stopped");this._currentTime=this._currentFrameTime=this._currentKeyframeIndex=0,this.event("complete")}}},a._destroy=function(){this.offAll(),this._templet=null,this._fullFrames=null,this._destroyed=!0},a.play=function(t,e,i,a,s){if(void 0===t&&(t=0),void 0===e&&(e=1),void 0===i&&(i=2147483647),void 0===a&&(a=0),void 0===s&&(s=0),!this._templet)throw new Error("AnimationPlayer:templet must not be null,maybe you need to set url.");if(i<0||a<0||s<0)throw new Error("AnimationPlayer:overallDuration,playStart and playEnd must large than zero.");if(0!==s&&a>s)throw new Error("AnimationPlayer:start must less than end.");this._currentTime=0,this._currentFrameTime=0,this._elapsedPlaybackTime=0,this.playbackRate=e,this._overallDuration=i,this._playStart=a,this._playEnd=s,this._paused=!1,this._currentAnimationClipIndex=t,this._currentKeyframeIndex=0,this._startUpdateLoopCount=D.loopCount,this.event("played"),this._templet.loaded?this._calculatePlayDuration():this._templet.once("loaded",this,this._onAnimationTempletLoaded),this._update(0)},a.playByFrame=function(t,e,i,a,s,r){void 0===t&&(t=0),void 0===e&&(e=1),void 0===i&&(i=2147483647),void 0===a&&(a=0),void 0===s&&(s=0),void 0===r&&(r=30);var n=1e3/r;this.play(t,e,i,a*n,s*n)},a.stop=function(t){void 0===t&&(t=!0),t?(this._currentTime=this._currentFrameTime=this._currentKeyframeIndex=0,this._currentAnimationClipIndex=-1,this.event("stopped")):this._stopWhenCircleFinish=!0},r(0,a,"playEnd",function(){return this._playEnd}),r(0,a,"templet",function(){return this._templet},function(t){0===!this.state&&this.stop(!0),this._templet!==t&&(this._templet=t,t.loaded?this._computeFullKeyframeIndices():t.once("loaded",this,this._onTempletLoadedComputeFullKeyframeIndices,[this._cachePlayRate,this._cacheFrameRate]))}),r(0,a,"playStart",function(){return this._playStart}),r(0,a,"playDuration",function(){return this._playDuration}),r(0,a,"state",function(){return-1===this._currentAnimationClipIndex?0:this._paused?1:2}),r(0,a,"currentKeyframeIndex",function(){return this._currentKeyframeIndex}),r(0,a,"overallDuration",function(){return this._overallDuration}),r(0,a,"currentFrameTime",function(){return this._currentFrameTime}),r(0,a,"currentAnimationClipIndex",function(){return this._currentAnimationClipIndex}),r(0,a,"currentPlayTime",function(){return this._currentTime+this._playStart}),r(0,a,"cachePlayRate",function(){return this._cachePlayRate},function(t){this._cachePlayRate!==t&&(this._cachePlayRate=t,this._templet&&(this._templet.loaded?this._computeFullKeyframeIndices():this._templet.once("loaded",this,this._onTempletLoadedComputeFullKeyframeIndices,[t,this._cacheFrameRate])))}),r(0,a,"cacheFrameRate",function(){return this._cacheFrameRate},function(t){this._cacheFrameRate!==t&&(this._cacheFrameRate=t,this._cacheFrameRateInterval=1e3/this._cacheFrameRate,this._templet&&(this._templet.loaded?this._computeFullKeyframeIndices():this._templet.once("loaded",this,this._onTempletLoadedComputeFullKeyframeIndices,[this._cachePlayRate,t])))}),r(0,a,"currentTime",null,function(t){if(-1!==this._currentAnimationClipIndex&&this._templet&&this._templet.loaded){if(t<this._playStart||t>this._playEnd)throw new Error("AnimationPlayer:value must large than playStartTime,small than playEndTime.");this._startUpdateLoopCount=D.loopCount;var e=this._cacheFrameRateInterval*this._cachePlayRate;this._currentTime=t,this._currentKeyframeIndex=Math.max(Math.floor(this.currentPlayTime/e),0),this._currentFrameTime=this._currentKeyframeIndex*e}}),r(0,a,"paused",function(){return this._paused},function(t){this._paused=t,t&&this.event("paused")}),r(0,a,"cacheFrameRateInterval",function(){return this._cacheFrameRateInterval}),r(0,a,"destroyed",function(){return this._destroyed}),e}(),tt=function(t){function e(){e.__super.call(this),x.isConchNode&&(this.drawSkin=function(t){t.transform||(t.transform=m.EMPTY),this._addCmd([t]),this.setSkinMesh&&this.setSkinMesh(t._ps,t.mVBData,t.mEleNum,0,t.mTexture,t.transform)})}s(e,"laya.ani.GraphicsAni",c);return e.prototype.drawSkin=function(t){var e=[t];this._saveToCmd(x._context._drawSkin,e)},e.create=function(){return e._caches.pop()||new e},e.recycle=function(t){t.clear(),e._caches.push(t)},e._caches=[],e}(),et=function(t){function e(){e.__super.call(this),this.mesh=new P}s(e,"laya.ani.bone.canvasmesh.SkinMeshCanvas",k);var i=e.prototype;return i.init2=function(t,e,i,a,s){this.transform&&(this.transform=null);var r;i?r=i:(r=[]).push(0,1,3,3,1,2),this.mesh.texture=t,this.mesh.indexes=r,this.mesh.vertices=a,this.mesh.uvs=s},i.render=function(t,i,a){this.mesh.texture&&(this.transform?(this.transform.translate(i,a),this.renderToContext(t),this.transform.translate(-i,-a)):(this.transform=e._tempMatrix,this.transform.identity(),this.transform.translate(i,a),this.renderToContext(t),this.transform.translate(-i,-a),this.transform=null))},a(e,["_tempMatrix",function(){return this._tempMatrix=new m}]),e}(),it=function(t){function e(){this._aniMap={},this.unfixedLastAniIndex=-1,e.__super.call(this),this._anis=new Array}s(e,"laya.ani.AnimationTemplet",g);var a=e.prototype;return a.parse=function(t){var e=new o(t);this._aniVersion=e.readUTFString(),C.parse(this,e)},a._calculateKeyFrame=function(t,e,i){var a=t.keyFrame;a[e]=a[0];for(var s=0;s<e;s++){var r=a[s];r.nextData=0===r.duration?r.data:a[s+1].data}a.length--},a.onAsynLoaded=function(t,e,i){var a=new o(e);switch(this._aniVersion=a.readUTFString(),this._aniVersion){case"LAYAANIMATION:02":w.parse(this,a);break;default:C.parse(this,a)}this._endLoaded()},a.disposeResource=function(){this._aniVersion=null,this._anis=null,this._aniMap=null,this._publicExtData=null,this.unfixedCurrentFrameIndexes=null,this.unfixedCurrentTimes=null,this.unfixedKeyframes=null,this._aniClassName=null,this._animationDatasCache=null},a.getAnimationCount=function(){return this._anis.length},a.getAnimation=function(t){return this._anis[t]},a.getAniDuration=function(t){return this._anis[t].playTime},a.getNodes=function(t){return this._anis[t].nodes},a.getNodeIndexWithName=function(t,e){return this._anis[t].bone3DMap[e]},a.getNodeCount=function(t){return this._anis[t].nodes.length},a.getTotalkeyframesLength=function(t){return this._anis[t].totalKeyframeDatasLength},a.getPublicExtData=function(){return this._publicExtData},a.getAnimationDataWithCache=function(t,e,i,a){var s=e[i];if(s){var r=s[t];return r?r[a]:null}return null},a.setAnimationDataWithCache=function(t,e,i,a,s){var r=e[i]||(e[i]={});(r[t]||(r[t]=[]))[a]=s},a.getOriginalData=function(t,i,a,s,r){for(var n=this._anis[t].nodes,h=0,l=0,o=n.length,u=0;l<o;l++){var c,d=n[l];c=d.keyFrame[a[l][s]],d.dataOffset=u;var _=r-c.startTime,p=d.lerpType;if(p)switch(p){case 0:case 1:for(h=0;h<d.keyframeWidth;)h+=d.interpolationMethod[h](d,h,i,u+h,c.data,_,null,c.duration,c.nextData);break;case 2:var f=c.interpolationData,m=f.length,y=0;for(h=0;h<m;){var x=f[h];switch(x){case 6:case 7:h+=e.interpolation[x](d,y,i,u+y,c.data,_,null,c.duration,c.nextData,f,h+1);break;default:h+=e.interpolation[x](d,y,i,u+y,c.data,_,null,c.duration,c.nextData)}y++}}else for(h=0;h<d.keyframeWidth;)h+=d.interpolationMethod[h](d,h,i,u+h,c.data,_,null,c.duration,c.nextData);u+=d.keyframeWidth}},a.getNodesCurrentFrameIndex=function(t,e){var i=this._anis[t].nodes;t!==this.unfixedLastAniIndex&&(this.unfixedCurrentFrameIndexes=new Uint32Array(i.length),this.unfixedCurrentTimes=new Float32Array(i.length),this.unfixedLastAniIndex=t);for(var a=0,s=i.length;a<s;a++){var r=i[a];for(e<this.unfixedCurrentTimes[a]&&(this.unfixedCurrentFrameIndexes[a]=0),this.unfixedCurrentTimes[a]=e;this.unfixedCurrentFrameIndexes[a]<r.keyFrame.length&&!(r.keyFrame[this.unfixedCurrentFrameIndexes[a]].startTime>this.unfixedCurrentTimes[a]);)this.unfixedCurrentFrameIndexes[a]++;this.unfixedCurrentFrameIndexes[a]--}return this.unfixedCurrentFrameIndexes},a.getOriginalDataUnfixedRate=function(t,i,a){var s=this._anis[t].nodes;t!==this.unfixedLastAniIndex&&(this.unfixedCurrentFrameIndexes=new Uint32Array(s.length),this.unfixedCurrentTimes=new Float32Array(s.length),this.unfixedKeyframes=n(s.length),this.unfixedLastAniIndex=t);for(var r=0,h=0,l=s.length,o=0;h<l;h++){var u=s[h];for(a<this.unfixedCurrentTimes[h]&&(this.unfixedCurrentFrameIndexes[h]=0),this.unfixedCurrentTimes[h]=a;this.unfixedCurrentFrameIndexes[h]<u.keyFrame.length&&!(u.keyFrame[this.unfixedCurrentFrameIndexes[h]].startTime>this.unfixedCurrentTimes[h]);)this.unfixedKeyframes[h]=u.keyFrame[this.unfixedCurrentFrameIndexes[h]],this.unfixedCurrentFrameIndexes[h]++;var c=this.unfixedKeyframes[h];u.dataOffset=o;var d=a-c.startTime;if(u.lerpType)switch(u.lerpType){case 0:case 1:for(r=0;r<u.keyframeWidth;)r+=u.interpolationMethod[r](u,r,i,o+r,c.data,d,null,c.duration,c.nextData);break;case 2:var _=c.interpolationData,p=_.length,f=0;for(r=0;r<p;){var m=_[r];switch(m){case 6:case 7:r+=e.interpolation[m](u,f,i,o+f,c.data,d,null,c.duration,c.nextData,_,r+1);break;default:r+=e.interpolation[m](u,f,i,o+f,c.data,d,null,c.duration,c.nextData)}f++}}else for(r=0;r<u.keyframeWidth;)r+=u.interpolationMethod[r](u,r,i,o+r,c.data,d,null,c.duration,c.nextData);o+=u.keyframeWidth}},e._LinearInterpolation_0=function(t,e,i,a,s,r,n,h,l,o){var u=0===h?0:r/h;return i[a]=(1-u)*s[e]+u*l[e],1},e._QuaternionInterpolation_1=function(t,e,i,a,s,r,n,h,l,o){var u=0===h?0:r/h;return f.slerpQuaternionArray(s,e,l,e,u,i,a),4},e._AngleInterpolation_2=function(t,e,i,a,s,r,n,h,l,o){return 0},e._RadiansInterpolation_3=function(t,e,i,a,s,r,n,h,l,o){return 0},e._Matrix4x4Interpolation_4=function(t,e,i,a,s,r,n,h,l,o){for(var u=0;u<16;u++,e++)i[a+u]=s[e]+r*n[e];return 16},e._NoInterpolation_5=function(t,e,i,a,s,r,n,h,l,o){return i[a]=s[e],1},e._BezierInterpolation_6=function(t,e,i,a,s,r,n,h,l,o,u){return void 0===u&&(u=0),i[a]=s[e]+(l[e]-s[e])*$.getBezierRate(r/h,o[u],o[u+1],o[u+2],o[u+3]),5},e._BezierInterpolation_7=function(t,e,i,a,s,r,n,h,l,o,u){return void 0===u&&(u=0),i[a]=o[u+4]+o[u+5]*$.getBezierRate((.001*r+o[u+6])/o[u+7],o[u],o[u+1],o[u+2],o[u+3]),9},e.load=function(t){return i.loader.create(t,null,null,e)},e.interpolation=[e._LinearInterpolation_0,e._QuaternionInterpolation_1,e._AngleInterpolation_2,e._RadiansInterpolation_3,e._Matrix4x4Interpolation_4,e._NoInterpolation_5,e._BezierInterpolation_6,e._BezierInterpolation_7],e}(),at=(function(t){function e(){this.isCached=!1,this.canvas=null,this.tex=null,this.rec=null,e.__super.call(this)}s(e,"laya.ani.bone.canvasmesh.CacheAbleSkinMesh",et);var i=e.prototype;i.getCanvasPic=function(){var t=new d("2D"),i=t.getContext("2d");this.rec=this.mesh.getBounds(),t.size(this.rec.width,this.rec.height);var a;return a=this.transform,this.transform=e.tempMt,this.transform.identity(),this.transform.translate(-this.rec.x,-this.rec.y),this.renderToContext(i),this.transform.translate(+this.rec.x,+this.rec.y),this.transform=a,new I(t)},i.render=function(t,e,i){this.mesh.texture&&(this.isCached||(this.isCached=!0,this.tex=this.getCanvasPic()),this.transform?(this.transform.translate(e,i),this._renderTextureToContext(t),this.transform.translate(-e,-i)):(this.transform=et._tempMatrix,this.transform.identity(),this.transform.translate(e,i),this._renderTextureToContext(t),this.transform.translate(-e,-i),this.transform=null))},i._renderTextureToContext=function(t){this.context=t.ctx||t,t.save();var e;if(e=this.tex,this.transform){var i=this.transform;t.transform(i.a,i.b,i.c,i.d,i.tx,i.ty)}this.rec=this.mesh.getBounds(),t.translate(this.rec.x,this.rec.y),t.drawTexture(e,0,0,e.width,e.height,0,0),t.restore()},a(e,["tempMt",function(){return this.tempMt=new m}])}(),function(t){function e(){this.cacheOK=!1,this.cacheCmdOK=!1,this.transformCmds=[],this.drawCmds=[],e.__super.call(this),this.tempMesh=new P}s(e,"laya.ani.bone.canvasmesh.SimpleSkinMeshCanvas",t);var i=e.prototype;return i.init2=function(e,i,a,s,r){t.prototype.init2.call(this,e,i,a,s,r),this.cacheOK=!1,this.cacheCmdOK=!1,this.transformCmds.length=6,this.drawCmds.length=9},i.renderToContext=function(t){if(this.context=t.ctx||t,this.mesh){if(this.mesh.uvs.length<=8)return void(0==this.mode?this._renderWithIndexes(this.mesh):this._renderNoIndexes(this.mesh));this.cacheOK||(this.tempMesh.texture=this.mesh.texture,this.tempMesh.uvs=this.mesh.texture.uv,this.tempMesh.vertices=Y.solveMesh(this.mesh,this.tempMesh.vertices),this.cacheOK=!0),0==this.mode?this._renderWithIndexes(this.tempMesh):this._renderNoIndexes(this.tempMesh)}},i._renderWithIndexes=function(t){if(this.cacheCmdOK)this.renderByCache(t);else{var e=t.indexes,i=0,a=e.length;for(a>1&&(a=1),i=0;i<a;i+=3){var s=2*e[i],r=2*e[i+1],n=2*e[i+2];this._renderDrawTriangle(t,s,r,n)}this.cacheCmdOK=!0}},i._renderDrawTriangle=function(t,e,i,a){var s=this.context,r=t.uvs,n=t.vertices,h=t.texture,l=h.bitmap,o=l.source,u=h.width,c=h.height,d=l.width,_=l.height,p=NaN,f=NaN,m=NaN,y=NaN,x=NaN,g=NaN;if(t.useUvTransform){var v=t.uvTransform;p=(r[e]*v.a+r[e+1]*v.c+v.tx)*d,f=(r[i]*v.a+r[i+1]*v.c+v.tx)*d,m=(r[a]*v.a+r[a+1]*v.c+v.tx)*d,y=(r[e]*v.b+r[e+1]*v.d+v.ty)*_,x=(r[i]*v.b+r[i+1]*v.d+v.ty)*_,g=(r[a]*v.b+r[a+1]*v.d+v.ty)*_}else p=r[e]*d,f=r[i]*d,m=r[a]*d,y=r[e+1]*_,x=r[i+1]*_,g=r[a+1]*_;var M=n[e],D=n[i],I=n[a],N=n[e+1],b=n[i+1],T=n[a+1],A=1/(p*x+y*m+f*g-x*m-y*f-p*g),C=M*x+y*I+D*g-x*I-y*D-M*g,w=p*D+M*m+f*I-D*m-M*f-p*I,S=p*x*I+y*D*m+M*f*g-M*x*m-y*f*I-p*D*g,F=N*x+y*T+b*g-x*T-y*b-N*g,k=p*b+N*m+f*T-b*m-N*f-p*T,P=p*x*T+y*b*m+N*f*g-N*x*m-y*f*T-p*b*g;if(this.transformCmds[0]=C*A,this.transformCmds[1]=F*A,this.transformCmds[2]=w*A,this.transformCmds[3]=k*A,this.transformCmds[4]=S*A,this.transformCmds[5]=P*A,this.drawCmds[0]=o,this.drawCmds[1]=h.uv[0]*d,this.drawCmds[2]=h.uv[1]*_,this.drawCmds[3]=u,this.drawCmds[4]=c,this.drawCmds[5]=h.uv[0]*d,this.drawCmds[6]=h.uv[1]*_,this.drawCmds[7]=u,this.drawCmds[8]=c,s.save(),this.transform){var B=this.transform;s.transform(B.a,B.b,B.c,B.d,B.tx,B.ty)}s.transform.apply(s,this.transformCmds),s.drawImage.apply(s,this.drawCmds),s.restore()},i.renderByCache=function(t){var e=this.context;if(e.save(),this.transform){var i=this.transform;e.transform(i.a,i.b,i.c,i.d,i.tx,i.ty)}e.transform.apply(e,this.transformCmds),e.drawImage.apply(e,this.drawCmds),e.restore()},e}(et)),st=function(t){function e(t,i){this._templet=null,this._player=null,this._curOriginalData=null,this._boneMatrixArray=[],this._lastTime=0,this._currAniName=null,this._currAniIndex=-1,this._pause=!0,this._aniClipIndex=-1,this._clipIndex=-1,this._skinIndex=0,this._skinName="default",this._aniMode=0,this._graphicsCache=null,this._boneSlotDic=null,this._bindBoneBoneSlotDic=null,this._boneSlotArray=null,this._index=-1,this._total=-1,this._indexControl=!1,this._aniPath=null,this._texturePath=null,this._complete=null,this._loadAniMode=0,this._yReverseMatrix=null,this._ikArr=null,this._tfArr=null,this._pathDic=null,this._rootBone=null,this._boneList=null,this._aniSectionDic=null,this._eventIndex=0,this._drawOrderIndex=0,this._drawOrder=null,this._lastAniClipIndex=-1,this._lastUpdateAniClipIndex=-1,e.__super.call(this),void 0===i&&(i=0),t&&this.init(t,i)}s(e,"laya.ani.bone.Skeleton",t);var a=e.prototype;return a.init=function(t,e){void 0===e&&(e=0);var i=0,a=0;if(1==e)for(this._graphicsCache=[],i=0,a=t.getAnimationCount();i<a;i++)this._graphicsCache.push([]);if(this._yReverseMatrix=t.yReverseMatrix,this._aniMode=e,this._templet=t,this._player=new J,this._player.cacheFrameRate=t.rate,this._player.templet=t,this._player.play(),this._parseSrcBoneMatrix(),this._boneList=t.mBoneArr,this._rootBone=t.mRootBone,this._aniSectionDic=t.aniSectionDic,t.ikArr.length>0)for(this._ikArr=[],i=0,a=t.ikArr.length;i<a;i++)this._ikArr.push(new E(t.ikArr[i],this._boneList));if(t.pathArr.length>0){var s,r;null==this._pathDic&&(this._pathDic={});var n;for(i=0,a=t.pathArr.length;i<a;i++)s=t.pathArr[i],r=new V(s,this._boneList),(n=this._boneSlotDic[s.name])&&((r=new V(s,this._boneList)).target=n),this._pathDic[s.name]=r}if(t.tfArr.length>0)for(this._tfArr=[],i=0,a=t.tfArr.length;i<a;i++)this._tfArr.push(new G(t.tfArr[i],this._boneList));if(t.skinDataArray.length>0){var h=this._templet.skinDataArray[this._skinIndex];this._skinName=h.name}this._player.on("played",this,this._onPlay),this._player.on("stopped",this,this._onStop),this._player.on("paused",this,this._onPause)},a.load=function(t,e,a){void 0===a&&(a=0),this._aniPath=t,this._complete=e,this._loadAniMode=a,i.loader.load([{url:t,type:"arraybuffer"}],_.create(this,this._onLoaded))},a._onLoaded=function(){var t=p.getRes(this._aniPath);if(null!=t){null==rt.TEMPLET_DICTIONARY&&(rt.TEMPLET_DICTIONARY={});var e;(e=rt.TEMPLET_DICTIONARY[this._aniPath])?e.isParseFail?this._parseFail():e.isParserComplete?this._parseComplete():(e.on("complete",this,this._parseComplete),e.on("error",this,this._parseFail)):((e=new rt)._setUrl(this._aniPath),rt.TEMPLET_DICTIONARY[this._aniPath]=e,e.on("complete",this,this._parseComplete),e.on("error",this,this._parseFail),e.isParserComplete=!1,e.parseData(null,t))}},a._parseComplete=function(){var t=rt.TEMPLET_DICTIONARY[this._aniPath];t&&(this.init(t,this._loadAniMode),this.play(0,!0)),this._complete&&this._complete.runWith(this)},a._parseFail=function(){console.log("[Error]:"+this._aniPath+"解析失败")},a._onPlay=function(){this.event("played")},a._onStop=function(){var t,e=this._templet.eventAniArr[this._aniClipIndex];if(e&&this._eventIndex<e.length)for(;this._eventIndex<e.length;this._eventIndex++)(t=e[this._eventIndex]).time>=this._player.playStart&&t.time<=this._player.playEnd&&this.event("label",t);this._eventIndex=0,this._drawOrder=null,this.event("stopped")},a._onPause=function(){this.event("paused")},a._parseSrcBoneMatrix=function(){var t=0,e=0;for(e=this._templet.srcBoneMatrixArr.length,t=0;t<e;t++)this._boneMatrixArray.push(new m);if(0==this._aniMode)this._boneSlotDic=this._templet.boneSlotDic,this._bindBoneBoneSlotDic=this._templet.bindBoneBoneSlotDic,this._boneSlotArray=this._templet.boneSlotArray;else{null==this._boneSlotDic&&(this._boneSlotDic={}),null==this._bindBoneBoneSlotDic&&(this._bindBoneBoneSlotDic={}),null==this._boneSlotArray&&(this._boneSlotArray=[]);var i,a,s=this._templet.boneSlotArray;for(t=0,e=s.length;t<e;t++)i=s[t],null==(a=this._bindBoneBoneSlotDic[i.parent])&&(this._bindBoneBoneSlotDic[i.parent]=a=[]),this._boneSlotDic[i.name]=i=i.copy(),a.push(i),this._boneSlotArray.push(i)}},a._emitMissedEvents=function(t,e,i){void 0===i&&(i=0);var a=this._templet.eventAniArr[this._player.currentAnimationClipIndex];if(a){var s,r=0,n=0;for(n=a.length,r=i;r<n;r++)(s=a[r]).time>=this._player.playStart&&s.time<=this._player.playEnd&&this.event("label",s)}},a._update=function(t){if(void 0===t&&(t=!0),!(this._pause||t&&this._indexControl)){var e=this.timer.currTimer,i=this._player.currentKeyframeIndex,a=e-this._lastTime;if(t?this._player._update(a):i=-1,this._lastTime=e,this._player&&(this._index=this._clipIndex=this._player.currentKeyframeIndex,!(this._index<0||a>0&&this._clipIndex==i&&this._lastUpdateAniClipIndex==this._aniClipIndex))){this._lastUpdateAniClipIndex=this._aniClipIndex,i>this._clipIndex&&0!=this._eventIndex&&(this._emitMissedEvents(this._player.playStart,this._player.playEnd,this._eventIndex),this._eventIndex=0);var s,r=this._templet.eventAniArr[this._aniClipIndex];r&&this._eventIndex<r.length&&((s=r[this._eventIndex]).time>=this._player.playStart&&s.time<=this._player.playEnd?this._player.currentPlayTime>=s.time&&(this.event("label",s),this._eventIndex++):this._eventIndex++);var n;if(0==this._aniMode){if(n=this._templet.getGrahicsDataWithCache(this._aniClipIndex,this._clipIndex))return void(this.graphics!=n&&(this.graphics=n));var h=0,l=0;for(l=this._clipIndex;!this._templet.getGrahicsDataWithCache(this._aniClipIndex,l-1)&&l>0;)l--;if(l<this._clipIndex)for(h=l;h<this._clipIndex;h++)this._createGraphics(h)}else if(1==this._aniMode){if(n=this._getGrahicsDataWithCache(this._aniClipIndex,this._clipIndex))return void(this.graphics!=n&&(this.graphics=n));for(l=this._clipIndex;!this._getGrahicsDataWithCache(this._aniClipIndex,l-1)&&l>0;)l--;if(l<this._clipIndex)for(h=l;h<this._clipIndex;h++)this._createGraphics(h)}this._createGraphics()}}},a._createGraphics=function(t){void 0===t&&(t=-1),-1==t&&(t=this._clipIndex);var e,i=t*this._player.cacheFrameRateInterval,a=this._templet.drawOrderAniArr[this._aniClipIndex];if(a&&a.length>0)for(this._drawOrderIndex=0,e=a[this._drawOrderIndex];i>=e.time&&(this._drawOrder=e.drawOrder,this._drawOrderIndex++,!(this._drawOrderIndex>=a.length));)e=a[this._drawOrderIndex];var s;0==this._aniMode||1==this._aniMode?this.graphics=tt.create():this.graphics instanceof laya.ani.GraphicsAni?this.graphics.clear():this.graphics=tt.create(),s=this.graphics;var r=this._templet.getNodes(this._aniClipIndex);this._templet.getOriginalData(this._aniClipIndex,this._curOriginalData,this._player._fullFrames[this._aniClipIndex],t,i);var n,h,l,u,c=this._aniSectionDic[this._aniClipIndex],d=0,_=0,p=0,f=0,y=0,x=this._templet.srcBoneMatrixArr.length;for(_=0,y=c[0];_<x;_++)u=this._boneList[_],l=this._templet.srcBoneMatrixArr[_],u.resultTransform.scX=l.scX*this._curOriginalData[d++],u.resultTransform.skX=l.skX+this._curOriginalData[d++],u.resultTransform.skY=l.skY+this._curOriginalData[d++],u.resultTransform.scY=l.scY*this._curOriginalData[d++],u.resultTransform.x=l.x+this._curOriginalData[d++],u.resultTransform.y=l.y+this._curOriginalData[d++],8===this._templet.tMatrixDataLen&&(u.resultTransform.skewX=l.skewX+this._curOriginalData[d++],u.resultTransform.skewY=l.skewY+this._curOriginalData[d++]);var g,v={},M={};for(y+=c[1];_<y;_++)v[(g=r[_]).name]=this._curOriginalData[d++],M[g.name]=this._curOriginalData[d++],this._curOriginalData[d++],this._curOriginalData[d++],this._curOriginalData[d++],this._curOriginalData[d++];var D={},I={};for(y+=c[2];_<y;_++)D[(g=r[_]).name]=this._curOriginalData[d++],I[g.name]=this._curOriginalData[d++],this._curOriginalData[d++],this._curOriginalData[d++],this._curOriginalData[d++],this._curOriginalData[d++];if(this._pathDic){var N;for(y+=c[3];_<y;_++)if(g=r[_],N=this._pathDic[g.name]){switch(new o(g.extenData).getByte()){case 1:N.position=this._curOriginalData[d++];break;case 2:N.spacing=this._curOriginalData[d++];break;case 3:N.rotateMix=this._curOriginalData[d++],N.translateMix=this._curOriginalData[d++]}}}if(this._yReverseMatrix?this._rootBone.update(this._yReverseMatrix):this._rootBone.update(m.TEMP.identity()),this._ikArr){var b;for(_=0,y=this._ikArr.length;_<y;_++)b=this._ikArr[_],D.hasOwnProperty(b.name)&&(b.bendDirection=D[b.name]),I.hasOwnProperty(b.name)&&(b.mix=I[b.name]),b.apply()}if(this._pathDic)for(var T in this._pathDic)(N=this._pathDic[T]).apply(this._boneList,s);if(this._tfArr){for(_=0,f=this._tfArr.length;_<f;_++)this._tfArr[_].apply()}for(_=0,f=this._boneList.length;_<f;_++)if(u=this._boneList[_],h=this._bindBoneBoneSlotDic[u.name],u.resultMatrix.copyTo(this._boneMatrixArray[_]),h)for(p=0,y=h.length;p<y;p++)(n=h[p])&&n.setParentMatrix(u.resultMatrix);var A,C={},w=this._templet.deformAniArr;if(w&&w.length>0){if(this._lastAniClipIndex!=this._aniClipIndex)for(this._lastAniClipIndex=this._aniClipIndex,_=0,y=this._boneSlotArray.length;_<y;_++)(n=this._boneSlotArray[_]).deformData=null;var S=w[this._aniClipIndex];A=S.default,this._setDeform(A,C,this._boneSlotArray,i);var F;for(F in S)"default"!=F&&F!=this._skinName&&(A=S[F],this._setDeform(A,C,this._boneSlotArray,i));A=S[this._skinName],this._setDeform(A,C,this._boneSlotArray,i)}var k,P,B;if(this._drawOrder)for(_=0,y=this._drawOrder.length;_<y;_++)k=v[(n=this._boneSlotArray[this._drawOrder[_]]).name],P=M[n.name],isNaN(P)||(s.save(),s.alpha(P)),isNaN(k)||-2==k||(this._templet.attachmentNames?n.showDisplayByName(this._templet.attachmentNames[k]):n.showDisplayByIndex(k)),C[this._drawOrder[_]]?(B=C[this._drawOrder[_]],n.currDisplayData&&B[n.currDisplayData.attachmentName]?n.deformData=B[n.currDisplayData.attachmentName]:n.deformData=null):n.deformData=null,isNaN(P)?n.draw(s,this._boneMatrixArray,2==this._aniMode):n.draw(s,this._boneMatrixArray,2==this._aniMode,P),isNaN(P)||s.restore();else for(_=0,y=this._boneSlotArray.length;_<y;_++)k=v[(n=this._boneSlotArray[_]).name],P=M[n.name],isNaN(P)||(s.save(),s.alpha(P)),isNaN(k)||-2==k||(this._templet.attachmentNames?n.showDisplayByName(this._templet.attachmentNames[k]):n.showDisplayByIndex(k)),C[_]?(B=C[_],n.currDisplayData&&B[n.currDisplayData.attachmentName]?n.deformData=B[n.currDisplayData.attachmentName]:n.deformData=null):n.deformData=null,isNaN(P)?n.draw(s,this._boneMatrixArray,2==this._aniMode):n.draw(s,this._boneMatrixArray,2==this._aniMode,P),isNaN(P)||s.restore();0==this._aniMode?this._templet.setGrahicsDataWithCache(this._aniClipIndex,t,s):1==this._aniMode&&this._setGrahicsDataWithCache(this._aniClipIndex,t,s)},a._setDeform=function(t,e,i,a){if(t){var s,r,n,h=0,l=0,o=0;if(t)for(h=0,l=t.deformSlotDataList.length;h<l;h++)for(s=t.deformSlotDataList[h],o=0;o<s.deformSlotDisplayList.length;o++)n=i[(r=s.deformSlotDisplayList[o]).slotIndex],r.apply(a,n),e[r.slotIndex]||(e[r.slotIndex]={}),e[r.slotIndex][r.attachment]=r.deformData}},a.getAnimNum=function(){return this._templet.getAnimationCount()},a.getAniNameByIndex=function(t){return this._templet.getAniNameByIndex(t)},a.getSlotByName=function(t){return this._boneSlotDic[t]},a.showSkinByName=function(t,e){void 0===e&&(e=!0),this.showSkinByIndex(this._templet.getSkinIndexByName(t),e)},a.showSkinByIndex=function(t,e){void 0===e&&(e=!0);for(var i=0;i<this._boneSlotArray.length;i++)this._boneSlotArray[i].showSlotData(null,e);if(this._templet.showSkinByIndex(this._boneSlotDic,t,e)){var a=this._templet.skinDataArray[t];this._skinIndex=t,this._skinName=a.name}this._clearCache()},a.showSlotSkinByIndex=function(t,e){if(0!=this._aniMode){var i=this.getSlotByName(t);i&&i.showDisplayByIndex(e),this._clearCache()}},a.showSlotSkinByName=function(t,e){if(0!=this._aniMode){var i=this.getSlotByName(t);i&&i.showDisplayByName(e),this._clearCache()}},a.replaceSlotSkinName=function(t,e,i){if(0!=this._aniMode){var a=this.getSlotByName(t);a&&a.replaceDisplayByName(e,i),this._clearCache()}},a.replaceSlotSkinByIndex=function(t,e,i){if(0!=this._aniMode){var a=this.getSlotByName(t);a&&a.replaceDisplayByIndex(e,i),this._clearCache()}},a.setSlotSkin=function(t,e){if(0!=this._aniMode){var i=this.getSlotByName(t);i&&i.replaceSkin(e),this._clearCache()}},a._clearCache=function(){if(1==this._aniMode)for(var t=0,e=this._graphicsCache.length;t<e;t++){for(var i=0,a=this._graphicsCache[t].length;i<a;i++){var s=this._graphicsCache[t][i];s!=this.graphics&&tt.recycle(s)}this._graphicsCache[t].length=0}},a.play=function(t,e,i,a,s,r){void 0===i&&(i=!0),void 0===a&&(a=0),void 0===s&&(s=0),void 0===r&&(r=!0),this._indexControl=!1;var n=-1,h=NaN;if(h=e?2147483647:0,"string"==typeof t)for(var o=0,u=this._templet.getAnimationCount();o<u;o++){var c=this._templet.getAnimation(o);if(c&&t==c.name){n=o;break}}else n=t;n>-1&&n<this.getAnimNum()&&(this._aniClipIndex=n,(i||this._pause||this._currAniIndex!=n)&&(this._currAniIndex=n,this._curOriginalData=new Float32Array(this._templet.getTotalkeyframesLength(n)),this._drawOrder=null,this._eventIndex=0,this._player.play(n,this._player.playbackRate,h,a,s),r&&this._templet.showSkinByIndex(this._boneSlotDic,this._skinIndex),this._pause&&(this._pause=!1,this._lastTime=l.now(),this.timer.frameLoop(1,this,this._update,null,!0)),this._update()))},a.stop=function(){this._pause||(this._pause=!0,this._player&&this._player.stop(!0),this.timer.clear(this,this._update))},a.playbackRate=function(t){this._player&&(this._player.playbackRate=t)},a.paused=function(){this._pause||(this._pause=!0,this._player&&(this._player.paused=!0),this.timer.clear(this,this._update))},a.resume=function(){this._indexControl=!1,this._pause&&(this._pause=!1,this._player&&(this._player.paused=!1),this._lastTime=l.now(),this.timer.frameLoop(1,this,this._update,null,!0))},a._getGrahicsDataWithCache=function(t,e){return this._graphicsCache[t][e]},a._setGrahicsDataWithCache=function(t,e,i){this._graphicsCache[t][e]=i},a.destroy=function(e){void 0===e&&(e=!0),t.prototype.destroy.call(this,e),this._templet=null,this._player&&this._player.offAll(),this._player=null,this._curOriginalData=null,this._boneMatrixArray.length=0,this._lastTime=0,this.timer.clear(this,this._update)},r(0,a,"url",function(){return this._aniPath},function(t){this.load(t)}),r(0,a,"index",function(){return this._index},function(t){this.player&&(this._index=t,this._player.currentTime=1e3*this._index/this._player.cacheFrameRate,this._indexControl=!0,this._update(!1))}),r(0,a,"total",function(){return this._templet&&this._player?this._total=Math.floor(this._templet.getAniDuration(this._player.currentAnimationClipIndex)/1e3*this._player.cacheFrameRate):this._total=-1,this._total}),r(0,a,"templet",function(){return this._templet}),r(0,a,"player",function(){return this._player}),e.useSimpleMeshInCanvas=!1,e}(M),rt=(function(t){function e(t){this._start=0,this._Pos=0,this._data=null,this._curIndex=0,this._preIndex=0,this._playIndex=0,this._playing=!1,this._ended=!0,this._count=0,this._ids=null,this._loadedImage={},this._idOfSprite=null,this._parentMovieClip=null,this._movieClipList=null,this._labels=null,this.basePath=null,this._atlasPath=null,this._url=null,this._isRoot=!1,this._completeHandler=null,this._endFrame=-1,this.interval=30,this.loop=!1,e.__super.call(this),this._ids={},this._idOfSprite=[],this._reset(),this._playing=!1,this._parentMovieClip=t,t?(this._isRoot=!1,this._movieClipList=t._movieClipList,this._movieClipList.push(this)):(this._movieClipList=[this],this._isRoot=!0,this._setUpNoticeType(1))}s(e,"laya.ani.swf.MovieClip",t);var a=e.prototype;a.destroy=function(e){void 0===e&&(e=!0),this._clear(),t.prototype.destroy.call(this,e)},a._setDisplay=function(e){t.prototype._setDisplay.call(this,e),this._isRoot&&this._$3__onDisplay(e)},a._$3__onDisplay=function(t){t?this.timer.loop(this.interval,this,this.updates,null,!0):this.timer.clear(this,this.updates)},a.updates=function(){if(!this._parentMovieClip){var t=0,e=0;for(e=this._movieClipList.length,t=0;t<e;t++)this._movieClipList[t]&&this._movieClipList[t]._update()}},a.addLabel=function(t,e){this._labels||(this._labels={}),this._labels[e]=t},a.removeLabel=function(t){if(t){if(!this._labels)for(var e in this._labels)if(this._labels[e]===t){delete this._labels[e];break}}else this._labels=null},a._update=function(){if(this._data&&this._playing){if(this._playIndex++,this._playIndex>=this._count){if(!this.loop)return this._playIndex--,void this.stop();this._playIndex=0}if(this._parse(this._playIndex),this._labels&&this._labels[this._playIndex]&&this.event("label",this._labels[this._playIndex]),-1!=this._endFrame&&this._endFrame==this._playIndex){if(this._endFrame=-1,null!=this._completeHandler){var t=this._completeHandler;this._completeHandler=null,t.run()}this.stop()}}},a.stop=function(){this._playing=!1},a.gotoAndStop=function(t){this.index=t,this.stop()},a._clear=function(){if(this.stop(),this._idOfSprite.length=0,!this._parentMovieClip){this.timer.clear(this,this.updates);var t=0,e=0;for(e=this._movieClipList.length,t=0;t<e;t++)this._movieClipList[t]!=this&&this._movieClipList[t]._clear();this._movieClipList.length=0}this._atlasPath&&p.clearRes(this._atlasPath);var i;for(i in this._loadedImage)this._loadedImage[i]&&(p.clearRes(i),this._loadedImage[i]=!1);this.removeChildren(),this.graphics=null,this._parentMovieClip=null},a.play=function(t,e){void 0===t&&(t=0),void 0===e&&(e=!0),this.loop=e,this._playing=!0,this._data&&this._displayFrame(t)},a._displayFrame=function(t){void 0===t&&(t=-1),-1!=t&&(this._curIndex>t&&this._reset(),this._parse(t))},a._reset=function(t){void 0===t&&(t=!0),t&&1!=this._curIndex&&this.removeChildren(),this._preIndex=this._curIndex=-1,this._Pos=this._start},a._parse=function(t){var i,a,s,r=0,n=0,h=0,l=!1,o=this._idOfSprite,u=this._data;for(this._ended&&this._reset(),u.pos=this._Pos,this._ended=!1,this._playIndex=t,this._curIndex>t&&t<this._preIndex&&(this._reset(!0),u.pos=this._Pos);this._curIndex<=t&&!this._ended;)switch(u.getUint16()){case 12:if(r=u.getUint16(),n=this._ids[u.getUint16()],this._Pos=u.pos,u.pos=n,0==(h=u.getUint8())){var c=u.getUint16();if(!(a=o[r])){a=o[r]=new M;var d=new M;d.loadImage(this.basePath+c+".png"),this._loadedImage[this.basePath+c+".png"]=!0,a.addChild(d),d.size(u.getFloat32(),u.getFloat32());var _=u._getMatrix();d.transform=_}a.alpha=1}else 1==h&&((i=o[r])||(o[r]=i=new e(this),i.interval=this.interval,i._ids=this._ids,i.basePath=this.basePath,i._setData(u,n),i._initState(),i.play(0)),i.alpha=1);u.pos=this._Pos;break;case 3:var p=o[u.getUint16()];p&&(this.addChild(p),p.zOrder=u.getUint16(),l=!0);break;case 4:(p=o[u.getUint16()])&&p.removeSelf();break;case 5:o[u.getUint16()][e._ValueList[u.getUint16()]]=u.getFloat32();break;case 6:o[u.getUint16()].visible=u.getUint8()>0;break;case 7:var f=(a=o[u.getUint16()]).transform||m.create();f.setTo(u.getFloat32(),u.getFloat32(),u.getFloat32(),u.getFloat32(),u.getFloat32(),u.getFloat32()),a.transform=f;break;case 8:o[u.getUint16()].setPos(u.getFloat32(),u.getFloat32());break;case 9:o[u.getUint16()].setSize(u.getFloat32(),u.getFloat32());break;case 10:o[u.getUint16()].alpha=u.getFloat32();break;case 11:o[u.getUint16()].setScale(u.getFloat32(),u.getFloat32());break;case 98:s=u.getString(),this.event(s),"stop"==s&&this.stop();break;case 99:this._curIndex=u.getUint16(),l&&this.updateZOrder();break;case 100:this._count=this._curIndex+1,this._ended=!0,this._playing&&(this.event("enterframe"),this.event("end"),this.event("complete")),this._reset(!1)}this._playing&&!this._ended&&this.event("enterframe"),this._Pos=u.pos},a._setData=function(t,e){this._data=t,this._start=e+3},a.load=function(t,e,a){void 0===e&&(e=!1),this._url=t=N.formatURL(t),e&&(this._atlasPath=a||t.split(".swf")[0]+".json"),this.stop(),this._clear(),this._movieClipList=[this];var s;s=[{url:t,type:"arraybuffer"}],this._atlasPath&&s.push({url:this._atlasPath,type:"atlas"}),i.loader.load(s,_.create(this,this._onLoaded))},a._onLoaded=function(){var t;(t=p.getRes(this._url))?(this.basePath=this._atlasPath?p.getAtlas(this._atlasPath).dir:this._url.split(".swf")[0]+"/image/",this._initData(t)):this.event("error","file not find")},a._initState=function(){this._reset(),this._ended=!1;var t=this._playing;for(this._playing=!1,this._curIndex=0;!this._ended;)this._parse(++this._curIndex);this._playing=t},a._initData=function(t){this._data=new o(t);var e=0,i=this._data.getUint16();for(e=0;e<i;e++)this._ids[this._data.getInt16()]=this._data.getInt32();this.interval=1e3/this._data.getUint16(),this._setData(this._data,this._ids[32767]),this._initState(),this.play(0),this.event("loaded"),this._parentMovieClip||this.timer.loop(this.interval,this,this.updates,null,!0)},a.playTo=function(t,e,i){this._completeHandler=i,this._endFrame=e,this.play(t,!1)},r(0,a,"index",function(){return this._playIndex},function(t){this._playIndex=t,this._data&&this._displayFrame(this._playIndex),this._labels&&this._labels[t]&&this.event("label",this._labels[t])}),r(0,a,"count",function(){return this._count}),r(0,a,"playing",function(){return this._playing}),r(0,a,"url",null,function(t){this.load(t)}),e._ValueList=["x","y","width","height","scaleX","scaleY","rotation","alpha"]}(M),function(t){function e(){this._mainTexture=null,this._textureJson=null,this._graphicsCache=[],this.srcBoneMatrixArr=[],this.ikArr=[],this.tfArr=[],this.pathArr=[],this.boneSlotDic={},this.bindBoneBoneSlotDic={},this.boneSlotArray=[],this.skinDataArray=[],this.skinDic={},this.subTextureDic={},this.isParseFail=!1,this.yReverseMatrix=null,this.drawOrderAniArr=[],this.eventAniArr=[],this.attachmentNames=null,this.deformAniArr=[],this._isDestroyed=!1,this._rate=30,this.isParserComplete=!1,this.aniSectionDic={},this._skBufferUrl=null,this._textureDic={},this._loadList=null,this._path=null,this.tMatrixDataLen=0,this.mRootBone=null,e.__super.call(this),this.skinSlotDisplayDataArr=[],this.mBoneArr=[]}s(e,"laya.ani.bone.Templet",t);var a=e.prototype;return a.loadAni=function(t){this._skBufferUrl=t,i.loader.load(t,_.create(this,this.onComplete),null,"arraybuffer")},a.onComplete=function(t){if(this._isDestroyed)this.destroy();else{var e=p.getRes(this._skBufferUrl);e?(this._path=this._skBufferUrl.slice(0,this._skBufferUrl.lastIndexOf("/"))+"/",this.parseData(null,e)):this.event("error","load failed:"+this._skBufferUrl)}},a.parseData=function(t,e,i){void 0===i&&(i=30),!this._path&&this.url&&(this._path=this.url.slice(0,this.url.lastIndexOf("/"))+"/"),this._mainTexture=t,this._mainTexture&&x.isWebGL&&t.bitmap&&(t.bitmap.enableMerageInAtlas=!1),this._rate=i,this.parse(e)},a.buildArmature=function(t){return void 0===t&&(t=0),new st(this,t)},a.parse=function(i){t.prototype.parse.call(this,i),this._endLoaded(),this._aniVersion!=e.LAYA_ANIMATION_VISION&&(console.log("[Error] 版本不一致，请使用IDE版本配套的重新导出"+this._aniVersion+"->"+e.LAYA_ANIMATION_VISION),this._loaded=!1),this.loaded?this._mainTexture?this._parsePublicExtData():this._parseTexturePath():(this.event("error",this),this.isParseFail=!0)},a._parseTexturePath=function(){if(this._isDestroyed)this.destroy();else{var t=0;this._loadList=[];var e,a=new o(this.getPublicExtData()),s=0,r=0,n=0,h=a.getInt32(),l=a.readUTFString(),u=l.split("\n");for(t=0;t<h;t++)e=this._path+u[2*t],l=u[2*t+1],a.getFloat32(),a.getFloat32(),s=a.getFloat32(),r=a.getFloat32(),n=a.getFloat32(),isNaN(n)?0:n,n=a.getFloat32(),isNaN(n)?0:n,n=a.getFloat32(),isNaN(n)?s:n,n=a.getFloat32(),isNaN(n)?r:n,-1==this._loadList.indexOf(e)&&this._loadList.push(e);i.loader.load(this._loadList,_.create(this,this._textureComplete))}},a._textureComplete=function(){for(var t,e,i=0,a=this._loadList.length;i<a;i++)e=this._loadList[i],t=this._textureDic[e]=p.getRes(e),x.isWebGL&&t&&t.bitmap&&(t.bitmap.enableMerageInAtlas=!1);this._parsePublicExtData()},a._parsePublicExtData=function(){var t=0,e=0,i=0,a=0,s=0;for(t=0,s=this.getAnimationCount();t<s;t++)this._graphicsCache.push([]);var r=!1;r="Dragon"!=this._aniClassName;var n,h,l=new o(this.getPublicExtData()),u=0,c=0,d=0,_=0,p=0,f=0,y=0,x=0,g=0,v=l.getInt32(),M=l.readUTFString(),D=M.split("\n");for(t=0;t<v;t++){if(n=this._mainTexture,h=this._path+D[2*t],M=D[2*t+1],null==this._mainTexture&&(n=this._textureDic[h]),!n)return this.event("error",this),void(this.isParseFail=!0);u=l.getFloat32(),c=l.getFloat32(),d=l.getFloat32(),_=l.getFloat32(),g=l.getFloat32(),p=isNaN(g)?0:g,g=l.getFloat32(),f=isNaN(g)?0:g,g=l.getFloat32(),y=isNaN(g)?d:g,g=l.getFloat32(),x=isNaN(g)?_:g,this.subTextureDic[M]=I.create(n,u,c,d,_,-p,-f,y,x)}this._mainTexture=n;var N,b=l.getUint16();for(t=0;t<b;t++)(N=[]).push(l.getUint16()),N.push(l.getUint16()),N.push(l.getUint16()),N.push(l.getUint16()),this.aniSectionDic[t]=N;var T,A,C,w,k,P=l.getInt16(),E={};for(t=0;t<P;t++)T=new S,0==t?k=T:T.root=k,T.d=r?-1:1,C=l.readUTFString(),w=l.readUTFString(),T.length=l.getFloat32(),1==l.getByte()&&(T.inheritRotation=!1),1==l.getByte()&&(T.inheritScale=!1),T.name=C,w&&((A=E[w])?A.addChild(T):this.mRootBone=T),E[C]=T,this.mBoneArr.push(T);this.tMatrixDataLen=l.getUint16();var Y,V=l.getUint16(),G=Math.floor(V/this.tMatrixDataLen),Z=this.srcBoneMatrixArr;for(t=0;t<G;t++)(Y=new Q).scX=l.getFloat32(),Y.skX=l.getFloat32(),Y.skY=l.getFloat32(),Y.scY=l.getFloat32(),Y.x=l.getFloat32(),Y.y=l.getFloat32(),8===this.tMatrixDataLen&&(Y.skewX=l.getFloat32(),Y.skewY=l.getFloat32()),Z.push(Y),(T=this.mBoneArr[t]).transform=Y;var j,$=l.getUint16(),J=0;for(t=0;t<$;t++){for(j=new K,J=l.getUint16(),e=0;e<J;e++)j.boneNames.push(l.readUTFString()),j.boneIndexs.push(l.getInt16());j.name=l.readUTFString(),j.targetBoneName=l.readUTFString(),j.targetBoneIndex=l.getInt16(),j.bendDirection=l.getFloat32(),j.mix=l.getFloat32(),j.isSpine=r,this.ikArr.push(j)}var tt,et=l.getUint16(),it=0;for(t=0;t<et;t++){for(tt=new H,it=l.getUint16(),e=0;e<it;e++)tt.boneIndexs.push(l.getInt16());tt.name=l.getUTFString(),tt.targetIndex=l.getInt16(),tt.rotateMix=l.getFloat32(),tt.translateMix=l.getFloat32(),tt.scaleMix=l.getFloat32(),tt.shearMix=l.getFloat32(),tt.offsetRotation=l.getFloat32(),tt.offsetX=l.getFloat32(),tt.offsetY=l.getFloat32(),tt.offsetScaleX=l.getFloat32(),tt.offsetScaleY=l.getFloat32(),tt.offsetShearY=l.getFloat32(),this.tfArr.push(tt)}var at,st=l.getUint16(),rt=0;for(t=0;t<st;t++){for((at=new W).name=l.readUTFString(),rt=l.getUint16(),e=0;e<rt;e++)at.bones.push(l.getInt16());at.target=l.readUTFString(),at.positionMode=l.readUTFString(),at.spacingMode=l.readUTFString(),at.rotateMode=l.readUTFString(),at.offsetRotation=l.getFloat32(),at.position=l.getFloat32(),at.spacing=l.getFloat32(),at.rotateMix=l.getFloat32(),at.translateMix=l.getFloat32(),this.pathArr.push(at)}var nt,ht,lt,ot,ut=0,ct=0,dt=0,_t=NaN,pt=0,ft=l.getInt16();for(t=0;t<ft;t++){var mt=l.getUint8(),yt={};this.deformAniArr.push(yt);for(var xt=0;xt<mt;xt++)for((nt=new B).skinName=l.getUTFString(),yt[nt.skinName]=nt,ut=l.getInt16(),e=0;e<ut;e++)for(ht=new U,nt.deformSlotDataList.push(ht),ct=l.getInt16(),i=0;i<ct;i++)for(lt=new L,ht.deformSlotDisplayList.push(lt),lt.slotIndex=l.getInt16(),lt.attachment=l.getUTFString(),dt=l.getInt16(),a=0;a<dt;a++)for(1==l.getByte()?lt.tweenKeyList.push(!0):lt.tweenKeyList.push(!1),_t=l.getFloat32(),lt.timeList.push(_t),ot=[],lt.vectices.push(ot),pt=l.getInt16(),s=0;s<pt;s++)ot.push(l.getFloat32())}var gt,vt,Mt=l.getInt16(),Dt=0,It=0;for(t=0;t<Mt;t++){for(Dt=l.getInt16(),gt=[],e=0;e<Dt;e++){for((vt=new R).time=l.getFloat32(),It=l.getInt16(),i=0;i<It;i++)vt.drawOrder.push(l.getInt16());gt.push(vt)}this.drawOrderAniArr.push(gt)}var Nt,bt,Tt=l.getInt16(),At=0;for(t=0;t<Tt;t++){for(At=l.getInt16(),Nt=[],e=0;e<At;e++)(bt=new O).name=l.getUTFString(),bt.intValue=l.getInt32(),bt.floatValue=l.getFloat32(),bt.stringValue=l.getUTFString(),bt.time=l.getFloat32(),Nt.push(bt);this.eventAniArr.push(Nt)}var Ct=l.getInt16();if(Ct>0)for(this.attachmentNames=[],t=0;t<Ct;t++)this.attachmentNames.push(l.getUTFString());var wt,St,Ft=l.getInt16();for(t=0;t<Ft;t++)(wt=new F).name=l.readUTFString(),wt.parent=l.readUTFString(),wt.attachmentName=l.readUTFString(),wt.srcDisplayIndex=wt.displayIndex=l.getInt16(),wt.templet=this,this.boneSlotDic[wt.name]=wt,null==(St=this.bindBoneBoneSlotDic[wt.parent])&&(this.bindBoneBoneSlotDic[wt.parent]=St=[]),St.push(wt),this.boneSlotArray.push(wt);var kt,Pt,Bt,Ut=l.readUTFString().split("\n"),Lt=0,Rt=l.getUint8(),Ot=0,Et=0,Kt=0,Yt=0,Vt=0,Wt=0,Xt=0;for(t=0;t<Rt;t++){for((kt=new X).name=Ut[Lt++],Ot=l.getUint8(),e=0;e<Ot;e++){for((Pt=new q).name=Ut[Lt++],wt=this.boneSlotDic[Pt.name],Et=l.getUint8(),i=0;i<Et;i++){if(Bt=new z,this.skinSlotDisplayDataArr.push(Bt),Bt.name=Ut[Lt++],Bt.attachmentName=Ut[Lt++],Bt.transform=new Q,Bt.transform.scX=l.getFloat32(),Bt.transform.skX=l.getFloat32(),Bt.transform.skY=l.getFloat32(),Bt.transform.scY=l.getFloat32(),Bt.transform.x=l.getFloat32(),Bt.transform.y=l.getFloat32(),Pt.displayArr.push(Bt),Bt.width=l.getFloat32(),Bt.height=l.getFloat32(),Bt.type=l.getUint8(),Bt.verLen=l.getUint16(),(P=l.getUint16())>0)for(Bt.bones=[],a=0;a<P;a++){var zt=l.getUint16();Bt.bones.push(zt)}if((Kt=l.getUint16())>0)for(Bt.uvs=[],a=0;a<Kt;a++)Bt.uvs.push(l.getFloat32());if((Yt=l.getUint16())>0)for(Bt.weights=[],a=0;a<Yt;a++)Bt.weights.push(l.getFloat32());if((Vt=l.getUint16())>0)for(Bt.triangles=[],a=0;a<Vt;a++)Bt.triangles.push(l.getUint16());if((Wt=l.getUint16())>0)for(Bt.vertices=[],a=0;a<Wt;a++)Bt.vertices.push(l.getFloat32());if((Xt=l.getUint16())>0)for(Bt.lengths=[],a=0;a<Xt;a++)Bt.lengths.push(l.getFloat32())}kt.slotArr.push(Pt)}this.skinDic[kt.name]=kt,this.skinDataArray.push(kt)}1==l.getUint8()?(this.yReverseMatrix=new m(1,0,0,-1,0,0),k&&k.setTempMatrix(this.yReverseMatrix)):k&&k.setTempMatrix(new m),this.showSkinByIndex(this.boneSlotDic,0),this.isParserComplete=!0,this.event("complete",this)},a.getTexture=function(t){var e=this.subTextureDic[t];return e||(e=this.subTextureDic[t.substr(0,t.length-1)]),null==e?this._mainTexture:e},a.showSkinByIndex=function(t,e,i){if(void 0===i&&(i=!0),e<0&&e>=this.skinDataArray.length)return!1;var a,s,r=0,n=0,h=this.skinDataArray[e];if(h){for(r=0,n=h.slotArr.length;r<n;r++)(s=h.slotArr[r])&&(a=t[s.name])&&(a.showSlotData(s,i),i&&"undefined"!=a.attachmentName&&"null"!=a.attachmentName?a.showDisplayByName(a.attachmentName):a.showDisplayByIndex(a.displayIndex));return!0}return!1},a.getSkinIndexByName=function(t){for(var e=0,i=this.skinDataArray.length;e<i;e++)if(this.skinDataArray[e].name==t)return e;return-1},a.getGrahicsDataWithCache=function(t,e){return this._graphicsCache[t][e]},a.setGrahicsDataWithCache=function(t,e,i){this._graphicsCache[t][e]=i},a.destroy=function(){this._isDestroyed=!0;var t;for(var i in this.subTextureDic)(t=this.subTextureDic[i])&&t.destroy();for(i in this._textureDic)(t=this._textureDic[i])&&t.destroy();for(var a=0,s=this.skinSlotDisplayDataArr.length;a<s;a++)this.skinSlotDisplayDataArr[a].destory();this.skinSlotDisplayDataArr.length=0,this.url&&delete e.TEMPLET_DICTIONARY[this.url],laya.resource.Resource.prototype.destroy.call(this)},a.getAniNameByIndex=function(t){var e=this.getAnimation(t);return e?e.name:null},r(0,a,"rate",function(){return this._rate},function(t){this._rate=t}),e.LAYA_ANIMATION_VISION="LAYAANIMATION:1.6.0",e.TEMPLET_DICTIONARY=null,e}(it))}(window,document,Laya),"function"==typeof define&&define.amd&&define("laya.core",["require","exports"],function(t,e){"use strict";Object.defineProperty(e,"__esModule",{value:!0});for(var i in Laya){var a=Laya[i];a&&a.__isclass&&(e[i]=a)}});
+
+(function(window,document,Laya){
+	var __un=Laya.un,__uns=Laya.uns,__static=Laya.static,__class=Laya.class,__getset=Laya.getset,__newvec=Laya.__newvec;
+
+	var Bezier=laya.maths.Bezier,Browser=laya.utils.Browser,Byte=laya.utils.Byte,Event=laya.events.Event;
+	var EventDispatcher=laya.events.EventDispatcher,Graphics=laya.display.Graphics,HTMLCanvas=laya.resource.HTMLCanvas;
+	var Handler=laya.utils.Handler,Loader=laya.net.Loader,MathUtil=laya.maths.MathUtil,Matrix=laya.maths.Matrix;
+	var Node=laya.display.Node,Point=laya.maths.Point,Rectangle=laya.maths.Rectangle,Render=laya.renders.Render;
+	var RenderContext=laya.renders.RenderContext,Resource=laya.resource.Resource,RunDriver=laya.utils.RunDriver;
+	var Sprite=laya.display.Sprite,Stat=laya.utils.Stat,Texture=laya.resource.Texture,URL=laya.net.URL,Utils=laya.utils.Utils;
+/**
+*@private
+*@author ...
+*/
+//class laya.ani.AnimationContent
+var AnimationContent=(function(){
+	function AnimationContent(){
+		this.nodes=null;
+		this.name=null;
+		this.playTime=NaN;
+		this.bone3DMap=null;
+		this.totalKeyframeDatasLength=0;
+	}
+
+	__class(AnimationContent,'laya.ani.AnimationContent');
+	return AnimationContent;
+})()
+
+
+/**
+*@private
+*@author ...
+*/
+//class laya.ani.AnimationNodeContent
+var AnimationNodeContent=(function(){
+	function AnimationNodeContent(){
+		this.name=null;
+		this.parentIndex=0;
+		this.parent=null;
+		this.keyframeWidth=0;
+		this.lerpType=0;
+		this.interpolationMethod=null;
+		this.childs=null;
+		this.keyFrame=null;
+		//=new Vector.<KeyFramesContent>;
+		this.playTime=NaN;
+		this.extenData=null;
+		this.dataOffset=0;
+	}
+
+	__class(AnimationNodeContent,'laya.ani.AnimationNodeContent');
+	return AnimationNodeContent;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.AnimationParser01
+var AnimationParser01=(function(){
+	function AnimationParser01(){}
+	__class(AnimationParser01,'laya.ani.AnimationParser01');
+	AnimationParser01.parse=function(templet,reader){
+		var data=reader.__getBuffer();
+		var i=0,j=0,k=0,n=0,l=0,m=0,o=0;
+		var aniClassName=reader.readUTFString();
+		templet._aniClassName=aniClassName;
+		var strList=reader.readUTFString().split("\n");
+		var aniCount=reader.getUint8();
+		var publicDataPos=reader.getUint32();
+		var publicExtDataPos=reader.getUint32();
+		var publicData;
+		if (publicDataPos > 0)
+			publicData=data.slice(publicDataPos,publicExtDataPos);
+		var publicRead=new Byte(publicData);
+		if (publicExtDataPos > 0)
+			templet._publicExtData=data.slice(publicExtDataPos,data.byteLength);
+		templet._useParent=!!reader.getUint8();
+		templet._anis.length=aniCount;
+		for (i=0;i < aniCount;i++){
+			var ani=templet._anis[i]=new AnimationContent();
+			{};
+			ani.nodes=new Array;
+			var name=ani.name=strList[reader.getUint16()];
+			templet._aniMap[name]=i;
+			ani.bone3DMap={};
+			ani.playTime=reader.getFloat32();
+			var boneCount=ani.nodes.length=reader.getUint8();
+			ani.totalKeyframeDatasLength=0;
+			for (j=0;j < boneCount;j++){
+				var node=ani.nodes[j]=new AnimationNodeContent();
+				{};
+				node.childs=[];
+				var nameIndex=reader.getInt16();
+				if (nameIndex >=0){
+					node.name=strList[nameIndex];
+					ani.bone3DMap[node.name]=j;
+				}
+				node.keyFrame=new Array;
+				node.parentIndex=reader.getInt16();
+				node.parentIndex==-1 ? node.parent=null :node.parent=ani.nodes[node.parentIndex]
+				node.lerpType=reader.getUint8();
+				var keyframeParamsOffset=reader.getUint32();
+				publicRead.pos=keyframeParamsOffset;
+				var keyframeDataCount=node.keyframeWidth=publicRead.getUint16();
+				ani.totalKeyframeDatasLength+=keyframeDataCount;
+				if (node.lerpType===0 || node.lerpType===1){
+					node.interpolationMethod=[];
+					node.interpolationMethod.length=keyframeDataCount;
+					for (k=0;k < keyframeDataCount;k++)
+					node.interpolationMethod[k]=AnimationTemplet.interpolation[publicRead.getUint8()];
+				}
+				if (node.parent !=null)
+					node.parent.childs.push(node);
+				var privateDataLen=reader.getUint16();
+				if (privateDataLen > 0){
+					node.extenData=data.slice(reader.pos,reader.pos+privateDataLen);
+					reader.pos+=privateDataLen;
+				};
+				var keyframeCount=reader.getUint16();
+				node.keyFrame.length=keyframeCount;
+				var startTime=0;
+				var keyFrame;
+				for (k=0,n=keyframeCount;k < n;k++){
+					keyFrame=node.keyFrame[k]=new KeyFramesContent();
+					{};
+					keyFrame.duration=reader.getFloat32();
+					keyFrame.startTime=startTime;
+					if (node.lerpType===2){
+						keyFrame.interpolationData=[];
+						var interDataLength=reader.getUint8();
+						var lerpType=0;
+						lerpType=reader.getFloat32();
+						switch (lerpType){
+							case 254:
+								keyFrame.interpolationData.length=keyframeDataCount;
+								for (o=0;o < keyframeDataCount;o++)
+								keyFrame.interpolationData[o]=0;
+								break ;
+							case 255:
+								keyFrame.interpolationData.length=keyframeDataCount;
+								for (o=0;o < keyframeDataCount;o++)
+								keyFrame.interpolationData[o]=5;
+								break ;
+							default :
+								keyFrame.interpolationData.push(lerpType);
+								for (m=1;m < interDataLength;m++){
+									keyFrame.interpolationData.push(reader.getFloat32());
+								}
+							}
+					}
+					keyFrame.data=new Float32Array(keyframeDataCount);
+					for (l=0;l < keyframeDataCount;l++){
+						keyFrame.data[l]=reader.getFloat32();
+						if (keyFrame.data[l] >-0.00000001 && keyFrame.data[l] < 0.00000001)keyFrame.data[l]=0;
+					}
+					startTime+=keyFrame.duration;
+				}
+				keyFrame.startTime=ani.playTime;
+				node.playTime=ani.playTime;
+				templet._calculateKeyFrame(node,keyframeCount,keyframeDataCount);
+			}
+		}
+	}
+
+	return AnimationParser01;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.AnimationParser02
+var AnimationParser02=(function(){
+	function AnimationParser02(){}
+	__class(AnimationParser02,'laya.ani.AnimationParser02');
+	AnimationParser02.READ_DATA=function(){
+		AnimationParser02._DATA.offset=AnimationParser02._reader.getUint32();
+		AnimationParser02._DATA.size=AnimationParser02._reader.getUint32();
+	}
+
+	AnimationParser02.READ_BLOCK=function(){
+		var count=AnimationParser02._BLOCK.count=AnimationParser02._reader.getUint16();
+		var blockStarts=AnimationParser02._BLOCK.blockStarts=[];
+		var blockLengths=AnimationParser02._BLOCK.blockLengths=[];
+		for (var i=0;i < count;i++){
+			blockStarts.push(AnimationParser02._reader.getUint32());
+			blockLengths.push(AnimationParser02._reader.getUint32());
+		}
+	}
+
+	AnimationParser02.READ_STRINGS=function(){
+		var offset=AnimationParser02._reader.getUint32();
+		var count=AnimationParser02._reader.getUint16();
+		var prePos=AnimationParser02._reader.pos;
+		AnimationParser02._reader.pos=offset+AnimationParser02._DATA.offset;
+		for (var i=0;i < count;i++)
+		AnimationParser02._strings[i]=AnimationParser02._reader.readUTFString();
+		AnimationParser02._reader.pos=prePos;
+	}
+
+	AnimationParser02.parse=function(templet,reader){
+		AnimationParser02._templet=templet;
+		AnimationParser02._reader=reader;
+		var arrayBuffer=reader.__getBuffer();
+		AnimationParser02.READ_DATA();
+		AnimationParser02.READ_BLOCK();
+		AnimationParser02.READ_STRINGS();
+		for (var i=0,n=AnimationParser02._BLOCK.count;i < n;i++){
+			var index=reader.getUint16();
+			var blockName=AnimationParser02._strings[index];
+			var fn=AnimationParser02["READ_"+blockName];
+			if (fn==null)
+				throw new Error("model file err,no this function:"+index+" "+blockName);
+			else
+			fn.call();
+		}
+	}
+
+	AnimationParser02.READ_ANIMATIONS=function(){
+		var reader=AnimationParser02._reader;
+		var arrayBuffer=reader.__getBuffer();
+		var i=0,j=0,k=0,n=0,l=0;
+		var keyframeWidth=reader.getUint16();
+		var interpolationMethod=[];
+		interpolationMethod.length=keyframeWidth;
+		for (i=0;i < keyframeWidth;i++)
+		interpolationMethod[i]=AnimationTemplet.interpolation[reader.getByte()];
+		var aniCount=reader.getUint8();
+		AnimationParser02._templet._anis.length=aniCount;
+		for (i=0;i < aniCount;i++){
+			var ani=AnimationParser02._templet._anis[i]=
+			{};
+			ani.nodes=new Array;
+			var aniName=ani.name=AnimationParser02._strings[reader.getUint16()];
+			AnimationParser02._templet._aniMap[aniName]=i;
+			ani.bone3DMap={};
+			ani.playTime=reader.getFloat32();
+			var boneCount=ani.nodes.length=reader.getInt16();
+			ani.totalKeyframeDatasLength=0;
+			for (j=0;j < boneCount;j++){
+				var node=ani.nodes[j]=
+				{};
+				node.keyframeWidth=keyframeWidth;
+				node.childs=[];
+				var nameIndex=reader.getUint16();
+				if (nameIndex >=0){
+					node.name=AnimationParser02._strings[nameIndex];
+					ani.bone3DMap[node.name]=j;
+				}
+				node.keyFrame=new Array;
+				node.parentIndex=reader.getInt16();
+				node.parentIndex==-1 ? node.parent=null :node.parent=ani.nodes[node.parentIndex]
+				ani.totalKeyframeDatasLength+=keyframeWidth;
+				node.interpolationMethod=interpolationMethod;
+				if (node.parent !=null)
+					node.parent.childs.push(node);
+				var keyframeCount=reader.getUint16();
+				node.keyFrame.length=keyframeCount;
+				var keyFrame=null,lastKeyFrame=null;
+				for (k=0,n=keyframeCount;k < n;k++){
+					keyFrame=node.keyFrame[k]=
+					{};
+					keyFrame.startTime=reader.getFloat32();
+					(lastKeyFrame)&& (lastKeyFrame.duration=keyFrame.startTime-lastKeyFrame.startTime);
+					var offset=AnimationParser02._DATA.offset;
+					var keyframeDataOffset=reader.getUint32();
+					var keyframeDataLength=keyframeWidth *4;
+					var keyframeArrayBuffer=arrayBuffer.slice(offset+keyframeDataOffset,offset+keyframeDataOffset+keyframeDataLength);
+					keyFrame.data=new Float32Array(keyframeArrayBuffer);
+					lastKeyFrame=keyFrame;
+				}
+				keyFrame.duration=0;
+				node.playTime=ani.playTime;
+				AnimationParser02._templet._calculateKeyFrame(node,keyframeCount,keyframeWidth);
+			}
+		}
+	}
+
+	AnimationParser02._templet=null;
+	AnimationParser02._reader=null;
+	AnimationParser02._strings=[];
+	__static(AnimationParser02,
+	['_BLOCK',function(){return this._BLOCK={count:0};},'_DATA',function(){return this._DATA={offset:0,size:0};}
+	]);
+	return AnimationParser02;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.AnimationState
+var AnimationState=(function(){
+	function AnimationState(){}
+	__class(AnimationState,'laya.ani.AnimationState');
+	AnimationState.stopped=0;
+	AnimationState.paused=1;
+	AnimationState.playing=2;
+	return AnimationState;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.Bone
+var Bone=(function(){
+	function Bone(){
+		this.name=null;
+		this.root=null;
+		this.parentBone=null;
+		this.length=10;
+		this.transform=null;
+		this.inheritScale=true;
+		this.inheritRotation=true;
+		this.rotation=NaN;
+		this.resultRotation=NaN;
+		this.d=-1;
+		this._tempMatrix=null;
+		this._sprite=null;
+		this.resultTransform=new Transform();
+		this.resultMatrix=new Matrix();
+		this._children=[];
+	}
+
+	__class(Bone,'laya.ani.bone.Bone');
+	var __proto=Bone.prototype;
+	__proto.setTempMatrix=function(matrix){
+		this._tempMatrix=matrix;
+		var i=0,n=0;
+		var tBone;
+		for (i=0,n=this._children.length;i < n;i++){
+			tBone=this._children[i];
+			tBone.setTempMatrix(this._tempMatrix);
+		}
+	}
+
+	__proto.update=function(pMatrix){
+		this.rotation=this.transform.skX;
+		var tResultMatrix;
+		if (pMatrix){
+			tResultMatrix=this.resultTransform.getMatrix();
+			Matrix.mul(tResultMatrix,pMatrix,this.resultMatrix);
+			this.resultRotation=this.rotation;
+		}
+		else {
+			this.resultRotation=this.rotation+this.parentBone.resultRotation;
+			if (this.parentBone){
+				if (this.inheritRotation && this.inheritScale){
+					tResultMatrix=this.resultTransform.getMatrix();
+					Matrix.mul(tResultMatrix,this.parentBone.resultMatrix,this.resultMatrix);
+				}
+				else {
+					var temp=0;
+					var parent=this.parentBone;
+					var tAngle=NaN;
+					var cos=NaN;
+					var sin=NaN;
+					var tParentMatrix=this.parentBone.resultMatrix;
+					tResultMatrix=this.resultTransform.getMatrix();
+					var worldX=tParentMatrix.a *tResultMatrix.tx+tParentMatrix.c *tResultMatrix.ty+tParentMatrix.tx;
+					var worldY=tParentMatrix.b *tResultMatrix.tx+tParentMatrix.d *tResultMatrix.ty+tParentMatrix.ty;
+					var tTestMatrix=new Matrix();
+					if (this.inheritRotation){
+						tAngle=Math.atan2(parent.resultMatrix.b,parent.resultMatrix.a);
+						cos=Math.cos(tAngle),sin=Math.sin(tAngle);
+						tTestMatrix.setTo(cos,sin,-sin,cos,0,0);
+						Matrix.mul(this._tempMatrix,tTestMatrix,Matrix.TEMP);
+						Matrix.TEMP.copyTo(tTestMatrix);
+						tResultMatrix=this.resultTransform.getMatrix();
+						Matrix.mul(tResultMatrix,tTestMatrix,this.resultMatrix);
+						if (this.resultTransform.scX *this.resultTransform.scY < 0){
+							this.resultMatrix.rotate(Math.PI*0.5);
+						}
+						this.resultMatrix.tx=worldX;
+						this.resultMatrix.ty=worldY;
+					}
+					else if (this.inheritScale){
+						tResultMatrix=this.resultTransform.getMatrix();
+						Matrix.TEMP.identity();
+						Matrix.TEMP.d=this.d;
+						Matrix.mul(tResultMatrix,Matrix.TEMP,this.resultMatrix);
+						this.resultMatrix.tx=worldX;
+						this.resultMatrix.ty=worldY;
+					}
+					else {
+						tResultMatrix=this.resultTransform.getMatrix();
+						Matrix.TEMP.identity();
+						Matrix.TEMP.d=this.d;
+						Matrix.mul(tResultMatrix,Matrix.TEMP,this.resultMatrix);
+						this.resultMatrix.tx=worldX;
+						this.resultMatrix.ty=worldY;
+					}
+				}
+			}
+			else {
+				tResultMatrix=this.resultTransform.getMatrix();
+				tResultMatrix.copyTo(this.resultMatrix);
+			}
+		};
+		var i=0,n=0;
+		var tBone;
+		for (i=0,n=this._children.length;i < n;i++){
+			tBone=this._children[i];
+			tBone.update();
+		}
+	}
+
+	__proto.updateChild=function(){
+		var i=0,n=0;
+		var tBone;
+		for (i=0,n=this._children.length;i < n;i++){
+			tBone=this._children[i];
+			tBone.update();
+		}
+	}
+
+	__proto.setRotation=function(rd){
+		if (this._sprite){
+			this._sprite.rotation=rd *180 / Math.PI;
+		}
+	}
+
+	__proto.updateDraw=function(x,y){
+		if (!Bone.ShowBones || Bone.ShowBones[this.name]){
+			if (this._sprite){
+				this._sprite.x=x+this.resultMatrix.tx;
+				this._sprite.y=y+this.resultMatrix.ty;
+			}
+			else {
+				this._sprite=new Sprite();
+				this._sprite.graphics.drawCircle(0,0,5,"#ff0000");
+				this._sprite.graphics.drawLine(0,0,this.length,0,"#00ff00");
+				this._sprite.graphics.fillText(this.name,0,0,"20px Arial","#00ff00","center");
+				Laya.stage.addChild(this._sprite);
+				this._sprite.x=x+this.resultMatrix.tx;
+				this._sprite.y=y+this.resultMatrix.ty;
+			}
+		};
+		var i=0,n=0;
+		var tBone;
+		for (i=0,n=this._children.length;i < n;i++){
+			tBone=this._children[i];
+			tBone.updateDraw(x,y);
+		}
+	}
+
+	__proto.addChild=function(bone){
+		this._children.push(bone);
+		bone.parentBone=this;
+	}
+
+	__proto.findBone=function(boneName){
+		if (this.name==boneName){
+			return this;
+		}
+		else {
+			var i=0,n=0;
+			var tBone;
+			var tResult;
+			for (i=0,n=this._children.length;i < n;i++){
+				tBone=this._children[i];
+				tResult=tBone.findBone(boneName);
+				if (tResult){
+					return tResult;
+				}
+			}
+		}
+		return null;
+	}
+
+	__proto.localToWorld=function(local){
+		var localX=local[0];
+		var localY=local[1];
+		local[0]=localX *this.resultMatrix.a+localY *this.resultMatrix.c+this.resultMatrix.tx;
+		local[1]=localX *this.resultMatrix.b+localY *this.resultMatrix.d+this.resultMatrix.ty;
+	}
+
+	Bone.ShowBones={};
+	return Bone;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.BoneSlot
+var BoneSlot=(function(){
+	function BoneSlot(){
+		/**插槽名称 */
+		this.name=null;
+		/**插槽绑定的骨骼名称 */
+		this.parent=null;
+		/**插糟显示数据数据的名称 */
+		this.attachmentName=null;
+		/**原始数据的索引 */
+		this.srcDisplayIndex=-1;
+		/**判断对象是否是原对象 */
+		this.type="src";
+		/**模板的指针 */
+		this.templet=null;
+		/**当前插槽对应的数据 */
+		this.currSlotData=null;
+		/**当前插槽显示的纹理 */
+		this.currTexture=null;
+		/**显示对象对应的数据 */
+		this.currDisplayData=null;
+		/**显示皮肤的索引 */
+		this.displayIndex=-1;
+		/**用户自定义的皮肤 */
+		this._diyTexture=null;
+		this._parentMatrix=null;
+		this._resultMatrix=null;
+		/**索引替换表 */
+		this._replaceDic={};
+		/**当前diyTexture的动画纹理 */
+		this._curDiyUV=null;
+		this._curDiyVS=null;
+		/**实时模式下，复用使用 */
+		this._skinSprite=null;
+		/**@private 变形动画数据 */
+		this.deformData=null;
+		this._mVerticleArr=null;
+	}
+
+	__class(BoneSlot,'laya.ani.bone.BoneSlot');
+	var __proto=BoneSlot.prototype;
+	/**
+	*设置要显示的插槽数据
+	*@param slotData
+	*@param disIndex
+	*@param freshIndex 是否重置纹理
+	*/
+	__proto.showSlotData=function(slotData,freshIndex){
+		(freshIndex===void 0)&& (freshIndex=true);
+		this.currSlotData=slotData;
+		if(freshIndex)
+			this.displayIndex=this.srcDisplayIndex;
+		this.currDisplayData=null;
+		this.currTexture=null;
+	}
+
+	/**
+	*通过名字显示指定对象
+	*@param name
+	*/
+	__proto.showDisplayByName=function(name){
+		if (this.currSlotData){
+			this.showDisplayByIndex(this.currSlotData.getDisplayByName(name));
+		}
+	}
+
+	/**
+	*替换贴图名
+	*@param tarName 要替换的贴图名
+	*@param newName 替换后的贴图名
+	*/
+	__proto.replaceDisplayByName=function(tarName,newName){
+		if (!this.currSlotData)return;
+		var preIndex=0;
+		preIndex=this.currSlotData.getDisplayByName(tarName);
+		var newIndex=0;
+		newIndex=this.currSlotData.getDisplayByName(newName);
+		this.replaceDisplayByIndex(preIndex,newIndex);
+	}
+
+	/**
+	*替换贴图索引
+	*@param tarIndex 要替换的索引
+	*@param newIndex 替换后的索引
+	*/
+	__proto.replaceDisplayByIndex=function(tarIndex,newIndex){
+		if (!this.currSlotData)return;
+		this._replaceDic[tarIndex]=newIndex;
+		if (this.displayIndex==tarIndex){
+			this.showDisplayByIndex(tarIndex);
+		}
+	}
+
+	/**
+	*指定显示对象
+	*@param index
+	*/
+	__proto.showDisplayByIndex=function(index){
+		if (this._replaceDic[index]!=null)index=this._replaceDic[index];
+		if (this.currSlotData && index >-1 && index < this.currSlotData.displayArr.length){
+			this.displayIndex=index;
+			this.currDisplayData=this.currSlotData.displayArr[index];
+			if (this.currDisplayData){
+				var tName=this.currDisplayData.name;
+				this.currTexture=this.templet.getTexture(tName);
+				if (this.currTexture && this.currDisplayData.type==0 && this.currDisplayData.uvs && (!Render.isConchApp || (Render.isConchApp && Sprite.RUNTIMEVERION > "0.9.15"))){
+					this.currTexture=this.currDisplayData.createTexture(this.currTexture);
+				}
+			}
+			}else {
+			this.displayIndex=-1;
+			this.currDisplayData=null;
+			this.currTexture=null;
+		}
+	}
+
+	/**
+	*替换皮肤
+	*@param _texture
+	*/
+	__proto.replaceSkin=function(_texture){
+		this._diyTexture=_texture;
+		if (this._curDiyUV)this._curDiyUV.length=0;
+		if (this.currDisplayData&&this._diyTexture==this.currDisplayData.texture){
+			this._diyTexture=null;
+		}
+	}
+
+	/**
+	*保存父矩阵的索引
+	*@param parentMatrix
+	*/
+	__proto.setParentMatrix=function(parentMatrix){
+		this._parentMatrix=parentMatrix;
+	}
+
+	/**
+	*把纹理画到Graphics上
+	*@param graphics
+	*@param noUseSave
+	*/
+	__proto.draw=function(graphics,boneMatrixArray,noUseSave,alpha){
+		(noUseSave===void 0)&& (noUseSave=false);
+		(alpha===void 0)&& (alpha=1);
+		if ((this._diyTexture==null && this.currTexture==null)|| this.currDisplayData==null){
+			if (!(this.currDisplayData && this.currDisplayData.type==3)){
+				return;
+			}
+		};
+		var tTexture=this.currTexture;
+		if (this._diyTexture)tTexture=this._diyTexture;
+		var tSkinSprite;
+		switch (this.currDisplayData.type){
+			case 0:
+				if (graphics){
+					var tCurrentMatrix=this.getDisplayMatrix();
+					if (this._parentMatrix){
+						var tRotateKey=false;
+						if (tCurrentMatrix){
+							Matrix.mul(tCurrentMatrix,this._parentMatrix,Matrix.TEMP);
+							var tResultMatrix;
+							if (noUseSave){
+								if (this._resultMatrix==null)this._resultMatrix=new Matrix();
+								tResultMatrix=this._resultMatrix;
+								}else {
+								tResultMatrix=new Matrix();
+							}
+							if ((!Render.isWebGL && this.currDisplayData.uvs)|| (Render.isWebGL && this._diyTexture && this.currDisplayData.uvs)){
+								var tTestMatrix=BoneSlot._tempMatrix;
+								tTestMatrix.identity();
+								if (this.currDisplayData.uvs[1] > this.currDisplayData.uvs[5]){
+									tTestMatrix.d=-1;
+								}
+								if (this.currDisplayData.uvs[0] > this.currDisplayData.uvs[4]
+									&& this.currDisplayData.uvs[1] > this.currDisplayData.uvs[5]){
+									tRotateKey=true;
+									tTestMatrix.rotate(-Math.PI/2);
+								}
+								Matrix.mul(tTestMatrix,Matrix.TEMP,tResultMatrix);
+								}else {
+								Matrix.TEMP.copyTo(tResultMatrix);
+							}
+							if (tRotateKey){
+								graphics.drawTexture(tTexture,-this.currDisplayData.height / 2,-this.currDisplayData.width / 2,this.currDisplayData.height,this.currDisplayData.width,tResultMatrix);
+								}else {
+								graphics.drawTexture(tTexture,-this.currDisplayData.width / 2,-this.currDisplayData.height / 2,this.currDisplayData.width,this.currDisplayData.height,tResultMatrix);
+							}
+						}
+					}
+				}
+				break ;
+			case 1:
+				if (noUseSave){
+					if (this._skinSprite==null){
+						this._skinSprite=BoneSlot.createSkinMesh();
+					}
+					tSkinSprite=this._skinSprite;
+					}else {
+					tSkinSprite=BoneSlot.createSkinMesh();
+				}
+				if (tSkinSprite==null){
+					return;
+				};
+				var tIBArray;
+				var tRed=1;
+				var tGreed=1;
+				var tBlue=1;
+				var tAlpha=1;
+				if (this.currDisplayData.bones==null){
+					var tVertices=this.currDisplayData.weights;
+					if (this.deformData){
+						tVertices=this.deformData;
+					};
+					var tUVs;
+					if (this._diyTexture){
+						if (!this._curDiyUV){
+							this._curDiyUV=[];
+						}
+						if (this._curDiyUV.length==0){
+							this._curDiyUV=UVTools.getRelativeUV(this.currTexture.uv,this.currDisplayData.uvs,this._curDiyUV);
+							this._curDiyUV=UVTools.getAbsoluteUV(this._diyTexture.uv,this._curDiyUV,this._curDiyUV);
+						}
+						tUVs=this._curDiyUV;
+						}else{
+						tUVs=this.currDisplayData.uvs;
+					}
+					this._mVerticleArr=tVertices;
+					var tTriangleNum=this.currDisplayData.triangles.length / 3;
+					tIBArray=this.currDisplayData.triangles;
+					tSkinSprite.init2(tTexture,null ,tIBArray,this._mVerticleArr,tUVs);
+					var tCurrentMatrix2=this.getDisplayMatrix();
+					if (this._parentMatrix){
+						if (tCurrentMatrix2){
+							Matrix.mul(tCurrentMatrix2,this._parentMatrix,Matrix.TEMP);
+							var tResultMatrix2;
+							if (noUseSave){
+								if (this._resultMatrix==null)this._resultMatrix=new Matrix();
+								tResultMatrix2=this._resultMatrix;
+								}else {
+								tResultMatrix2=new Matrix();
+							}
+							Matrix.TEMP.copyTo(tResultMatrix2);
+							tSkinSprite.transform=tResultMatrix2;
+						}
+					}
+					}else {
+					this.skinMesh(boneMatrixArray,tSkinSprite,alpha);
+				}
+				graphics.drawSkin(tSkinSprite);
+				break ;
+			case 2:
+				if (noUseSave){
+					if (this._skinSprite==null){
+						this._skinSprite=BoneSlot.createSkinMesh();
+					}
+					tSkinSprite=this._skinSprite;
+					}else {
+					tSkinSprite=BoneSlot.createSkinMesh();
+				}
+				if (tSkinSprite==null){
+					return;
+				}
+				this.skinMesh(boneMatrixArray,tSkinSprite,alpha);
+				graphics.drawSkin(tSkinSprite);
+				break ;
+			case 3:
+				break ;
+			}
+	}
+
+	/**
+	*显示蒙皮动画
+	*@param boneMatrixArray 当前帧的骨骼矩阵
+	*/
+	__proto.skinMesh=function(boneMatrixArray,skinSprite,alpha){
+		var tTexture=this.currTexture;
+		var tBones=this.currDisplayData.bones;
+		var tUvs;
+		if (this._diyTexture){
+			tTexture=this._diyTexture;
+			if (!this._curDiyUV){
+				this._curDiyUV=[];
+			}
+			if (this._curDiyUV.length==0){
+				this._curDiyUV=UVTools.getRelativeUV(this.currTexture.uv,this.currDisplayData.uvs,this._curDiyUV);
+				this._curDiyUV=UVTools.getAbsoluteUV(this._diyTexture.uv,this._curDiyUV,this._curDiyUV);
+			}
+			tUvs=this._curDiyUV;
+			}else{
+			tUvs=this.currDisplayData.uvs;
+		};
+		var tWeights=this.currDisplayData.weights;
+		var tTriangles=this.currDisplayData.triangles;
+		var tIBArray;
+		var tRx=0;
+		var tRy=0;
+		var nn=0;
+		var tMatrix;
+		var tX=NaN;
+		var tY=NaN;
+		var tB=0;
+		var tWeight=0;
+		var tVertices=[];
+		var i=0,j=0,n=0;
+		var tRed=1;
+		var tGreed=1;
+		var tBlue=1;
+		var tAlpha=alpha;
+		if (this.deformData && this.deformData.length > 0){
+			var f=0;
+			for (i=0,n=tBones.length;i < n;){
+				nn=tBones[i++]+i;
+				tRx=0,tRy=0;
+				for (;i < nn;i++){
+					tMatrix=boneMatrixArray[tBones[i]]
+					tX=tWeights[tB]+this.deformData[f++];
+					tY=tWeights[tB+1]+this.deformData[f++];
+					tWeight=tWeights[tB+2];
+					tRx+=(tX *tMatrix.a+tY *tMatrix.c+tMatrix.tx)*tWeight;
+					tRy+=(tX *tMatrix.b+tY *tMatrix.d+tMatrix.ty)*tWeight;
+					tB+=3;
+				}
+				tVertices.push(tRx,tRy);
+			}
+			}else {
+			for (i=0,n=tBones.length;i < n;){
+				nn=tBones[i++]+i;
+				tRx=0,tRy=0;
+				for (;i < nn;i++){
+					tMatrix=boneMatrixArray[tBones[i]]
+					tX=tWeights[tB];
+					tY=tWeights[tB+1];
+					tWeight=tWeights[tB+2];
+					tRx+=(tX *tMatrix.a+tY *tMatrix.c+tMatrix.tx)*tWeight;
+					tRy+=(tX *tMatrix.b+tY *tMatrix.d+tMatrix.ty)*tWeight;
+					tB+=3;
+				}
+				tVertices.push(tRx,tRy);
+			}
+		}
+		this._mVerticleArr=tVertices;
+		tIBArray=tTriangles;
+		skinSprite.init2(tTexture,null,tIBArray,this._mVerticleArr,tUvs);
+	}
+
+	/**
+	*画骨骼的起始点，方便调试
+	*@param graphics
+	*/
+	__proto.drawBonePoint=function(graphics){
+		if (graphics && this._parentMatrix){
+			graphics.drawCircle(this._parentMatrix.tx,this._parentMatrix.ty,5,"#ff0000");
+		}
+	}
+
+	/**
+	*得到显示对象的矩阵
+	*@return
+	*/
+	__proto.getDisplayMatrix=function(){
+		if (this.currDisplayData){
+			return this.currDisplayData.transform.getMatrix();
+		}
+		return null;
+	}
+
+	/**
+	*得到插糟的矩阵
+	*@return
+	*/
+	__proto.getMatrix=function(){
+		return this._resultMatrix;
+	}
+
+	/**
+	*用原始数据拷贝出一个
+	*@return
+	*/
+	__proto.copy=function(){
+		var tBoneSlot=new BoneSlot();
+		tBoneSlot.type="copy";
+		tBoneSlot.name=this.name;
+		tBoneSlot.attachmentName=this.attachmentName;
+		tBoneSlot.srcDisplayIndex=this.srcDisplayIndex;
+		tBoneSlot.parent=this.parent;
+		tBoneSlot.displayIndex=this.displayIndex;
+		tBoneSlot.templet=this.templet;
+		tBoneSlot.currSlotData=this.currSlotData;
+		tBoneSlot.currTexture=this.currTexture;
+		tBoneSlot.currDisplayData=this.currDisplayData;
+		return tBoneSlot;
+	}
+
+	BoneSlot.createSkinMesh=function(){
+		if (Render.isWebGL || Render.isConchApp){
+			return RunDriver.skinAniSprite();
+			}else{
+			if (!Render.isWebGL){
+				if (Skeleton.useSimpleMeshInCanvas){
+					return new SimpleSkinMeshCanvas();
+					}else{
+					return new SkinMeshCanvas();
+				}
+			}
+		}
+		return null;
+	}
+
+	__static(BoneSlot,
+	['_tempMatrix',function(){return this._tempMatrix=new Matrix();}
+	]);
+	return BoneSlot;
+})()
+
+
+/**
+*@private
+*canvas mesh渲染器
+*/
+//class laya.ani.bone.canvasmesh.CanvasMeshRender
+var CanvasMeshRender=(function(){
+	function CanvasMeshRender(){
+		/**
+		*mesh数据
+		*/
+		this.mesh=null;
+		/**
+		*矩阵
+		*/
+		this.transform=null;
+		/**
+		*绘图环境
+		*/
+		this.context=null;
+		/**
+		*绘制mesh的模式 0:顶点索引模式 1：无顶点索引模式
+		*/
+		this.mode=0;
+	}
+
+	__class(CanvasMeshRender,'laya.ani.bone.canvasmesh.CanvasMeshRender');
+	var __proto=CanvasMeshRender.prototype;
+	/**
+	*将mesh数据渲染到context上面
+	*@param context
+	*
+	*/
+	__proto.renderToContext=function(context){
+		this.context=context.ctx||context;
+		if (this.mesh){
+			if (this.mode==0){
+				this._renderWithIndexes(this.mesh);
+				}else{
+				this._renderNoIndexes(this.mesh);
+			}
+		}
+	}
+
+	/**
+	*无顶点索引的模式
+	*@param mesh
+	*
+	*/
+	__proto._renderNoIndexes=function(mesh){
+		var i=0,len=mesh.vertices.length / 2;
+		var index=0;
+		for (i=0;i < len-2;i++){
+			index=i *2;
+			this._renderDrawTriangle(mesh,index,(index+2),(index+4));
+		}
+	}
+
+	/**
+	*使用顶点索引模式绘制
+	*@param mesh
+	*
+	*/
+	__proto._renderWithIndexes=function(mesh){
+		var indexes=mesh.indexes;
+		var i=0,len=indexes.length;
+		for (i=0;i < len;i+=3){
+			var index0=indexes[i] *2;
+			var index1=indexes[i+1] *2;
+			var index2=indexes[i+2] *2;
+			this._renderDrawTriangle(mesh,index0,index1,index2);
+		}
+	}
+
+	/**
+	*绘制三角形
+	*@param mesh mesh
+	*@param index0 顶点0
+	*@param index1 顶点1
+	*@param index2 顶点2
+	*
+	*/
+	__proto._renderDrawTriangle=function(mesh,index0,index1,index2){
+		var context=this.context;
+		var uvs=mesh.uvs;
+		var vertices=mesh.vertices;
+		var texture=mesh.texture;
+		var source=texture.bitmap;
+		var textureSource=source.source;
+		var textureWidth=texture.width;
+		var textureHeight=texture.height;
+		var sourceWidth=source.width;
+		var sourceHeight=source.height;
+		var u0=NaN;
+		var u1=NaN;
+		var u2=NaN;
+		var v0=NaN;
+		var v1=NaN;
+		var v2=NaN;
+		if (mesh.useUvTransform){
+			var ut=mesh.uvTransform;
+			u0=((uvs[index0] *ut.a)+(uvs[index0+1] *ut.c)+ut.tx)*sourceWidth;
+			u1=((uvs[index1] *ut.a)+(uvs[index1+1] *ut.c)+ut.tx)*sourceWidth;
+			u2=((uvs[index2] *ut.a)+(uvs[index2+1] *ut.c)+ut.tx)*sourceWidth;
+			v0=((uvs[index0] *ut.b)+(uvs[index0+1] *ut.d)+ut.ty)*sourceHeight;
+			v1=((uvs[index1] *ut.b)+(uvs[index1+1] *ut.d)+ut.ty)*sourceHeight;
+			v2=((uvs[index2] *ut.b)+(uvs[index2+1] *ut.d)+ut.ty)*sourceHeight;
+		}
+		else {
+			u0=uvs[index0] *sourceWidth;
+			u1=uvs[index1] *sourceWidth;
+			u2=uvs[index2] *sourceWidth;
+			v0=uvs[index0+1] *sourceHeight;
+			v1=uvs[index1+1] *sourceHeight;
+			v2=uvs[index2+1] *sourceHeight;
+		};
+		var x0=vertices[index0];
+		var x1=vertices[index1];
+		var x2=vertices[index2];
+		var y0=vertices[index0+1];
+		var y1=vertices[index1+1];
+		var y2=vertices[index2+1];
+		if (mesh.canvasPadding > 0){
+			var paddingX=mesh.canvasPadding;
+			var paddingY=mesh.canvasPadding;
+			var centerX=(x0+x1+x2)/ 3;
+			var centerY=(y0+y1+y2)/ 3;
+			var normX=x0-centerX;
+			var normY=y0-centerY;
+			var dist=Math.sqrt((normX *normX)+(normY *normY));
+			x0=centerX+((normX / dist)*(dist+paddingX));
+			y0=centerY+((normY / dist)*(dist+paddingY));
+			normX=x1-centerX;
+			normY=y1-centerY;
+			dist=Math.sqrt((normX *normX)+(normY *normY));
+			x1=centerX+((normX / dist)*(dist+paddingX));
+			y1=centerY+((normY / dist)*(dist+paddingY));
+			normX=x2-centerX;
+			normY=y2-centerY;
+			dist=Math.sqrt((normX *normX)+(normY *normY));
+			x2=centerX+((normX / dist)*(dist+paddingX));
+			y2=centerY+((normY / dist)*(dist+paddingY));
+		}
+		context.save();
+		if (this.transform){
+			var mt=this.transform;
+			context.transform(mt.a,mt.b,mt.c,mt.d,mt.tx,mt.ty);
+		}
+		context.beginPath();
+		context.moveTo(x0,y0);
+		context.lineTo(x1,y1);
+		context.lineTo(x2,y2);
+		context.closePath();
+		context.clip();
+		var delta=(u0 *v1)+(v0 *u2)+(u1 *v2)-(v1 *u2)-(v0 *u1)-(u0 *v2);
+		var dDelta=1 / delta;
+		var deltaA=(x0 *v1)+(v0 *x2)+(x1 *v2)-(v1 *x2)-(v0 *x1)-(x0 *v2);
+		var deltaB=(u0 *x1)+(x0 *u2)+(u1 *x2)-(x1 *u2)-(x0 *u1)-(u0 *x2);
+		var deltaC=(u0 *v1 *x2)+(v0 *x1 *u2)+(x0 *u1 *v2)-(x0 *v1 *u2)-(v0 *u1 *x2)-(u0 *x1 *v2);
+		var deltaD=(y0 *v1)+(v0 *y2)+(y1 *v2)-(v1 *y2)-(v0 *y1)-(y0 *v2);
+		var deltaE=(u0 *y1)+(y0 *u2)+(u1 *y2)-(y1 *u2)-(y0 *u1)-(u0 *y2);
+		var deltaF=(u0 *v1 *y2)+(v0 *y1 *u2)+(y0 *u1 *v2)-(y0 *v1 *u2)-(v0 *u1 *y2)-(u0 *y1 *v2);
+		context.transform(deltaA *dDelta,deltaD *dDelta,deltaB *dDelta,deltaE*dDelta,deltaC *dDelta,deltaF *dDelta);
+		context.drawImage(textureSource,texture.uv[0]*sourceWidth,texture.uv[1]*sourceHeight,textureWidth,textureHeight,texture.uv[0]*sourceWidth,texture.uv[1]*sourceHeight,textureWidth,textureHeight);
+		context.restore();
+	}
+
+	return CanvasMeshRender;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.canvasmesh.MeshData
+var MeshData=(function(){
+	function MeshData(){
+		/**
+		*纹理
+		*/
+		this.texture=null;
+		/**
+		*uv数据
+		*/
+		this.uvs=[0,0,1,0,1,1,0,1];
+		/**
+		*顶点数据
+		*/
+		this.vertices=[0,0,100,0,100,100,0,100];
+		/**
+		*顶点索引
+		*/
+		this.indexes=[0,1,3,3,1,2];
+		/**
+		*uv变换矩阵
+		*/
+		this.uvTransform=null;
+		/**
+		*是否有uv变化矩阵
+		*/
+		this.useUvTransform=false;
+		/**
+		*扩展像素,用来去除黑边
+		*/
+		this.canvasPadding=1;
+	}
+
+	__class(MeshData,'laya.ani.bone.canvasmesh.MeshData');
+	var __proto=MeshData.prototype;
+	/**
+	*计算mesh的Bounds
+	*@return
+	*
+	*/
+	__proto.getBounds=function(){
+		return Rectangle._getWrapRec(this.vertices);
+	}
+
+	return MeshData;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.DeformAniData
+var DeformAniData=(function(){
+	function DeformAniData(){
+		this.skinName=null;
+		this.deformSlotDataList=[];
+	}
+
+	__class(DeformAniData,'laya.ani.bone.DeformAniData');
+	return DeformAniData;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.DeformSlotData
+var DeformSlotData=(function(){
+	function DeformSlotData(){
+		this.deformSlotDisplayList=[];
+	}
+
+	__class(DeformSlotData,'laya.ani.bone.DeformSlotData');
+	return DeformSlotData;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.DeformSlotDisplayData
+var DeformSlotDisplayData=(function(){
+	function DeformSlotDisplayData(){
+		this.boneSlot=null;
+		this.slotIndex=-1;
+		this.attachment=null;
+		this.deformData=null;
+		this.frameIndex=0;
+		this.timeList=[];
+		this.vectices=[];
+		this.tweenKeyList=[];
+	}
+
+	__class(DeformSlotDisplayData,'laya.ani.bone.DeformSlotDisplayData');
+	var __proto=DeformSlotDisplayData.prototype;
+	__proto.binarySearch1=function(values,target){
+		var low=0;
+		var high=values.length-2;
+		if (high==0)
+			return 1;
+		var current=high >>> 1;
+		while (true){
+			if (values[Math.floor(current+1)] <=target)
+				low=current+1;
+			else
+			high=current;
+			if (low==high)
+				return low+1;
+			current=(low+high)>>> 1;
+		}
+		return 0;
+	}
+
+	// Can't happen.
+	__proto.apply=function(time,boneSlot,alpha){
+		(alpha===void 0)&& (alpha=1);
+		time+=0.05;
+		if (this.timeList.length <=0){
+			return;
+		};
+		var i=0;
+		var n=0;
+		var tTime=this.timeList[0];
+		if (time < tTime){
+			return;
+		};
+		var tVertexCount=this.vectices[0].length;
+		var tVertices=[];
+		var tFrameIndex=this.binarySearch1(this.timeList,time);
+		this.frameIndex=tFrameIndex;
+		if (time >=this.timeList[this.timeList.length-1]){
+			var lastVertices=this.vectices[this.vectices.length-1];
+			if (alpha < 1){
+				for (i=0;i < tVertexCount;i++){
+					tVertices[i]+=(lastVertices[i]-tVertices[i])*alpha;
+				}
+				}else {
+				for (i=0;i < tVertexCount;i++){
+					tVertices[i]=lastVertices[i];
+				}
+			}
+			this.deformData=tVertices;
+			return;
+		};
+		var tTweenKey=this.tweenKeyList[this.frameIndex];
+		var tPrevVertices=this.vectices[this.frameIndex-1];
+		var tNextVertices=this.vectices[this.frameIndex];
+		var tPreFrameTime=this.timeList[this.frameIndex-1];
+		var tFrameTime=this.timeList[this.frameIndex];
+		if (this.tweenKeyList[tFrameIndex-1]){
+			alpha=(time-tPreFrameTime)/ (tFrameTime-tPreFrameTime);
+			}else {
+			alpha=0;
+		};
+		var tPrev=NaN;
+		for (i=0;i < tVertexCount;i++){
+			tPrev=tPrevVertices[i];
+			tVertices[i]=tPrev+(tNextVertices[i]-tPrev)*alpha;
+		}
+		this.deformData=tVertices;
+	}
+
+	return DeformSlotDisplayData;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.DrawOrderData
+var DrawOrderData=(function(){
+	function DrawOrderData(){
+		this.time=NaN;
+		this.drawOrder=[];
+	}
+
+	__class(DrawOrderData,'laya.ani.bone.DrawOrderData');
+	return DrawOrderData;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.EventData
+var EventData=(function(){
+	function EventData(){
+		this.name=null;
+		this.intValue=0;
+		this.floatValue=NaN;
+		this.stringValue=null;
+		this.time=NaN;
+	}
+
+	__class(EventData,'laya.ani.bone.EventData');
+	return EventData;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.IkConstraint
+var IkConstraint=(function(){
+	function IkConstraint(data,bones){
+		this._targetBone=null;
+		this._bones=null;
+		this._data=null;
+		this.name=null;
+		this.mix=NaN;
+		this.bendDirection=NaN;
+		this.isSpine=true;
+		//debug相关代码
+		this._sp=null;
+		this.isDebug=false;
+		this._data=data;
+		this._targetBone=bones[data.targetBoneIndex];
+		this.isSpine=data.isSpine;
+		if (this._bones==null)this._bones=[];
+		this._bones.length=0;
+		for (var i=0,n=data.boneIndexs.length;i < n;i++){
+			this._bones.push(bones[data.boneIndexs[i]]);
+		}
+		this.name=data.name;
+		this.mix=data.mix;
+		this.bendDirection=data.bendDirection;
+	}
+
+	__class(IkConstraint,'laya.ani.bone.IkConstraint');
+	var __proto=IkConstraint.prototype;
+	__proto.apply=function(){
+		switch (this._bones.length){
+			case 1:
+				this._applyIk1(this._bones[0],this._targetBone.resultMatrix.tx,this._targetBone.resultMatrix.ty,this.mix);
+				break ;
+			case 2:
+				if (this.isSpine){
+					this._applyIk2(this._bones[0],this._bones[1],this._targetBone.resultMatrix.tx,this._targetBone.resultMatrix.ty,this.bendDirection,this.mix);
+					}else{
+					this._applyIk3(this._bones[0],this._bones[1],this._targetBone.resultMatrix.tx,this._targetBone.resultMatrix.ty,this.bendDirection,this.mix);
+				}
+				break ;
+			}
+	}
+
+	__proto._applyIk1=function(bone,targetX,targetY,alpha){
+		var pp=bone.parentBone;
+		var id=1 / (pp.resultMatrix.a *pp.resultMatrix.d-pp.resultMatrix.b *pp.resultMatrix.c);
+		var x=targetX-pp.resultMatrix.tx;
+		var y=targetY-pp.resultMatrix.ty;
+		var tx=(x *pp.resultMatrix.d-y *pp.resultMatrix.c)*id-bone.transform.x;
+		var ty=(y *pp.resultMatrix.a-x *pp.resultMatrix.b)*id-bone.transform.y;
+		var rotationIK=Math.atan2(ty,tx)*IkConstraint.radDeg-0-bone.transform.skX;
+		if (bone.transform.scX < 0)rotationIK+=180;
+		if (rotationIK > 180)
+			rotationIK-=360;
+		else if (rotationIK <-180)rotationIK+=360;
+		bone.transform.skX=bone.transform.skY=bone.transform.skX+rotationIK *alpha;
+		bone.update();
+	}
+
+	__proto.updatePos=function(x,y){
+		if (this._sp){
+			this._sp.pos(x,y);
+		}
+	}
+
+	__proto._applyIk2=function(parent,child,targetX,targetY,bendDir,alpha){
+		if (alpha==0){
+			return;
+		};
+		var px=parent.resultTransform.x,py=parent.resultTransform.y;
+		var psx=parent.transform.scX,psy=parent.transform.scY;
+		var csx=child.transform.scX;
+		var os1=0,os2=0,s2=0;
+		if (psx < 0){
+			psx=-psx;
+			os1=180;
+			s2=-1;
+			}else {
+			os1=0;
+			s2=1;
+		}
+		if (psy < 0){
+			psy=-psy;
+			s2=-s2;
+		}
+		if (csx < 0){
+			csx=-csx;
+			os2=180;
+			}else {
+			os2=0
+		};
+		var cx=child.resultTransform.x,cy=NaN,cwx=NaN,cwy=NaN;
+		var a=parent.resultMatrix.a,b=parent.resultMatrix.c;
+		var c=parent.resultMatrix.b,d=parent.resultMatrix.d;
+		var u=Math.abs(psx-psy)<=0.0001;
+		if (!u){
+			cy=0;
+			cwx=a *cx+parent.resultMatrix.tx;
+			cwy=c *cx+parent.resultMatrix.ty;
+			}else {
+			cy=child.resultTransform.y;
+			cwx=a *cx+b *cy+parent.resultMatrix.tx;
+			cwy=c *cx+d *cy+parent.resultMatrix.ty;
+		}
+		if (this.isDebug){
+			if (!this._sp){
+				this._sp=new Sprite();
+				Laya.stage.addChild(this._sp);
+			}
+			this._sp.graphics.clear();
+			this._sp.graphics.drawCircle(targetX,targetY,15,"#ffff00");
+			this._sp.graphics.drawCircle(cwx,cwy,15,"#ff00ff");
+		}
+		parent.setRotation(Math.atan2(cwy-parent.resultMatrix.ty,cwx-parent.resultMatrix.tx));
+		var pp=parent.parentBone;
+		a=pp.resultMatrix.a;
+		b=pp.resultMatrix.c;
+		c=pp.resultMatrix.b;
+		d=pp.resultMatrix.d;
+		var id=1 / (a *d-b *c);
+		var x=targetX-pp.resultMatrix.tx,y=targetY-pp.resultMatrix.ty;
+		var tx=(x *d-y *b)*id-px;
+		var ty=(y *a-x *c)*id-py;
+		x=cwx-pp.resultMatrix.tx;
+		y=cwy-pp.resultMatrix.ty;
+		var dx=(x *d-y *b)*id-px;
+		var dy=(y *a-x *c)*id-py;
+		var l1=Math.sqrt(dx *dx+dy *dy);
+		var l2=child.length *csx;
+		var a1=NaN,a2=NaN;
+		if (u){
+			l2 *=psx;
+			var cos=(tx *tx+ty *ty-l1 *l1-l2 *l2)/ (2 *l1 *l2);
+			if (cos <-1)
+				cos=-1;
+			else if (cos > 1)cos=1;
+			a2=Math.acos(cos)*bendDir;
+			a=l1+l2 *cos;
+			b=l2 *Math.sin(a2);
+			a1=Math.atan2(ty *a-tx *b,tx *a+ty *b);
+			}else {
+			a=psx *l2;
+			b=psy *l2;
+			var aa=a *a,bb=b *b,dd=tx *tx+ty *ty,ta=Math.atan2(ty,tx);
+			c=bb *l1 *l1+aa *dd-aa *bb;
+			var c1=-2 *bb *l1,c2=bb-aa;
+			d=c1 *c1-4 *c2 *c;
+			if (d > 0){
+				var q=Math.sqrt(d);
+				if (c1 < 0)q=-q;
+				q=-(c1+q)/ 2;
+				var r0=q / c2,r1=c / q;
+				var r=Math.abs(r0)< Math.abs(r1)? r0 :r1;
+				if (r *r <=dd){
+					y=Math.sqrt(dd-r *r)*bendDir;
+					a1=ta-Math.atan2(y,r);
+					a2=Math.atan2(y / psy,(r-l1)/ psx);
+				}
+			};
+			var minAngle=0,minDist=Number.MAX_VALUE,minX=0,minY=0;
+			var maxAngle=0,maxDist=0,maxX=0,maxY=0;
+			x=l1+a;
+			d=x *x;
+			if (d > maxDist){
+				maxAngle=0;
+				maxDist=d;
+				maxX=x;
+			}
+			x=l1-a;
+			d=x *x;
+			if (d < minDist){
+				minAngle=Math.PI;
+				minDist=d;
+				minX=x;
+			};
+			var angle=Math.acos(-a *l1 / (aa-bb));
+			x=a *Math.cos(angle)+l1;
+			y=b *Math.sin(angle);
+			d=x *x+y *y;
+			if (d < minDist){
+				minAngle=angle;
+				minDist=d;
+				minX=x;
+				minY=y;
+			}
+			if (d > maxDist){
+				maxAngle=angle;
+				maxDist=d;
+				maxX=x;
+				maxY=y;
+			}
+			if (dd <=(minDist+maxDist)/ 2){
+				a1=ta-Math.atan2(minY *bendDir,minX);
+				a2=minAngle *bendDir;
+				}else {
+				a1=ta-Math.atan2(maxY *bendDir,maxX);
+				a2=maxAngle *bendDir;
+			}
+		};
+		var os=Math.atan2(cy,cx)*s2;
+		var rotation=parent.resultTransform.skX;
+		a1=(a1-os)*IkConstraint.radDeg+os1-rotation;
+		if (a1 > 180)
+			a1-=360;
+		else if (a1 <-180)a1+=360;
+		parent.resultTransform.x=px;
+		parent.resultTransform.y=py;
+		parent.resultTransform.skX=parent.resultTransform.skY=rotation+a1 *alpha;
+		rotation=child.resultTransform.skX;
+		rotation=rotation % 360;
+		a2=((a2+os)*IkConstraint.radDeg-0)*s2+os2-rotation;
+		if (a2 > 180)
+			a2-=360;
+		else if (a2 <-180)a2+=360;
+		child.resultTransform.x=cx;
+		child.resultTransform.y=cy;
+		child.resultTransform.skX=child.resultTransform.skY=child.resultTransform.skY+a2 *alpha;
+		parent.update();
+	}
+
+	__proto._applyIk3=function(parent,child,targetX,targetY,bendDir,alpha){
+		if (alpha==0){
+			return;
+		};
+		var cwx=NaN,cwy=NaN;
+		var x=child.resultMatrix.a *child.length;
+		var y=child.resultMatrix.b *child.length;
+		var lLL=x *x+y *y;
+		var lL=Math.sqrt(lLL);
+		var parentX=parent.resultMatrix.tx;
+		var parentY=parent.resultMatrix.ty;
+		var childX=child.resultMatrix.tx;
+		var childY=child.resultMatrix.ty;
+		var dX=childX-parentX;
+		var dY=childY-parentY;
+		var lPP=dX *dX+dY *dY;
+		var lP=Math.sqrt(lPP);
+		dX=targetX-parent.resultMatrix.tx;
+		dY=targetY-parent.resultMatrix.ty;
+		var lTT=dX *dX+dY *dY;
+		var lT=Math.sqrt(lTT);
+		var ikRadianA=0;
+		if (lL+lP <=lT || lT+lL <=lP || lT+lP <=lL){
+			var rate=NaN;
+			if (lL+lP <=lT){
+				rate=1;
+				}else{
+				rate=-1;
+			}
+			childX=parentX+rate*(targetX-parentX)*lP / lT;
+			childY=parentY+rate*(targetY-parentY)*lP / lT;
+		}
+		else{
+			var h=(lPP-lLL+lTT)/ (2 *lTT);
+			var r=Math.sqrt(lPP-h *h *lTT)/ lT;
+			var hX=parentX+(dX *h);
+			var hY=parentY+(dY *h);
+			var rX=-dY *r;
+			var rY=dX *r;
+			if (bendDir>0){
+				childX=hX-rX;
+				childY=hY-rY;
+			}
+			else{
+				childX=hX+rX;
+				childY=hY+rY;
+			}
+		}
+		cwx=childX;
+		cwy=childY;
+		if (this.isDebug){
+			if (!this._sp){
+				this._sp=new Sprite();
+				Laya.stage.addChild(this._sp);
+			}
+			this._sp.graphics.clear();
+			this._sp.graphics.drawCircle(parentX,parentY,15,"#ff00ff");
+			this._sp.graphics.drawCircle(targetX,targetY,15,"#ffff00");
+			this._sp.graphics.drawCircle(cwx,cwy,15,"#ff00ff");
+		};
+		var pRotation=NaN;
+		pRotation=Math.atan2(cwy-parent.resultMatrix.ty,cwx-parent.resultMatrix.tx);
+		parent.setRotation(pRotation);
+		var pTarMatrix;
+		pTarMatrix=IkConstraint._tempMatrix;
+		pTarMatrix.identity();
+		pTarMatrix.rotate(pRotation);
+		pTarMatrix.scale(parent.resultMatrix.getScaleX(),parent.resultMatrix.getScaleY());
+		pTarMatrix.translate(parent.resultMatrix.tx,parent.resultMatrix.ty);
+		pTarMatrix.copyTo(parent.resultMatrix);
+		parent.updateChild();
+		var childRotation=NaN;
+		childRotation=Math.atan2(targetY-cwy,targetX-cwx);
+		child.setRotation(childRotation);
+		var childTarMatrix;
+		childTarMatrix=IkConstraint._tempMatrix;
+		childTarMatrix.identity();
+		childTarMatrix.rotate(childRotation);
+		childTarMatrix.scale(child.resultMatrix.getScaleX(),child.resultMatrix.getScaleY());
+		childTarMatrix.translate(cwx,cwy);
+		pTarMatrix.copyTo(child.resultMatrix);
+		child.updateChild();
+	}
+
+	__static(IkConstraint,
+	['radDeg',function(){return this.radDeg=180 / Math.PI;},'degRad',function(){return this.degRad=Math.PI / 180;},'_tempMatrix',function(){return this._tempMatrix=new Matrix();}
+	]);
+	return IkConstraint;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.IkConstraintData
+var IkConstraintData=(function(){
+	function IkConstraintData(){
+		this.name=null;
+		this.targetBoneName=null;
+		this.bendDirection=1;
+		this.mix=1;
+		this.isSpine=true;
+		this.targetBoneIndex=-1;
+		this.boneNames=[];
+		this.boneIndexs=[];
+	}
+
+	__class(IkConstraintData,'laya.ani.bone.IkConstraintData');
+	return IkConstraintData;
+})()
+
+
+/**
+*@private
+*Mesh数据处理工具
+*@version 1.0
+*
+*@created 2017-4-28 下午2:46:23
+*/
+//class laya.ani.bone.MeshTools
+var MeshTools=(function(){
+	function MeshTools(){}
+	__class(MeshTools,'laya.ani.bone.MeshTools');
+	MeshTools.findEdge=function(verticles,offI,min){
+		(offI===void 0)&& (offI=0);
+		(min===void 0)&& (min=true);
+		var i=0,len=0;
+		var tIndex=0;
+		len=verticles.length;
+		tIndex=-1;
+		for (i=0;i < len;i+=2){
+			if (tIndex < 0 || (min==(verticles[tIndex+offI] < verticles[i+offI]))){
+				tIndex=i;
+			}
+		}
+		return tIndex;
+	}
+
+	MeshTools.findBestTriangle=function(verticles){
+		var topI=0;
+		topI=MeshTools.findEdge(verticles,1,true);
+		var bottomI=0;
+		bottomI=MeshTools.findEdge(verticles,1,false);
+		var leftI=0;
+		leftI=MeshTools.findEdge(verticles,0,true);
+		var rightI=0;
+		rightI=MeshTools.findEdge(verticles,0,false);
+		var rst;
+		rst=MeshTools._bestTriangle;
+		rst.length=0;
+		rst.push(leftI,rightI);
+		if (rst.indexOf(topI)< 0)rst.push(topI);
+		if (rst.indexOf(bottomI)< 0)rst.push(bottomI);
+		return rst;
+	}
+
+	MeshTools.solveMesh=function(mesh,rst){
+		rst=rst||[];
+		rst.length=0;
+		var mUv;
+		mUv=mesh.uvs;
+		var mVer;
+		mVer=mesh.vertices;
+		var uvAbs;
+		var indexs;
+		indexs=MeshTools.findBestTriangle(mUv);
+		var index0=0;
+		var index1=0;
+		var index2=0;
+		index0=indexs[0];
+		index1=indexs[1];
+		index2=indexs[2];
+		MeshTools._absArr.length=0;
+		var newVerticles;
+		if (MeshTools.isNormalUV(mesh.texture.uv)){
+			MeshTools.adptTexture(mesh);
+		}
+		uvAbs=MeshTools.solvePoints(mesh.texture.uv,mUv[index0],mUv[index0+1],mUv[index1]-mUv[index0],mUv[index1+1]-mUv[index0+1],mUv[index2]-mUv[index0],mUv[index2+1]-mUv[index0+1],MeshTools._absArr);
+		newVerticles=MeshTools.transPoints(uvAbs,mVer[index0],mVer[index0+1],mVer[index1]-mVer[index0],mVer[index1+1]-mVer[index0+1],mVer[index2]-mVer[index0],mVer[index2+1]-mVer[index0+1],rst);
+		return newVerticles;
+	}
+
+	MeshTools.findWrapRect=function(verticles){
+		var topI=0;
+		topI=MeshTools.findEdge(verticles,1,true);
+		var bottomI=0;
+		bottomI=MeshTools.findEdge(verticles,1,false);
+		var leftI=0;
+		leftI=MeshTools.findEdge(verticles,0,true);
+		var rightI=0;
+		rightI=MeshTools.findEdge(verticles,0,false);
+		var left=NaN;
+		left=verticles[leftI];
+		var right=NaN;
+		right=verticles[rightI];
+		var top=NaN;
+		top=verticles[topI+1];
+		var bottom=NaN;
+		bottom=verticles[bottomI+1];
+		var rst;
+		return [right,bottom,left-right,top-bottom];
+	}
+
+	MeshTools.adptTexture=function(mesh){
+		var rec;
+		rec=MeshTools.findWrapRect(mesh.uvs);
+		var oTex;
+		var nTex;
+		oTex=mesh.texture;
+		var oWidth=oTex.width;
+		var oHeight=oTex.height;
+		nTex=Texture.create(oTex,rec[0] *oWidth,rec[1] *oHeight,rec[2] *oWidth,rec[3] *oHeight);
+		mesh.texture=nTex;
+	}
+
+	MeshTools.isNormalUV=function(uv){
+		return uv[0]==0 && uv[1]==0 && uv[4]==1 && uv[5]==1;
+	}
+
+	MeshTools.solvePoints=function(pointList,oX,oY,v1x,v1y,v2x,v2y,rst){
+		rst=rst||[];
+		var i=0,len=0;
+		len=pointList.length;
+		var tRst;
+		for (i=0;i < len;i+=2){
+			tRst=MeshTools.solve2(pointList[i],pointList[i+1],oX,oY,v1x,v1y,v2x,v2y);
+			rst.push(tRst[0],tRst[1]);
+		}
+		return rst;
+	}
+
+	MeshTools.transPoints=function(abs,oX,oY,v1x,v1y,v2x,v2y,rst){
+		rst=rst|| [];
+		var i=0,len=0;
+		len=abs.length;
+		var tRst;
+		for (i=0;i < len;i+=2){
+			tRst=MeshTools.transPoint(abs[i],abs[i+1],oX,oY,v1x,v1y,v2x,v2y,rst);
+		}
+		return rst;
+	}
+
+	MeshTools.transPoint=function(a,b,oX,oY,v1x,v1y,v2x,v2y,rst){
+		rst=rst|| [];
+		var nX=NaN;
+		var nY=NaN;
+		nX=oX+v1x *a+v2x *b;
+		nY=oY+v1y *a+v2y *b;
+		rst.push(nX,nY)
+		return rst;
+	}
+
+	MeshTools.solve2=function(rx,ry,oX,oY,v1x,v1y,v2x,v2y,rv,rst){
+		(rv===void 0)&& (rv=false);
+		rst=rst||[];
+		var a=NaN,b=NaN;
+		if (v1x==0){
+			return MeshTools.solve2(rx,ry,oX,oY,v2x,v2y,v1x,v1y,true,rst);
+		};
+		var dX=NaN;
+		var dY=NaN;
+		dX=rx-oX;
+		dY=ry-oY;
+		b=(dY-dX *v1y / v1x)/ (v2y-v2x *v1y / v1x);
+		a=(dX-b *v2x)/ v1x;
+		if(rv){
+			rst.push(b,a);
+			}else{
+			rst.push(a,b);
+		}
+		return rst;
+	}
+
+	MeshTools.solve=function(pointC,point0,v1,v2){
+		return MeshTools.solve2(pointC.x,pointC.y,point0.x,point0.y,v1.x,v1.y,v2.x,v2.y);
+	}
+
+	MeshTools._bestTriangle=[];
+	MeshTools._absArr=[];
+	return MeshTools;
+})()
+
+
+/**
+*@private
+*路径作用器
+*1，生成根据骨骼计算控制点
+*2，根据控制点生成路径，并计算路径上的节点
+*3，根据节点，重新调整骨骼位置
+*/
+//class laya.ani.bone.PathConstraint
+var PathConstraint=(function(){
+	function PathConstraint(data,bones){
+		this.target=null;
+		this.data=null;
+		this.bones=null;
+		this.position=NaN;
+		this.spacing=NaN;
+		this.rotateMix=NaN;
+		this.translateMix=NaN;
+		this._debugKey=false;
+		this._spaces=null;
+		this._segments=[];
+		this._curves=[];
+		this.data=data;
+		this.position=data.position;
+		this.spacing=data.spacing;
+		this.rotateMix=data.rotateMix;
+		this.translateMix=data.translateMix;
+		this.bones=[];
+		var tBoneIds=this.data.bones;
+		for (var i=0,n=tBoneIds.length;i < n;i++){
+			this.bones.push(bones[tBoneIds[i]]);
+		}
+	}
+
+	__class(PathConstraint,'laya.ani.bone.PathConstraint');
+	var __proto=PathConstraint.prototype;
+	/**
+	*计算骨骼在路径上的节点
+	*@param boneSlot
+	*@param boneMatrixArray
+	*@param graphics
+	*/
+	__proto.apply=function(boneList,graphics){
+		if (!this.target)
+			return;
+		var tTranslateMix=this.translateMix;
+		var tRotateMix=this.translateMix;
+		var tTranslate=tTranslateMix > 0;
+		var tRotate=tRotateMix > 0;
+		var tSpacingMode=this.data.spacingMode;
+		var tLengthSpacing=tSpacingMode=="length";
+		var tRotateMode=this.data.rotateMode;
+		var tTangents=tRotateMode=="tangent";
+		var tScale=tRotateMode=="chainScale";
+		var lengths=[];
+		var boneCount=this.bones.length;
+		var spacesCount=tTangents ? boneCount :boneCount+1;
+		var spaces=[];
+		this._spaces=spaces;
+		spaces[0]=this.position;
+		var spacing=this.spacing;
+		if (tScale || tLengthSpacing){
+			for (var i=0,n=spacesCount-1;i < n;){
+				var bone=this.bones[i];
+				var length=bone.length;
+				var x=length *bone.resultMatrix.a;
+				var y=length *bone.resultMatrix.b;
+				length=Math.sqrt(x *x+y *y);
+				if (tScale)
+					lengths[i]=length;
+				spaces[++i]=tLengthSpacing ? Math.max(0,length+spacing):spacing;
+			}
+		}
+		else {
+			for (i=1;i < spacesCount;i++){
+				spaces[i]=spacing;
+			}
+		};
+		var positions=this.computeWorldPositions(this.target,boneList,graphics,spacesCount,tTangents,this.data.positionMode=="percent",tSpacingMode=="percent");
+		if (this._debugKey){
+			for (i=0;i < positions.length;i++){
+				graphics.drawCircle(positions[i++],positions[i++],5,"#00ff00");
+			};
+			var tLinePos=[];
+			for (i=0;i < positions.length;i++){
+				tLinePos.push(positions[i++],positions[i++]);
+			}
+			graphics.drawLines(0,0,tLinePos,"#ff0000");
+		};
+		var skeletonX=NaN;
+		var skeletonY=NaN;
+		var boneX=positions[0];
+		var boneY=positions[1];
+		var offsetRotation=this.data.offsetRotation;
+		var tip=tRotateMode=="chain" && offsetRotation==0;
+		var p=NaN;
+		for (i=0,p=3;i < boneCount;i++,p+=3){
+			bone=this.bones[i];
+			bone.resultMatrix.tx+=(boneX-bone.resultMatrix.tx)*tTranslateMix;
+			bone.resultMatrix.ty+=(boneY-bone.resultMatrix.ty)*tTranslateMix;
+			x=positions[p];
+			y=positions[p+1];
+			var dx=x-boneX,dy=y-boneY;
+			if (tScale){
+				length=lengths[i];
+				if (length !=0){
+					var s=(Math.sqrt(dx *dx+dy *dy)/ length-1)*tRotateMix+1;
+					bone.resultMatrix.a *=s;
+					bone.resultMatrix.c *=s;
+				}
+			}
+			boneX=x;
+			boneY=y;
+			if (tRotate){
+				var a=bone.resultMatrix.a;
+				var b=bone.resultMatrix.c;
+				var c=bone.resultMatrix.b;
+				var d=bone.resultMatrix.d;
+				var r=NaN;
+				var cos=NaN;
+				var sin=NaN;
+				if (tTangents){
+					r=positions[p-1];
+				}
+				else if (spaces[i+1]==0){
+					r=positions[p+2];
+				}
+				else {
+					r=Math.atan2(dy,dx);
+				}
+				r-=Math.atan2(c,a)-offsetRotation / 180 *Math.PI;
+				if (tip){
+					cos=Math.cos(r);
+					sin=Math.sin(r);
+					length=bone.length;
+					boneX+=(length *(cos *a-sin *c)-dx)*tRotateMix;
+					boneY+=(length *(sin *a+cos *c)-dy)*tRotateMix;
+				}
+				if (r > Math.PI){
+					r-=(Math.PI *2);
+				}
+				else if (r <-Math.PI){
+					r+=(Math.PI *2);
+				}
+				r *=tRotateMix;
+				cos=Math.cos(r);
+				sin=Math.sin(r);
+				bone.resultMatrix.a=cos *a-sin *c;
+				bone.resultMatrix.c=cos *b-sin *d;
+				bone.resultMatrix.b=sin *a+cos *c;
+				bone.resultMatrix.d=sin *b+cos *d;
+			}
+		}
+	}
+
+	/**
+	*计算顶点的世界坐标
+	*@param boneSlot
+	*@param boneList
+	*@param start
+	*@param count
+	*@param worldVertices
+	*@param offset
+	*/
+	__proto.computeWorldVertices2=function(boneSlot,boneList,start,count,worldVertices,offset){
+		var tBones=boneSlot.currDisplayData.bones;
+		var tWeights=boneSlot.currDisplayData.weights;
+		var tTriangles=boneSlot.currDisplayData.triangles;
+		var tMatrix;
+		var i=0;
+		var v=0;
+		var skip=0;
+		var n=0;
+		var w=0;
+		var b=0;
+		var wx=0;
+		var wy=0;
+		var vx=0;
+		var vy=0;
+		var bone;
+		var len=0;
+		if (tBones==null){
+			if (!tTriangles)tTriangles=tWeights;
+			if (boneSlot.deformData)
+				tTriangles=boneSlot.deformData;
+			var parentName;
+			parentName=boneSlot.parent;
+			if (boneList){
+				len=boneList.length;
+				for (i=0;i < len;i++){
+					if (boneList[i].name==parentName){
+						bone=boneList[i];
+						break ;
+					}
+				}
+			};
+			var tBoneMt;
+			if (bone){
+				tBoneMt=bone.resultMatrix;
+			}
+			if (!tBoneMt)tBoneMt=PathConstraint._tempMt;
+			var x=tBoneMt.tx;
+			var y=tBoneMt.ty;
+			var a=tBoneMt.a,bb=tBoneMt.b,c=tBoneMt.c,d=tBoneMt.d;
+			if(bone)d*=bone.d;
+			for (v=start,w=offset;w < count;v+=2,w+=2){
+				vx=tTriangles[v],vy=tTriangles[v+1];
+				worldVertices[w]=vx *a+vy *bb+x;
+				worldVertices[w+1]=-(vx *c+vy *d+y);
+			}
+			return;
+		}
+		for (i=0;i < start;i+=2){
+			n=tBones[v];
+			v+=n+1;
+			skip+=n;
+		};
+		var skeletonBones=boneList;
+		for (w=offset,b=skip *3;w < count;w+=2){
+			wx=0,wy=0;
+			n=tBones[v++];
+			n+=v;
+			for (;v < n;v++,b+=3){
+				tMatrix=skeletonBones[tBones[v]].resultMatrix;
+				vx=tWeights[b];
+				vy=tWeights[b+1];
+				var weight=tWeights[b+2];
+				wx+=(vx *tMatrix.a+vy *tMatrix.c+tMatrix.tx)*weight;
+				wy+=(vx *tMatrix.b+vy *tMatrix.d+tMatrix.ty)*weight;
+			}
+			worldVertices[w]=wx;
+			worldVertices[w+1]=wy;
+		}
+	}
+
+	/**
+	*计算路径上的节点
+	*@param boneSlot
+	*@param boneList
+	*@param graphics
+	*@param spacesCount
+	*@param tangents
+	*@param percentPosition
+	*@param percentSpacing
+	*@return
+	*/
+	__proto.computeWorldPositions=function(boneSlot,boneList,graphics,spacesCount,tangents,percentPosition,percentSpacing){
+		var tBones=boneSlot.currDisplayData.bones;
+		var tWeights=boneSlot.currDisplayData.weights;
+		var tTriangles=boneSlot.currDisplayData.triangles;
+		var tRx=0;
+		var tRy=0;
+		var nn=0;
+		var tMatrix;
+		var tX=NaN;
+		var tY=NaN;
+		var tB=0;
+		var tWeight=0;
+		var tVertices=[];
+		var i=0,j=0,n=0;
+		var verticesLength=boneSlot.currDisplayData.verLen;
+		var target=boneSlot;
+		var position=this.position;
+		var spaces=this._spaces;
+		var world=[];
+		var out=[];
+		var closed=false;
+		var curveCount=verticesLength / 6;
+		var prevCurve=-1;
+		var pathLength=NaN;
+		var o=0,curve=0;
+		var p=NaN;
+		var space=NaN;
+		var prev=NaN;
+		var length=NaN;
+		if (!true){
+			var lengths=boneSlot.currDisplayData.lengths;
+			curveCount-=closed ? 1 :2;
+			pathLength=lengths[curveCount];
+			if (percentPosition)
+				position *=pathLength;
+			if (percentSpacing){
+				for (i=0;i < spacesCount;i++)
+				spaces[i] *=pathLength;
+			}
+			world.length=8;
+			for (i=0,o=0,curve=0;i < spacesCount;i++,o+=3){
+				space=spaces[i];
+				position+=space;
+				p=position;
+				if (closed){
+					p %=pathLength;
+					if (p < 0)
+						p+=pathLength;
+					curve=0;
+				}
+				else if (p < 0){
+					if (prevCurve !=PathConstraint.BEFORE){
+						prevCurve=PathConstraint.BEFORE;
+						this.computeWorldVertices2(target,boneList,2,4,world,0);
+					}
+					this.addBeforePosition(p,world,0,out,o);
+					continue ;
+				}
+				else if (p > pathLength){
+					if (prevCurve !=PathConstraint.AFTER){
+						prevCurve=PathConstraint.AFTER;
+						this.computeWorldVertices2(target,boneList,verticesLength-6,4,world,0);
+					}
+					this.addAfterPosition(p-pathLength,world,0,out,o);
+					continue ;
+				}
+				for (;;curve++){
+					length=lengths[curve];
+					if (p > length)
+						continue ;
+					if (curve==0)
+						p /=length;
+					else {
+						prev=lengths[curve-1];
+						p=(p-prev)/ (length-prev);
+					}
+					break ;
+				}
+				if (curve !=prevCurve){
+					prevCurve=curve;
+					if (closed && curve==curveCount){
+						this.computeWorldVertices2(target,boneList,verticesLength-4,4,world,0);
+						this.computeWorldVertices2(target,boneList,0,4,world,4);
+					}
+					else
+					this.computeWorldVertices2(target,boneList,curve *6+2,8,world,0);
+				}
+				this.addCurvePosition(p,world[0],world[1],world[2],world[3],world[4],world[5],world[6],world[7],out,o,tangents || (i > 0 && space==0));
+			}
+			return out;
+		}
+		if (closed){
+			verticesLength+=2;
+			world[verticesLength-2]=world[0];
+			world[verticesLength-1]=world[1];
+		}
+		else {
+			curveCount--;
+			verticesLength-=4;
+			this.computeWorldVertices2(boneSlot,boneList,2,verticesLength,tVertices,0);
+			if (this._debugKey){
+				for (i=0;i < tVertices.length;){
+					graphics.drawCircle(tVertices[i++],tVertices[i++],10,"#ff0000");
+				}
+			}
+			world=tVertices;
+		}
+		this._curves.length=curveCount;
+		var curves=this._curves;
+		pathLength=0;
+		var x1=world[0],y1=world[1],cx1=0,cy1=0,cx2=0,cy2=0,x2=0,y2=0;
+		var tmpx=NaN,tmpy=NaN,dddfx=NaN,dddfy=NaN,ddfx=NaN,ddfy=NaN,dfx=NaN,dfy=NaN;
+		var w=0;
+		for (i=0,w=2;i < curveCount;i++,w+=6){
+			cx1=world[w];
+			cy1=world[w+1];
+			cx2=world[w+2];
+			cy2=world[w+3];
+			x2=world[w+4];
+			y2=world[w+5];
+			tmpx=(x1-cx1 *2+cx2)*0.1875;
+			tmpy=(y1-cy1 *2+cy2)*0.1875;
+			dddfx=((cx1-cx2)*3-x1+x2)*0.09375;
+			dddfy=((cy1-cy2)*3-y1+y2)*0.09375;
+			ddfx=tmpx *2+dddfx;
+			ddfy=tmpy *2+dddfy;
+			dfx=(cx1-x1)*0.75+tmpx+dddfx *0.16666667;
+			dfy=(cy1-y1)*0.75+tmpy+dddfy *0.16666667;
+			pathLength+=Math.sqrt(dfx *dfx+dfy *dfy);
+			dfx+=ddfx;
+			dfy+=ddfy;
+			ddfx+=dddfx;
+			ddfy+=dddfy;
+			pathLength+=Math.sqrt(dfx *dfx+dfy *dfy);
+			dfx+=ddfx;
+			dfy+=ddfy;
+			pathLength+=Math.sqrt(dfx *dfx+dfy *dfy);
+			dfx+=ddfx+dddfx;
+			dfy+=ddfy+dddfy;
+			pathLength+=Math.sqrt(dfx *dfx+dfy *dfy);
+			curves[i]=pathLength;
+			x1=x2;
+			y1=y2;
+		}
+		if (percentPosition)
+			position *=pathLength;
+		if (percentSpacing){
+			for (i=0;i < spacesCount;i++)
+			spaces[i] *=pathLength;
+		};
+		var segments=this._segments;
+		var curveLength=0;
+		var segment=0;
+		for (i=0,o=0,curve=0,segment=0;i < spacesCount;i++,o+=3){
+			space=spaces[i];
+			position+=space;
+			p=position;
+			if (closed){
+				p %=pathLength;
+				if (p < 0)
+					p+=pathLength;
+				curve=0;
+			}
+			else if (p < 0){
+				this.addBeforePosition(p,world,0,out,o);
+				continue ;
+			}
+			else if (p > pathLength){
+				this.addAfterPosition(p-pathLength,world,verticesLength-4,out,o);
+				continue ;
+			}
+			for (;;curve++){
+				length=curves[curve];
+				if (p > length)
+					continue ;
+				if (curve==0)
+					p /=length;
+				else {
+					prev=curves[curve-1];
+					p=(p-prev)/ (length-prev);
+				}
+				break ;
+			}
+			if (curve !=prevCurve){
+				prevCurve=curve;
+				var ii=curve *6;
+				x1=world[ii];
+				y1=world[ii+1];
+				cx1=world[ii+2];
+				cy1=world[ii+3];
+				cx2=world[ii+4];
+				cy2=world[ii+5];
+				x2=world[ii+6];
+				y2=world[ii+7];
+				tmpx=(x1-cx1 *2+cx2)*0.03;
+				tmpy=(y1-cy1 *2+cy2)*0.03;
+				dddfx=((cx1-cx2)*3-x1+x2)*0.006;
+				dddfy=((cy1-cy2)*3-y1+y2)*0.006;
+				ddfx=tmpx *2+dddfx;
+				ddfy=tmpy *2+dddfy;
+				dfx=(cx1-x1)*0.3+tmpx+dddfx *0.16666667;
+				dfy=(cy1-y1)*0.3+tmpy+dddfy *0.16666667;
+				curveLength=Math.sqrt(dfx *dfx+dfy *dfy);
+				segments[0]=curveLength;
+				for (ii=1;ii < 8;ii++){
+					dfx+=ddfx;
+					dfy+=ddfy;
+					ddfx+=dddfx;
+					ddfy+=dddfy;
+					curveLength+=Math.sqrt(dfx *dfx+dfy *dfy);
+					segments[ii]=curveLength;
+				}
+				dfx+=ddfx;
+				dfy+=ddfy;
+				curveLength+=Math.sqrt(dfx *dfx+dfy *dfy);
+				segments[8]=curveLength;
+				dfx+=ddfx+dddfx;
+				dfy+=ddfy+dddfy;
+				curveLength+=Math.sqrt(dfx *dfx+dfy *dfy);
+				segments[9]=curveLength;
+				segment=0;
+			}
+			p *=curveLength;
+			for (;;segment++){
+				length=segments[segment];
+				if (p > length)
+					continue ;
+				if (segment==0)
+					p /=length;
+				else {
+					prev=segments[segment-1];
+					p=segment+(p-prev)/ (length-prev);
+				}
+				break ;
+			}
+			this.addCurvePosition(p *0.1,x1,y1,cx1,cy1,cx2,cy2,x2,y2,out,o,tangents || (i > 0 && space==0));
+		}
+		return out;
+	}
+
+	__proto.addBeforePosition=function(p,temp,i,out,o){
+		var x1=temp[i],y1=temp[i+1],dx=temp[i+2]-x1,dy=temp[i+3]-y1,r=Math.atan2(dy,dx);
+		out[o]=x1+p *Math.cos(r);
+		out[o+1]=y1+p *Math.sin(r);
+		out[o+2]=r;
+	}
+
+	__proto.addAfterPosition=function(p,temp,i,out,o){
+		var x1=temp[i+2],y1=temp[i+3],dx=x1-temp[i],dy=y1-temp[i+1],r=Math.atan2(dy,dx);
+		out[o]=x1+p *Math.cos(r);
+		out[o+1]=y1+p *Math.sin(r);
+		out[o+2]=r;
+	}
+
+	__proto.addCurvePosition=function(p,x1,y1,cx1,cy1,cx2,cy2,x2,y2,out,o,tangents){
+		if (p==0)
+			p=0.0001;
+		var tt=p *p,ttt=tt *p,u=1-p,uu=u *u,uuu=uu *u;
+		var ut=u *p,ut3=ut *3,uut3=u *ut3,utt3=ut3 *p;
+		var x=x1 *uuu+cx1 *uut3+cx2 *utt3+x2 *ttt,y=y1 *uuu+cy1 *uut3+cy2 *utt3+y2 *ttt;
+		out[o]=x;
+		out[o+1]=y;
+		if (tangents){
+			out[o+2]=Math.atan2(y-(y1 *uu+cy1 *ut *2+cy2 *tt),x-(x1 *uu+cx1 *ut *2+cx2 *tt));
+		}
+		else {
+			out[o+2]=0;
+		}
+	}
+
+	PathConstraint.NONE=-1;
+	PathConstraint.BEFORE=-2;
+	PathConstraint.AFTER=-3;
+	__static(PathConstraint,
+	['_tempMt',function(){return this._tempMt=new Matrix();}
+	]);
+	return PathConstraint;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.PathConstraintData
+var PathConstraintData=(function(){
+	function PathConstraintData(){
+		this.name=null;
+		this.target=null;
+		this.positionMode=null;
+		this.spacingMode=null;
+		this.rotateMode=null;
+		this.offsetRotation=NaN;
+		this.position=NaN;
+		this.spacing=NaN;
+		this.rotateMix=NaN;
+		this.translateMix=NaN;
+		this.bones=[];
+	}
+
+	__class(PathConstraintData,'laya.ani.bone.PathConstraintData');
+	return PathConstraintData;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.SkinData
+var SkinData=(function(){
+	function SkinData(){
+		this.name=null;
+		this.slotArr=[];
+	}
+
+	__class(SkinData,'laya.ani.bone.SkinData');
+	return SkinData;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.SkinSlotDisplayData
+var SkinSlotDisplayData=(function(){
+	function SkinSlotDisplayData(){
+		this.name=null;
+		this.attachmentName=null;
+		this.type=0;
+		this.transform=null;
+		this.width=NaN;
+		this.height=NaN;
+		this.texture=null;
+		this.bones=null;
+		this.uvs=null;
+		this.weights=null;
+		this.triangles=null;
+		this.vertices=null;
+		this.lengths=null;
+		this.verLen=0;
+	}
+
+	__class(SkinSlotDisplayData,'laya.ani.bone.SkinSlotDisplayData');
+	var __proto=SkinSlotDisplayData.prototype;
+	__proto.createTexture=function(currTexture){
+		if (this.texture)return this.texture;
+		this.texture=new Texture(currTexture.bitmap,this.uvs);
+		if (this.uvs[0] > this.uvs[4]
+			&& this.uvs[1] > this.uvs[5]){
+			this.texture.width=currTexture.height;
+			this.texture.height=currTexture.width;
+			this.texture.offsetX=-currTexture.offsetX;
+			this.texture.offsetY=-currTexture.offsetY;
+			this.texture.sourceWidth=currTexture.sourceHeight;
+			this.texture.sourceHeight=currTexture.sourceWidth;
+			}else {
+			this.texture.width=currTexture.width;
+			this.texture.height=currTexture.height;
+			this.texture.offsetX=-currTexture.offsetX;
+			this.texture.offsetY=-currTexture.offsetY;
+			this.texture.sourceWidth=currTexture.sourceWidth;
+			this.texture.sourceHeight=currTexture.sourceHeight;
+		}
+		if (!Render.isWebGL){
+			if (this.uvs[1] > this.uvs[5]){
+				this.texture.offsetY=this.texture.sourceHeight-this.texture.height-this.texture.offsetY;
+			}
+		}
+		return this.texture;
+	}
+
+	__proto.destory=function(){
+		if (this.texture)this.texture.destroy();
+	}
+
+	return SkinSlotDisplayData;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.SlotData
+var SlotData=(function(){
+	function SlotData(){
+		this.name=null;
+		this.displayArr=[];
+	}
+
+	__class(SlotData,'laya.ani.bone.SlotData');
+	var __proto=SlotData.prototype;
+	__proto.getDisplayByName=function(name){
+		var tDisplay;
+		for (var i=0,n=this.displayArr.length;i < n;i++){
+			tDisplay=this.displayArr[i];
+			if (tDisplay.attachmentName==name){
+				return i;
+			}
+		}
+		return-1;
+	}
+
+	return SlotData;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.TfConstraint
+var TfConstraint=(function(){
+	function TfConstraint(data,bones){
+		this._data=null;
+		this._bones=null;
+		this.target=null;
+		this.rotateMix=NaN;
+		this.translateMix=NaN;
+		this.scaleMix=NaN;
+		this.shearMix=NaN;
+		this._temp=__newvec(2,0);
+		this._data=data;
+		if (this._bones==null){
+			this._bones=[];
+		}
+		this.target=bones[data.targetIndex];
+		var j=0,n=0;
+		for (j=0,n=data.boneIndexs.length;j < n;j++){
+			this._bones.push(bones[data.boneIndexs[j]]);
+		}
+		this.rotateMix=data.rotateMix;
+		this.translateMix=data.translateMix;
+		this.scaleMix=data.scaleMix;
+		this.shearMix=data.shearMix;
+	}
+
+	__class(TfConstraint,'laya.ani.bone.TfConstraint');
+	var __proto=TfConstraint.prototype;
+	__proto.apply=function(){
+		var tTfBone;
+		var ta=this.target.resultMatrix.a,tb=this.target.resultMatrix.b,tc=this.target.resultMatrix.c,td=this.target.resultMatrix.d;
+		for (var j=0,n=this._bones.length;j < n;j++){
+			tTfBone=this._bones[j];
+			if (this.rotateMix > 0){
+				var a=tTfBone.resultMatrix.a,b=tTfBone.resultMatrix.b,c=tTfBone.resultMatrix.c,d=tTfBone.resultMatrix.d;
+				var r=Math.atan2(tc,ta)-Math.atan2(c,a)+this._data.offsetRotation *Math.PI / 180;
+				if (r > Math.PI)
+					r-=Math.PI *2;
+				else if (r <-Math.PI)r+=Math.PI *2;
+				r *=this.rotateMix;
+				var cos=Math.cos(r),sin=Math.sin(r);
+				tTfBone.resultMatrix.a=cos *a-sin *c;
+				tTfBone.resultMatrix.b=cos *b-sin *d;
+				tTfBone.resultMatrix.c=sin *a+cos *c;
+				tTfBone.resultMatrix.d=sin *b+cos *d;
+			}
+			if (this.translateMix){
+				this._temp[0]=this._data.offsetX;
+				this._temp[1]=this._data.offsetY;
+				this.target.localToWorld(this._temp);
+				tTfBone.resultMatrix.tx+=(this._temp[0]-tTfBone.resultMatrix.tx)*this.translateMix;
+				tTfBone.resultMatrix.ty+=(this._temp[1]-tTfBone.resultMatrix.ty)*this.translateMix;
+				tTfBone.updateChild();
+			}
+			if (this.scaleMix > 0){
+				var bs=Math.sqrt(tTfBone.resultMatrix.a *tTfBone.resultMatrix.a+tTfBone.resultMatrix.c *tTfBone.resultMatrix.c);
+				var ts=Math.sqrt(ta *ta+tc *tc);
+				var s=bs > 0.00001 ? (bs+(ts-bs+this._data.offsetScaleX)*this.scaleMix)/ bs :0;
+				tTfBone.resultMatrix.a *=s;
+				tTfBone.resultMatrix.c *=s;
+				bs=Math.sqrt(tTfBone.resultMatrix.b *tTfBone.resultMatrix.b+tTfBone.resultMatrix.d *tTfBone.resultMatrix.d);
+				ts=Math.sqrt(tb *tb+td *td);
+				s=bs > 0.00001 ? (bs+(ts-bs+this._data.offsetScaleY)*this.scaleMix)/ bs :0;
+				tTfBone.resultMatrix.b *=s;
+				tTfBone.resultMatrix.d *=s;
+			}
+			if (this.shearMix > 0){
+				b=tTfBone.resultMatrix.b,d=tTfBone.resultMatrix.d;
+				var by=Math.atan2(d,b);
+				r=Math.atan2(td,tb)-Math.atan2(tc,ta)-(by-Math.atan2(tTfBone.resultMatrix.c,tTfBone.resultMatrix.a));
+				if (r > Math.PI)
+					r-=Math.PI *2;
+				else if (r <-Math.PI)r+=Math.PI *2;
+				r=by+(r+this._data.offsetShearY *Math.PI / 180)*this.shearMix;
+				s=Math.sqrt(b *b+d *d);
+				tTfBone.resultMatrix.b=Math.cos(r)*s;
+				tTfBone.resultMatrix.d=Math.sin(r)*s;
+			}
+		}
+	}
+
+	return TfConstraint;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.TfConstraintData
+var TfConstraintData=(function(){
+	function TfConstraintData(){
+		this.name=null;
+		this.targetIndex=0;
+		this.rotateMix=NaN;
+		this.translateMix=NaN;
+		this.scaleMix=NaN;
+		this.shearMix=NaN;
+		this.offsetRotation=NaN;
+		this.offsetX=NaN;
+		this.offsetY=NaN;
+		this.offsetScaleX=NaN;
+		this.offsetScaleY=NaN;
+		this.offsetShearY=NaN;
+		this.boneIndexs=[];
+	}
+
+	__class(TfConstraintData,'laya.ani.bone.TfConstraintData');
+	return TfConstraintData;
+})()
+
+
+/**
+*@private
+*/
+//class laya.ani.bone.Transform
+var Transform=(function(){
+	function Transform(){
+		this.skX=0;
+		this.skY=0;
+		this.scX=1;
+		this.scY=1;
+		this.x=0;
+		this.y=0;
+		this.skewX=0;
+		this.skewY=0;
+		this.mMatrix=null;
+	}
+
+	__class(Transform,'laya.ani.bone.Transform');
+	var __proto=Transform.prototype;
+	__proto.initData=function(data){
+		if (data.x !=undefined){
+			this.x=data.x;
+		}
+		if (data.y !=undefined){
+			this.y=data.y;
+		}
+		if (data.skX !=undefined){
+			this.skX=data.skX;
+		}
+		if (data.skY !=undefined){
+			this.skY=data.skY;
+		}
+		if (data.scX !=undefined){
+			this.scX=data.scX;
+		}
+		if (data.scY !=undefined){
+			this.scY=data.scY;
+		}
+	}
+
+	__proto.getMatrix=function(){
+		var tMatrix;
+		if (this.mMatrix){
+			tMatrix=this.mMatrix;
+			}else {
+			tMatrix=this.mMatrix=new Matrix();
+		}
+		tMatrix.identity();
+		tMatrix.scale(this.scX,this.scY);
+		if (this.skewX || this.skewY){
+			this.skew(tMatrix,this.skewX *Math.PI / 180,this.skewY *Math.PI / 180);
+		}
+		tMatrix.rotate(this.skX *Math.PI / 180);
+		tMatrix.translate(this.x,this.y);
+		return tMatrix;
+	}
+
+	__proto.skew=function(m,x,y){
+		var sinX=Math.sin(y);
+		var cosX=Math.cos(y);
+		var sinY=Math.sin(x);
+		var cosY=Math.cos(x);
+		m.setTo(m.a *cosY-m.b *sinX,
+		m.a *sinY+m.b *cosX,
+		m.c *cosY-m.d *sinX,
+		m.c *sinY+m.d *cosX,
+		m.tx *cosY-m.ty *sinX,
+		m.tx *sinY+m.ty *cosX);
+		return m;
+	}
+
+	return Transform;
+})()
+
+
+/**
+*用于UV转换的工具类
+*@private
+*/
+//class laya.ani.bone.UVTools
+var UVTools=(function(){
+	function UVTools(){}
+	__class(UVTools,'laya.ani.bone.UVTools');
+	UVTools.getRelativeUV=function(bigUV,smallUV,rst){
+		var startX=bigUV[0];
+		var width=bigUV[2]-bigUV[0];
+		var startY=bigUV[1];
+		var height=bigUV[5]-bigUV[1];
+		if(!rst)rst=[];
+		rst.length=smallUV.length;
+		var i=0,len=0;
+		len=rst.length;
+		var dWidth=1 / width;
+		var dHeight=1 / height;
+		for (i=0;i < len;i+=2){
+			rst[i]=(smallUV[i]-startX)*dWidth;
+			rst[i+1]=(smallUV[i+1]-startY)*dHeight;
+		}
+		return rst;
+	}
+
+	UVTools.getAbsoluteUV=function(bigUV,smallUV,rst){
+		if (bigUV[0]==0 && bigUV[1]==0 && bigUV[4]==1 && bigUV[5]==1){
+			if (rst){
+				Utils.copyArray(rst,smallUV);
+				return rst;
+				}else{
+				return smallUV;
+			}
+		};
+		var startX=bigUV[0];
+		var width=bigUV[2]-bigUV[0];
+		var startY=bigUV[1];
+		var height=bigUV[5]-bigUV[1];
+		if(!rst)rst=[];
+		rst.length=smallUV.length;
+		var i=0,len=0;
+		len=rst.length;
+		for (i=0;i < len;i+=2){
+			rst[i]=smallUV[i]*width+startX;
+			rst[i+1]=smallUV[i+1]*height+startY;
+		}
+		return rst;
+	}
+
+	return UVTools;
+})()
+
+
+/**
+*@private
+*@author ...
+*/
+//class laya.ani.KeyFramesContent
+var KeyFramesContent=(function(){
+	function KeyFramesContent(){
+		this.startTime=NaN;
+		this.duration=NaN;
+		this.interpolationData=null;
+		//私有插值方式 [type0(插值类型),Data0(插值数据,可为空)，type1(插值类型),Data1(插值数据,可为空)] 注意：254全线性插值，255全不插值
+		this.data=null;
+		//=new Float32Array();
+		this.nextData=null;
+	}
+
+	__class(KeyFramesContent,'laya.ani.KeyFramesContent');
+	return KeyFramesContent;
+})()
+
+
+/**
+*@private
+*...
+*@author ww
+*/
+//class laya.ani.math.BezierLerp
+var BezierLerp=(function(){
+	function BezierLerp(){}
+	__class(BezierLerp,'laya.ani.math.BezierLerp');
+	BezierLerp.getBezierRate=function(t,px0,py0,px1,py1){
+		var key=BezierLerp._getBezierParamKey(px0,py0,px1,py1);
+		var vKey=key *100+t;
+		if (BezierLerp._bezierResultCache[vKey])return BezierLerp._bezierResultCache[vKey];
+		var points=BezierLerp._getBezierPoints(px0,py0,px1,py1,key);
+		var i=0,len=0;
+		len=points.length;
+		for (i=0;i < len;i+=2){
+			if (t <=points[i]){
+				BezierLerp._bezierResultCache[vKey]=points[i+1];
+				return points[i+1];
+			}
+		}
+		BezierLerp._bezierResultCache[vKey]=1;
+		return 1;
+	}
+
+	BezierLerp._getBezierParamKey=function(px0,py0,px1,py1){
+		return (((px0 *100+py0)*100+px1)*100+py1)*100;
+	}
+
+	BezierLerp._getBezierPoints=function(px0,py0,px1,py1,key){
+		if (BezierLerp._bezierPointsCache[key])return BezierLerp._bezierPointsCache[key];
+		var controlPoints;
+		controlPoints=[0,0,px0,py0,px1,py1,1,1];
+		var bz;
+		bz=new Bezier();
+		var points;
+		points=bz.getBezierPoints(controlPoints,100,3);
+		BezierLerp._bezierPointsCache[key]=points;
+		return points;
+	}
+
+	BezierLerp._bezierResultCache={};
+	BezierLerp._bezierPointsCache={};
+	return BezierLerp;
+})()
+
+
+/**
+*<code>AnimationPlayer</code> 类用于动画播放器。
+*/
+//class laya.ani.AnimationPlayer extends laya.events.EventDispatcher
+var AnimationPlayer=(function(_super){
+	function AnimationPlayer(){
+		/**@private */
+		this._destroyed=false;
+		/**数据模板*/
+		this._templet=null;
+		/**当前精确时间，不包括重播时间*/
+		this._currentTime=NaN;
+		/**当前帧时间，不包括重播时间*/
+		this._currentFrameTime=NaN;
+		/**动画播放的起始时间位置*/
+		this._playStart=NaN;
+		/**动画播放的结束时间位置*/
+		this._playEnd=NaN;
+		/**动画播放一次的总时间*/
+		this._playDuration=NaN;
+		/**动画播放总时间*/
+		this._overallDuration=NaN;
+		/**是否在一帧结束时停止*/
+		this._stopWhenCircleFinish=false;
+		/**已播放时间，包括重播时间*/
+		this._elapsedPlaybackTime=NaN;
+		/**播放时帧数*/
+		this._startUpdateLoopCount=NaN;
+		/**当前动画索引*/
+		this._currentAnimationClipIndex=0;
+		/**当前帧数*/
+		this._currentKeyframeIndex=0;
+		/**是否暂停*/
+		this._paused=false;
+		/**默认帧率,必须大于0*/
+		this._cacheFrameRate=0;
+		/**帧率间隔时间*/
+		this._cacheFrameRateInterval=NaN;
+		/**缓存播放速率*/
+		this._cachePlayRate=NaN;
+		this._fullFrames=null;
+		/**是否缓存*/
+		this.isCache=true;
+		/**播放速率*/
+		this.playbackRate=1.0;
+		/**停止时是否归零*/
+		this.returnToZeroStopped=false;
+		AnimationPlayer.__super.call(this);
+		this._destroyed=false;
+		this._currentAnimationClipIndex=-1;
+		this._currentKeyframeIndex=-1;
+		this._currentTime=0.0;
+		this._overallDuration=Number.MAX_VALUE;
+		this._stopWhenCircleFinish=false;
+		this._elapsedPlaybackTime=0;
+		this._startUpdateLoopCount=-1;
+		this._cachePlayRate=1.0;
+		this.cacheFrameRate=60;
+		this.returnToZeroStopped=false;
+	}
+
+	__class(AnimationPlayer,'laya.ani.AnimationPlayer',_super);
+	var __proto=AnimationPlayer.prototype;
+	Laya.imps(__proto,{"laya.resource.IDestroy":true})
+	/**
+	*@private
+	*/
+	__proto._onTempletLoadedComputeFullKeyframeIndices=function(cachePlayRate,cacheFrameRate,templet){
+		if (this._templet===templet && this._cachePlayRate===cachePlayRate && this._cacheFrameRate===cacheFrameRate)
+			this._computeFullKeyframeIndices();
+	}
+
+	/**
+	*@private
+	*/
+	__proto._computeFullKeyframeIndices=function(){
+		var anifullFrames=this._fullFrames=[];
+		var templet=this._templet;
+		var cacheFrameInterval=this._cacheFrameRateInterval *this._cachePlayRate;
+		for (var i=0,iNum=templet.getAnimationCount();i < iNum;i++){
+			var aniFullFrame=[];
+			for (var j=0,jNum=templet.getAnimation(i).nodes.length;j < jNum;j++){
+				var node=templet.getAnimation(i).nodes[j];
+				var frameCount=Math.floor(node.playTime / cacheFrameInterval+0.01);
+				var nodeFullFrames=new Uint16Array(frameCount+1);
+				var lastFrameIndex=-1;
+				for (var n=0,nNum=node.keyFrame.length;n < nNum;n++){
+					var keyFrame=node.keyFrame[n];
+					var tm=keyFrame.startTime;
+					var endTm=tm+keyFrame.duration+cacheFrameInterval;
+					do {
+						var frameIndex=Math.floor(tm / cacheFrameInterval+0.5);
+						for (var k=lastFrameIndex+1;k < frameIndex;k++)
+						nodeFullFrames[k]=n;
+						lastFrameIndex=frameIndex;
+						nodeFullFrames[frameIndex]=n;
+						tm+=cacheFrameInterval;
+					}while (tm <=endTm);
+				}
+				aniFullFrame.push(nodeFullFrames);
+			}
+			anifullFrames.push(aniFullFrame);
+		}
+	}
+
+	/**
+	*@private
+	*/
+	__proto._onAnimationTempletLoaded=function(){
+		(this.destroyed)|| (this._calculatePlayDuration());
+	}
+
+	/**
+	*@private
+	*/
+	__proto._calculatePlayDuration=function(){
+		if (this.state!==/*laya.ani.AnimationState.stopped*/0){
+			var oriDuration=this._templet.getAniDuration(this._currentAnimationClipIndex);
+			(this._playEnd===0)&& (this._playEnd=oriDuration);
+			if (this._playEnd > oriDuration)
+				this._playEnd=oriDuration;
+			this._playDuration=this._playEnd-this._playStart;
+		}
+	}
+
+	/**
+	*@private
+	*/
+	__proto._setPlayParams=function(time,cacheFrameInterval){
+		this._currentTime=time;
+		this._currentKeyframeIndex=Math.max(Math.floor((this.currentPlayTime)/ cacheFrameInterval+0.01),0);
+		this._currentFrameTime=this._currentKeyframeIndex *cacheFrameInterval;
+	}
+
+	/**
+	*@private
+	*/
+	__proto._setPlayParamsWhenStop=function(currentAniClipPlayDuration,cacheFrameInterval){
+		this._currentTime=currentAniClipPlayDuration;
+		this._currentKeyframeIndex=Math.max(Math.floor(currentAniClipPlayDuration / cacheFrameInterval+0.01),0);
+		this._currentFrameTime=this._currentKeyframeIndex *cacheFrameInterval;
+		this._currentAnimationClipIndex=-1;
+	}
+
+	/**
+	*@private
+	*/
+	__proto._update=function(elapsedTime){
+		if (this._currentAnimationClipIndex===-1 || this._paused || !this._templet || !this._templet.loaded)
+			return;
+		var cacheFrameInterval=this._cacheFrameRateInterval *this._cachePlayRate;
+		var time=0;
+		(this._startUpdateLoopCount!==Stat.loopCount)&& (time=elapsedTime *this.playbackRate,this._elapsedPlaybackTime+=time);
+		var currentAniClipPlayDuration=this.playDuration;
+		if ((this._overallDuration!==0 && this._elapsedPlaybackTime >=this._overallDuration)|| (this._overallDuration===0 && this._elapsedPlaybackTime >=currentAniClipPlayDuration)){
+			this._setPlayParamsWhenStop(currentAniClipPlayDuration,cacheFrameInterval);
+			this.event(/*laya.events.Event.STOPPED*/"stopped");
+			return;
+		}
+		time+=this._currentTime;
+		if (currentAniClipPlayDuration > 0){
+			if (time >=currentAniClipPlayDuration){
+				do {
+					time-=currentAniClipPlayDuration;
+					if (this._stopWhenCircleFinish){
+						this._setPlayParamsWhenStop(currentAniClipPlayDuration,cacheFrameInterval);
+						this._stopWhenCircleFinish=false;
+						this.event(/*laya.events.Event.STOPPED*/"stopped");
+						return;
+					}
+					if (time < currentAniClipPlayDuration){
+						this._setPlayParams(time,cacheFrameInterval);
+						this.event(/*laya.events.Event.COMPLETE*/"complete");
+					}
+				}while (time >=currentAniClipPlayDuration)
+				}else {
+				this._setPlayParams(time,cacheFrameInterval);
+			}
+			}else {
+			if (this._stopWhenCircleFinish){
+				this._setPlayParamsWhenStop(currentAniClipPlayDuration,cacheFrameInterval);
+				this._stopWhenCircleFinish=false;
+				this.event(/*laya.events.Event.STOPPED*/"stopped");
+				return;
+			}
+			this._currentTime=this._currentFrameTime=this._currentKeyframeIndex=0;
+			this.event(/*laya.events.Event.COMPLETE*/"complete");
+		}
+	}
+
+	/**
+	*@private
+	*/
+	__proto._destroy=function(){
+		this.offAll();
+		this._templet=null;
+		this._fullFrames=null;
+		this._destroyed=true;
+	}
+
+	/**
+	*播放动画。
+	*@param index 动画索引。
+	*@param playbackRate 播放速率。
+	*@param duration 播放时长（0为1次,Number.MAX_VALUE为循环播放）。
+	*@param playStart 播放的起始时间位置。
+	*@param playEnd 播放的结束时间位置。（0为动画一次循环的最长结束时间位置）。
+	*/
+	__proto.play=function(index,playbackRate,overallDuration,playStart,playEnd){
+		(index===void 0)&& (index=0);
+		(playbackRate===void 0)&& (playbackRate=1.0);
+		(overallDuration===void 0)&& (overallDuration=2147483647);
+		(playStart===void 0)&& (playStart=0);
+		(playEnd===void 0)&& (playEnd=0);
+		if (!this._templet)
+			throw new Error("AnimationPlayer:templet must not be null,maybe you need to set url.");
+		if (overallDuration < 0 || playStart < 0 || playEnd < 0)
+			throw new Error("AnimationPlayer:overallDuration,playStart and playEnd must large than zero.");
+		if ((playEnd!==0)&& (playStart > playEnd))
+			throw new Error("AnimationPlayer:start must less than end.");
+		this._currentTime=0;
+		this._currentFrameTime=0;
+		this._elapsedPlaybackTime=0;
+		this.playbackRate=playbackRate;
+		this._overallDuration=overallDuration;
+		this._playStart=playStart;
+		this._playEnd=playEnd;
+		this._paused=false;
+		this._currentAnimationClipIndex=index;
+		this._currentKeyframeIndex=0;
+		this._startUpdateLoopCount=Stat.loopCount;
+		this.event(/*laya.events.Event.PLAYED*/"played");
+		if (this._templet.loaded)
+			this._calculatePlayDuration();
+		else
+		this._templet.once(/*laya.events.Event.LOADED*/"loaded",this,this._onAnimationTempletLoaded);
+		this._update(0);
+	}
+
+	/**
+	*播放动画。
+	*@param index 动画索引。
+	*@param playbackRate 播放速率。
+	*@param duration 播放时长（0为1次,Number.MAX_VALUE为循环播放）。
+	*@param playStartFrame 播放的原始起始帧率位置。
+	*@param playEndFrame 播放的原始结束帧率位置。（0为动画一次循环的最长结束时间位置）。
+	*/
+	__proto.playByFrame=function(index,playbackRate,overallDuration,playStartFrame,playEndFrame,fpsIn3DBuilder){
+		(index===void 0)&& (index=0);
+		(playbackRate===void 0)&& (playbackRate=1.0);
+		(overallDuration===void 0)&& (overallDuration=2147483647);
+		(playStartFrame===void 0)&& (playStartFrame=0);
+		(playEndFrame===void 0)&& (playEndFrame=0);
+		(fpsIn3DBuilder===void 0)&& (fpsIn3DBuilder=30);
+		var interval=1000.0 / fpsIn3DBuilder;
+		this.play(index,playbackRate,overallDuration,playStartFrame *interval,playEndFrame *interval);
+	}
+
+	/**
+	*停止播放当前动画
+	*@param immediate 是否立即停止
+	*/
+	__proto.stop=function(immediate){
+		(immediate===void 0)&& (immediate=true);
+		if (immediate){
+			this._currentTime=this._currentFrameTime=this._currentKeyframeIndex=0;
+			this._currentAnimationClipIndex=-1;
+			this.event(/*laya.events.Event.STOPPED*/"stopped");
+			}else {
+			this._stopWhenCircleFinish=true;
+		}
+	}
+
+	/**
+	*动画播放的结束时间位置。
+	*@return 结束时间位置。
+	*/
+	__getset(0,__proto,'playEnd',function(){
+		return this._playEnd;
+	});
+
+	/**
+	*设置动画数据模板,注意：修改此值会有计算开销。
+	*@param value 动画数据模板
+	*/
+	/**
+	*获取动画数据模板
+	*@param value 动画数据模板
+	*/
+	__getset(0,__proto,'templet',function(){
+		return this._templet;
+		},function(value){
+		if (!this.state===/*laya.ani.AnimationState.stopped*/0)
+			this.stop(true);
+		if (this._templet!==value){
+			this._templet=value;
+			if (value.loaded)
+				this._computeFullKeyframeIndices();
+			else
+			value.once(/*laya.events.Event.LOADED*/"loaded",this,this._onTempletLoadedComputeFullKeyframeIndices,[this._cachePlayRate,this._cacheFrameRate]);
+		}
+	});
+
+	/**
+	*动画播放的起始时间位置。
+	*@return 起始时间位置。
+	*/
+	__getset(0,__proto,'playStart',function(){
+		return this._playStart;
+	});
+
+	/**
+	*获取动画播放一次的总时间
+	*@return 动画播放一次的总时间
+	*/
+	__getset(0,__proto,'playDuration',function(){
+		return this._playDuration;
+	});
+
+	/**
+	*获取当前播放状态
+	*@return 当前播放状态
+	*/
+	__getset(0,__proto,'state',function(){
+		if (this._currentAnimationClipIndex===-1)
+			return /*laya.ani.AnimationState.stopped*/0;
+		if (this._paused)
+			return /*laya.ani.AnimationState.paused*/1;
+		return /*laya.ani.AnimationState.playing*/2;
+	});
+
+	/**
+	*获取当前帧数
+	*@return 当前帧数
+	*/
+	__getset(0,__proto,'currentKeyframeIndex',function(){
+		return this._currentKeyframeIndex;
+	});
+
+	/**
+	*获取动画播放的总总时间
+	*@return 动画播放的总时间
+	*/
+	__getset(0,__proto,'overallDuration',function(){
+		return this._overallDuration;
+	});
+
+	/**
+	*获取当前帧时间，不包括重播时间
+	*@return value 当前时间
+	*/
+	__getset(0,__proto,'currentFrameTime',function(){
+		return this._currentFrameTime;
+	});
+
+	/**
+	*获取当前动画索引
+	*@return value 当前动画索引
+	*/
+	__getset(0,__proto,'currentAnimationClipIndex',function(){
+		return this._currentAnimationClipIndex;
+	});
+
+	/**
+	*获取当前精确时间，不包括重播时间
+	*@return value 当前时间
+	*/
+	__getset(0,__proto,'currentPlayTime',function(){
+		return this._currentTime+this._playStart;
+	});
+
+	/**
+	*设置缓存播放速率,默认值为1.0,注意：修改此值会有计算开销。*
+	*@return value 缓存播放速率。
+	*/
+	/**
+	*获取缓存播放速率。*
+	*@return 缓存播放速率。
+	*/
+	__getset(0,__proto,'cachePlayRate',function(){
+		return this._cachePlayRate;
+		},function(value){
+		if (this._cachePlayRate!==value){
+			this._cachePlayRate=value;
+			if (this._templet)
+				if (this._templet.loaded)
+			this._computeFullKeyframeIndices();
+			else
+			this._templet.once(/*laya.events.Event.LOADED*/"loaded",this,this._onTempletLoadedComputeFullKeyframeIndices,[value,this._cacheFrameRate]);
+		}
+	});
+
+	/**
+	*设置默认帧率,每秒60帧,注意：修改此值会有计算开销。*
+	*@return value 缓存帧率
+	*/
+	/**
+	*获取默认帧率*
+	*@return value 默认帧率
+	*/
+	__getset(0,__proto,'cacheFrameRate',function(){
+		return this._cacheFrameRate;
+		},function(value){
+		if (this._cacheFrameRate!==value){
+			this._cacheFrameRate=value;
+			this._cacheFrameRateInterval=1000.0 / this._cacheFrameRate;
+			if (this._templet)
+				if (this._templet.loaded)
+			this._computeFullKeyframeIndices();
+			else
+			this._templet.once(/*laya.events.Event.LOADED*/"loaded",this,this._onTempletLoadedComputeFullKeyframeIndices,[this._cachePlayRate,value]);
+		}
+	});
+
+	/**
+	*设置当前播放位置
+	*@param value 当前时间
+	*/
+	__getset(0,__proto,'currentTime',null,function(value){
+		if (this._currentAnimationClipIndex===-1 || !this._templet || !this._templet.loaded)
+			return;
+		if (value < this._playStart || value > this._playEnd)
+			throw new Error("AnimationPlayer:value must large than playStartTime,small than playEndTime.");
+		this._startUpdateLoopCount=Stat.loopCount;
+		var cacheFrameInterval=this._cacheFrameRateInterval *this._cachePlayRate;
+		this._currentTime=value;
+		this._currentKeyframeIndex=Math.max(Math.floor(this.currentPlayTime / cacheFrameInterval),0);
+		this._currentFrameTime=this._currentKeyframeIndex *cacheFrameInterval;
+	});
+
+	/**
+	*设置是否暂停
+	*@param value 是否暂停
+	*/
+	/**
+	*获取当前是否暂停
+	*@return 是否暂停
+	*/
+	__getset(0,__proto,'paused',function(){
+		return this._paused;
+		},function(value){
+		this._paused=value;
+		value && this.event(/*laya.events.Event.PAUSED*/"paused");
+	});
+
+	/**
+	*获取缓存帧率间隔时间
+	*@return 缓存帧率间隔时间
+	*/
+	__getset(0,__proto,'cacheFrameRateInterval',function(){
+		return this._cacheFrameRateInterval;
+	});
+
+	/**
+	*获取是否已销毁。
+	*@return 是否已销毁。
+	*/
+	__getset(0,__proto,'destroyed',function(){
+		return this._destroyed;
+	});
+
+	return AnimationPlayer;
+})(EventDispatcher)
+
+
+/**
+*@private
+*/
+//class laya.ani.GraphicsAni extends laya.display.Graphics
+var GraphicsAni=(function(_super){
+	function GraphicsAni(){
+		GraphicsAni.__super.call(this);
+		if (Render.isConchNode){
+			this["drawSkin"]=function (skin){
+				skin.transform || (skin.transform=Matrix.EMPTY);
+				/*__JS__ */this._addCmd([skin]);
+				this.setSkinMesh&&this.setSkinMesh(skin._ps,skin.mVBData,skin.mEleNum,0,skin.mTexture,skin.transform);
+			};
+		}
+	}
+
+	__class(GraphicsAni,'laya.ani.GraphicsAni',_super);
+	var __proto=GraphicsAni.prototype;
+	/**
+	*@private
+	*画自定义蒙皮动画
+	*@param skin
+	*/
+	__proto.drawSkin=function(skin){
+		var arr=[skin];
+		this._saveToCmd(Render._context._drawSkin,arr);
+	}
+
+	GraphicsAni.create=function(){
+		var rs=GraphicsAni._caches.pop();
+		return rs||new GraphicsAni();
+	}
+
+	GraphicsAni.recycle=function(graphics){
+		graphics.clear();
+		GraphicsAni._caches.push(graphics);
+	}
+
+	GraphicsAni._caches=[];
+	return GraphicsAni;
+})(Graphics)
+
+
+/**
+*@private
+*Canvas版本的SkinMesh
+*/
+//class laya.ani.bone.canvasmesh.SkinMeshCanvas extends laya.ani.bone.canvasmesh.CanvasMeshRender
+var SkinMeshCanvas=(function(_super){
+	function SkinMeshCanvas(){
+		SkinMeshCanvas.__super.call(this);
+		this.mesh=new MeshData();
+	}
+
+	__class(SkinMeshCanvas,'laya.ani.bone.canvasmesh.SkinMeshCanvas',_super);
+	var __proto=SkinMeshCanvas.prototype;
+	__proto.init2=function(texture,vs,ps,verticles,uvs){
+		if (this.transform){
+			this.transform=null;
+		};
+		var _ps;
+		if (ps){
+			_ps=ps;
+			}else {
+			_ps=[];
+			_ps.push(0,1,3,3,1,2);
+		}
+		this.mesh.texture=texture;
+		this.mesh.indexes=_ps;
+		this.mesh.vertices=verticles;
+		this.mesh.uvs=uvs;
+	}
+
+	__proto.render=function(context,x,y){
+		if(!this.mesh.texture)return;
+		if(!this.transform){
+			this.transform=SkinMeshCanvas._tempMatrix;
+			this.transform.identity();
+			this.transform.translate(x,y);
+			this.renderToContext(context);
+			this.transform.translate(-x,-y);
+			this.transform=null;
+			}else{
+			this.transform.translate(x,y);
+			this.renderToContext(context);
+			this.transform.translate(-x,-y);
+		}
+	}
+
+	__static(SkinMeshCanvas,
+	['_tempMatrix',function(){return this._tempMatrix=new Matrix();}
+	]);
+	return SkinMeshCanvas;
+})(CanvasMeshRender)
+
+
+/**
+*<code>AnimationTemplet</code> 类用于动画模板资源。
+*/
+//class laya.ani.AnimationTemplet extends laya.resource.Resource
+var AnimationTemplet=(function(_super){
+	function AnimationTemplet(){
+		/**@private */
+		//this._aniVersion=null;
+		/**@private */
+		this._aniMap={};
+		/**@private */
+		//this._publicExtData=null;
+		/**@private */
+		//this._useParent=false;
+		/**@private */
+		//this.unfixedCurrentFrameIndexes=null;
+		/**@private */
+		//this.unfixedCurrentTimes=null;
+		/**@private */
+		//this.unfixedKeyframes=null;
+		/**@private */
+		this.unfixedLastAniIndex=-1;
+		/**@private */
+		//this._aniClassName=null;
+		/**@private */
+		//this._animationDatasCache=null;
+		AnimationTemplet.__super.call(this);
+		this._anis=new Array;
+	}
+
+	__class(AnimationTemplet,'laya.ani.AnimationTemplet',_super);
+	var __proto=AnimationTemplet.prototype;
+	/**
+	*@private
+	*/
+	__proto.parse=function(data){
+		var reader=new Byte(data);
+		this._aniVersion=reader.readUTFString();
+		AnimationParser01.parse(this,reader);
+	}
+
+	/**
+	*@private
+	*/
+	__proto._calculateKeyFrame=function(node,keyframeCount,keyframeDataCount){
+		var keyFrames=node.keyFrame;
+		keyFrames[keyframeCount]=keyFrames[0];
+		for (var i=0;i < keyframeCount;i++){
+			var keyFrame=keyFrames[i];
+			keyFrame.nextData=(keyFrame.duration===0)? keyFrame.data :keyFrames[i+1].data;
+		}
+		keyFrames.length--;
+	}
+
+	/**
+	*@inheritDoc
+	*/
+	__proto.onAsynLoaded=function(url,data,params){
+		var reader=new Byte(data);
+		this._aniVersion=reader.readUTFString();
+		switch (this._aniVersion){
+			case "LAYAANIMATION:02":
+				AnimationParser02.parse(this,reader);
+				break ;
+			default :
+				AnimationParser01.parse(this,reader);
+			}
+		this._endLoaded();
+	}
+
+	/**
+	*@inheritDoc
+	*/
+	__proto.disposeResource=function(){
+		this._aniVersion=null;
+		this._anis=null;
+		this._aniMap=null;
+		this._publicExtData=null;
+		this.unfixedCurrentFrameIndexes=null;
+		this.unfixedCurrentTimes=null;
+		this.unfixedKeyframes=null;
+		this._aniClassName=null;
+		this._animationDatasCache=null;
+	}
+
+	__proto.getAnimationCount=function(){
+		return this._anis.length;
+	}
+
+	__proto.getAnimation=function(aniIndex){
+		return this._anis[aniIndex];
+	}
+
+	__proto.getAniDuration=function(aniIndex){
+		return this._anis[aniIndex].playTime;
+	}
+
+	__proto.getNodes=function(aniIndex){
+		return this._anis[aniIndex].nodes;
+	}
+
+	__proto.getNodeIndexWithName=function(aniIndex,name){
+		return this._anis[aniIndex].bone3DMap[name];
+	}
+
+	__proto.getNodeCount=function(aniIndex){
+		return this._anis[aniIndex].nodes.length;
+	}
+
+	__proto.getTotalkeyframesLength=function(aniIndex){
+		return this._anis[aniIndex].totalKeyframeDatasLength;
+	}
+
+	__proto.getPublicExtData=function(){
+		return this._publicExtData;
+	}
+
+	__proto.getAnimationDataWithCache=function(key,cacheDatas,aniIndex,frameIndex){
+		var aniDatas=cacheDatas[aniIndex];
+		if (!aniDatas){
+			return null;
+			}else {
+			var keyDatas=aniDatas[key];
+			if (!keyDatas)
+				return null;
+			else {
+				return keyDatas[frameIndex];
+			}
+		}
+	}
+
+	__proto.setAnimationDataWithCache=function(key,cacheDatas,aniIndex,frameIndex,data){
+		var aniDatas=(cacheDatas[aniIndex])|| (cacheDatas[aniIndex]={});
+		var aniDatasCache=(aniDatas[key])|| (aniDatas[key]=[]);
+		aniDatasCache[frameIndex]=data;
+	}
+
+	__proto.getOriginalData=function(aniIndex,originalData,nodesFrameIndices,frameIndex,playCurTime){
+		var oneAni=this._anis[aniIndex];
+		var nodes=oneAni.nodes;
+		var j=0;
+		for (var i=0,n=nodes.length,outOfs=0;i < n;i++){
+			var node=nodes[i];
+			var key;
+			key=node.keyFrame[nodesFrameIndices[i][frameIndex]];
+			node.dataOffset=outOfs;
+			var dt=playCurTime-key.startTime;
+			var lerpType=node.lerpType;
+			if (lerpType){
+				switch (lerpType){
+					case 0:
+					case 1:
+						for (j=0;j < node.keyframeWidth;)
+						j+=node.interpolationMethod[j](node,j,originalData,outOfs+j,key.data,dt,null,key.duration,key.nextData);
+						break ;
+					case 2:;
+						var interpolationData=key.interpolationData;
+						var interDataLen=interpolationData.length;
+						var dataIndex=0;
+						for (j=0;j < interDataLen;){
+							var type=interpolationData[j];
+						switch (type){
+							case 6:
+								j+=AnimationTemplet.interpolation[type](node,dataIndex,originalData,outOfs+dataIndex,key.data,dt,null,key.duration,key.nextData,interpolationData,j+1);
+								break ;
+							case 7:
+								j+=AnimationTemplet.interpolation[type](node,dataIndex,originalData,outOfs+dataIndex,key.data,dt,null,key.duration,key.nextData,interpolationData,j+1);
+								break ;
+							default :
+								j+=AnimationTemplet.interpolation[type](node,dataIndex,originalData,outOfs+dataIndex,key.data,dt,null,key.duration,key.nextData);
+							}
+						dataIndex++;
+					}
+					break ;
+				}
+				}else {
+				for (j=0;j < node.keyframeWidth;)
+				j+=node.interpolationMethod[j](node,j,originalData,outOfs+j,key.data,dt,null,key.duration,key.nextData);
+			}
+			outOfs+=node.keyframeWidth;
+		}
+	}
+
+	__proto.getNodesCurrentFrameIndex=function(aniIndex,playCurTime){
+		var ani=this._anis[aniIndex];
+		var nodes=ani.nodes;
+		if (aniIndex!==this.unfixedLastAniIndex){
+			this.unfixedCurrentFrameIndexes=new Uint32Array(nodes.length);
+			this.unfixedCurrentTimes=new Float32Array(nodes.length);
+			this.unfixedLastAniIndex=aniIndex;
+		}
+		for (var i=0,n=nodes.length,outOfs=0;i < n;i++){
+			var node=nodes[i];
+			if (playCurTime < this.unfixedCurrentTimes[i])
+				this.unfixedCurrentFrameIndexes[i]=0;
+			this.unfixedCurrentTimes[i]=playCurTime;
+			while ((this.unfixedCurrentFrameIndexes[i] < node.keyFrame.length)){
+				if (node.keyFrame[this.unfixedCurrentFrameIndexes[i]].startTime > this.unfixedCurrentTimes[i])
+					break ;
+				this.unfixedCurrentFrameIndexes[i]++;
+			}
+			this.unfixedCurrentFrameIndexes[i]--;
+		}
+		return this.unfixedCurrentFrameIndexes;
+	}
+
+	__proto.getOriginalDataUnfixedRate=function(aniIndex,originalData,playCurTime){
+		var oneAni=this._anis[aniIndex];
+		var nodes=oneAni.nodes;
+		if (aniIndex!==this.unfixedLastAniIndex){
+			this.unfixedCurrentFrameIndexes=new Uint32Array(nodes.length);
+			this.unfixedCurrentTimes=new Float32Array(nodes.length);
+			this.unfixedKeyframes=__newvec(nodes.length);
+			this.unfixedLastAniIndex=aniIndex;
+		};
+		var j=0;
+		for (var i=0,n=nodes.length,outOfs=0;i < n;i++){
+			var node=nodes[i];
+			if (playCurTime < this.unfixedCurrentTimes[i])
+				this.unfixedCurrentFrameIndexes[i]=0;
+			this.unfixedCurrentTimes[i]=playCurTime;
+			while (this.unfixedCurrentFrameIndexes[i] < node.keyFrame.length){
+				if (node.keyFrame[this.unfixedCurrentFrameIndexes[i]].startTime > this.unfixedCurrentTimes[i])
+					break ;
+				this.unfixedKeyframes[i]=node.keyFrame[this.unfixedCurrentFrameIndexes[i]];
+				this.unfixedCurrentFrameIndexes[i]++;
+			};
+			var key=this.unfixedKeyframes[i];
+			node.dataOffset=outOfs;
+			var dt=playCurTime-key.startTime;
+			var lerpType=node.lerpType;
+			if (lerpType){
+				switch (node.lerpType){
+					case 0:
+					case 1:
+						for (j=0;j < node.keyframeWidth;)
+						j+=node.interpolationMethod[j](node,j,originalData,outOfs+j,key.data,dt,null,key.duration,key.nextData);
+						break ;
+					case 2:;
+						var interpolationData=key.interpolationData;
+						var interDataLen=interpolationData.length;
+						var dataIndex=0;
+						for (j=0;j < interDataLen;){
+							var type=interpolationData[j];
+						switch (type){
+							case 6:
+								j+=AnimationTemplet.interpolation[type](node,dataIndex,originalData,outOfs+dataIndex,key.data,dt,null,key.duration,key.nextData,interpolationData,j+1);
+								break ;
+							case 7:
+								j+=AnimationTemplet.interpolation[type](node,dataIndex,originalData,outOfs+dataIndex,key.data,dt,null,key.duration,key.nextData,interpolationData,j+1);
+								break ;
+							default :
+								j+=AnimationTemplet.interpolation[type](node,dataIndex,originalData,outOfs+dataIndex,key.data,dt,null,key.duration,key.nextData);
+							}
+						dataIndex++;
+					}
+					break ;
+				}
+				}else {
+				for (j=0;j < node.keyframeWidth;)
+				j+=node.interpolationMethod[j](node,j,originalData,outOfs+j,key.data,dt,null,key.duration,key.nextData);
+			}
+			outOfs+=node.keyframeWidth;
+		}
+	}
+
+	AnimationTemplet._LinearInterpolation_0=function(bone,index,out,outOfs,data,dt,dData,duration,nextData,interData){
+		var amount=duration===0 ? 0 :dt / duration;
+		out[outOfs]=(1.0-amount)*data[index]+amount *nextData[index];
+		return 1;
+	}
+
+	AnimationTemplet._QuaternionInterpolation_1=function(bone,index,out,outOfs,data,dt,dData,duration,nextData,interData){
+		var amount=duration===0 ? 0 :dt / duration;
+		MathUtil.slerpQuaternionArray(data,index,nextData,index,amount,out,outOfs);
+		return 4;
+	}
+
+	AnimationTemplet._AngleInterpolation_2=function(bone,index,out,outOfs,data,dt,dData,duration,nextData,interData){
+		return 0;
+	}
+
+	AnimationTemplet._RadiansInterpolation_3=function(bone,index,out,outOfs,data,dt,dData,duration,nextData,interData){
+		return 0;
+	}
+
+	AnimationTemplet._Matrix4x4Interpolation_4=function(bone,index,out,outOfs,data,dt,dData,duration,nextData,interData){
+		for (var i=0;i < 16;i++,index++)
+		out[outOfs+i]=data[index]+dt *dData[index];
+		return 16;
+	}
+
+	AnimationTemplet._NoInterpolation_5=function(bone,index,out,outOfs,data,dt,dData,duration,nextData,interData){
+		out[outOfs]=data[index];
+		return 1;
+	}
+
+	AnimationTemplet._BezierInterpolation_6=function(bone,index,out,outOfs,data,dt,dData,duration,nextData,interData,offset){
+		(offset===void 0)&& (offset=0);
+		out[outOfs]=data[index]+(nextData[index]-data[index])*BezierLerp.getBezierRate(dt / duration,interData[offset],interData[offset+1],interData[offset+2],interData[offset+3]);
+		return 5;
+	}
+
+	AnimationTemplet._BezierInterpolation_7=function(bone,index,out,outOfs,data,dt,dData,duration,nextData,interData,offset){
+		(offset===void 0)&& (offset=0);
+		out[outOfs]=interData[offset+4]+interData[offset+5] *BezierLerp.getBezierRate((dt *0.001+interData[offset+6])/ interData[offset+7],interData[offset],interData[offset+1],interData[offset+2],interData[offset+3]);
+		return 9;
+	}
+
+	AnimationTemplet.load=function(url){
+		return Laya.loader.create(url,null,null,AnimationTemplet);
+	}
+
+	AnimationTemplet.interpolation=[AnimationTemplet._LinearInterpolation_0,AnimationTemplet._QuaternionInterpolation_1,AnimationTemplet._AngleInterpolation_2,AnimationTemplet._RadiansInterpolation_3,AnimationTemplet._Matrix4x4Interpolation_4,AnimationTemplet._NoInterpolation_5,AnimationTemplet._BezierInterpolation_6,AnimationTemplet._BezierInterpolation_7];
+	return AnimationTemplet;
+})(Resource)
+
+
+/**
+*@private
+*将mesh元素缓存到canvas中并进行绘制
+*/
+//class laya.ani.bone.canvasmesh.CacheAbleSkinMesh extends laya.ani.bone.canvasmesh.SkinMeshCanvas
+var CacheAbleSkinMesh=(function(_super){
+	function CacheAbleSkinMesh(){
+		this.isCached=false;
+		this.canvas=null;
+		this.tex=null;
+		this.rec=null;
+		CacheAbleSkinMesh.__super.call(this);
+	}
+
+	__class(CacheAbleSkinMesh,'laya.ani.bone.canvasmesh.CacheAbleSkinMesh',_super);
+	var __proto=CacheAbleSkinMesh.prototype;
+	__proto.getCanvasPic=function(){
+		var canvas=new HTMLCanvas("2D");
+		var ctx=canvas.getContext('2d');
+		this.rec=this.mesh.getBounds();
+		debugger;
+		canvas.size(this.rec.width,this.rec.height);
+		var preTransform;
+		preTransform=this.transform;
+		this.transform=CacheAbleSkinMesh.tempMt;
+		this.transform.identity();
+		this.transform.translate(-this.rec.x,-this.rec.y);
+		this.renderToContext(ctx);
+		this.transform.translate(+this.rec.x,+this.rec.y);
+		this.transform=preTransform;
+		return new Texture(canvas);
+	}
+
+	__proto.render=function(context,x,y){
+		if (!this.mesh.texture)return;
+		if (!this.isCached){
+			this.isCached=true;
+			this.tex=this.getCanvasPic();
+		}
+		if(!this.transform){
+			this.transform=SkinMeshCanvas._tempMatrix;
+			this.transform.identity();
+			this.transform.translate(x,y);
+			this._renderTextureToContext(context);
+			this.transform.translate(-x,-y);
+			this.transform=null;
+			}else{
+			this.transform.translate(x,y);
+			this._renderTextureToContext(context);
+			this.transform.translate(-x,-y);
+		}
+	}
+
+	__proto._renderTextureToContext=function(context){
+		this.context=context.ctx || context;
+		context.save();
+		var texture;
+		texture=this.tex;
+		if (this.transform){
+			var mt=this.transform;
+			context.transform(mt.a,mt.b,mt.c,mt.d,mt.tx,mt.ty);
+		}
+		this.rec=this.mesh.getBounds();
+		context.translate(this.rec.x,this.rec.y);
+		context.drawTexture(texture,0,0,texture.width,texture.height,0,0);
+		context.restore();
+	}
+
+	__static(CacheAbleSkinMesh,
+	['tempMt',function(){return this.tempMt=new Matrix();}
+	]);
+	return CacheAbleSkinMesh;
+})(SkinMeshCanvas)
+
+
+/**
+*@private
+*简化mesh绘制，多顶点mesh改为四顶点mesh，只绘制矩形不绘制三角形
+*/
+//class laya.ani.bone.canvasmesh.SimpleSkinMeshCanvas extends laya.ani.bone.canvasmesh.SkinMeshCanvas
+var SimpleSkinMeshCanvas=(function(_super){
+	function SimpleSkinMeshCanvas(){
+		/**
+		*当前mesh数据是否可用
+		*/
+		this.cacheOK=false;
+		/**
+		*当前渲染数据是否可用
+		*/
+		this.cacheCmdOK=false;
+		/**
+		*transform参数缓存
+		*/
+		this.transformCmds=[];
+		/**
+		*drawImage参数缓存
+		*/
+		this.drawCmds=[]
+		SimpleSkinMeshCanvas.__super.call(this);
+		this.tempMesh=new MeshData();
+	}
+
+	__class(SimpleSkinMeshCanvas,'laya.ani.bone.canvasmesh.SimpleSkinMeshCanvas',_super);
+	var __proto=SimpleSkinMeshCanvas.prototype;
+	__proto.init2=function(texture,vs,ps,verticles,uvs){
+		_super.prototype.init2.call(this,texture,vs,ps,verticles,uvs);
+		this.cacheOK=false;
+		this.cacheCmdOK=false;
+		this.transformCmds.length=6;
+		this.drawCmds.length=9;
+	}
+
+	__proto.renderToContext=function(context){
+		this.context=context.ctx || context;
+		if (this.mesh){
+			if (this.mesh.uvs.length <=8){
+				if (this.mode==0){
+					this._renderWithIndexes(this.mesh);
+				}
+				else {
+					this._renderNoIndexes(this.mesh);
+				}
+				return;
+			}
+			if (!this.cacheOK){
+				this.tempMesh.texture=this.mesh.texture;
+				this.tempMesh.uvs=this.mesh.texture.uv;
+				this.tempMesh.vertices=MeshTools.solveMesh(this.mesh,this.tempMesh.vertices);
+				this.cacheOK=true;
+			}
+			if (this.mode==0){
+				this._renderWithIndexes(this.tempMesh);
+			}
+			else {
+				this._renderNoIndexes(this.tempMesh);
+			}
+		}
+	}
+
+	__proto._renderWithIndexes=function(mesh){
+		if(this.cacheCmdOK){
+			this.renderByCache(mesh);
+			return;
+		};
+		var indexes=mesh.indexes;
+		var i=0,len=indexes.length;
+		if (len > 1)
+			len=1;
+		for (i=0;i < len;i+=3){
+			var index0=indexes[i] *2;
+			var index1=indexes[i+1] *2;
+			var index2=indexes[i+2] *2;
+			this._renderDrawTriangle(mesh,index0,index1,index2);
+		}
+		this.cacheCmdOK=true;
+	}
+
+	__proto._renderDrawTriangle=function(mesh,index0,index1,index2){
+		var context=this.context;
+		var uvs=mesh.uvs;
+		var vertices=mesh.vertices;
+		var texture=mesh.texture;
+		var source=texture.bitmap;
+		var textureSource=source.source;
+		var textureWidth=texture.width;
+		var textureHeight=texture.height;
+		var sourceWidth=source.width;
+		var sourceHeight=source.height;
+		var u0=NaN;
+		var u1=NaN;
+		var u2=NaN;
+		var v0=NaN;
+		var v1=NaN;
+		var v2=NaN;
+		if (mesh.useUvTransform){
+			var ut=mesh.uvTransform;
+			u0=((uvs[index0] *ut.a)+(uvs[index0+1] *ut.c)+ut.tx)*sourceWidth;
+			u1=((uvs[index1] *ut.a)+(uvs[index1+1] *ut.c)+ut.tx)*sourceWidth;
+			u2=((uvs[index2] *ut.a)+(uvs[index2+1] *ut.c)+ut.tx)*sourceWidth;
+			v0=((uvs[index0] *ut.b)+(uvs[index0+1] *ut.d)+ut.ty)*sourceHeight;
+			v1=((uvs[index1] *ut.b)+(uvs[index1+1] *ut.d)+ut.ty)*sourceHeight;
+			v2=((uvs[index2] *ut.b)+(uvs[index2+1] *ut.d)+ut.ty)*sourceHeight;
+		}
+		else {
+			u0=uvs[index0] *sourceWidth;
+			u1=uvs[index1] *sourceWidth;
+			u2=uvs[index2] *sourceWidth;
+			v0=uvs[index0+1] *sourceHeight;
+			v1=uvs[index1+1] *sourceHeight;
+			v2=uvs[index2+1] *sourceHeight;
+		};
+		var x0=vertices[index0];
+		var x1=vertices[index1];
+		var x2=vertices[index2];
+		var y0=vertices[index0+1];
+		var y1=vertices[index1+1];
+		var y2=vertices[index2+1];
+		var delta=(u0 *v1)+(v0 *u2)+(u1 *v2)-(v1 *u2)-(v0 *u1)-(u0 *v2);
+		var dDelta=1 / delta;
+		var deltaA=(x0 *v1)+(v0 *x2)+(x1 *v2)-(v1 *x2)-(v0 *x1)-(x0 *v2);
+		var deltaB=(u0 *x1)+(x0 *u2)+(u1 *x2)-(x1 *u2)-(x0 *u1)-(u0 *x2);
+		var deltaC=(u0 *v1 *x2)+(v0 *x1 *u2)+(x0 *u1 *v2)-(x0 *v1 *u2)-(v0 *u1 *x2)-(u0 *x1 *v2);
+		var deltaD=(y0 *v1)+(v0 *y2)+(y1 *v2)-(v1 *y2)-(v0 *y1)-(y0 *v2);
+		var deltaE=(u0 *y1)+(y0 *u2)+(u1 *y2)-(y1 *u2)-(y0 *u1)-(u0 *y2);
+		var deltaF=(u0 *v1 *y2)+(v0 *y1 *u2)+(y0 *u1 *v2)-(y0 *v1 *u2)-(v0 *u1 *y2)-(u0 *y1 *v2);
+		this.transformCmds[0]=deltaA *dDelta;
+		this.transformCmds[1]=deltaD *dDelta;
+		this.transformCmds[2]=deltaB *dDelta;
+		this.transformCmds[3]=deltaE *dDelta;
+		this.transformCmds[4]=deltaC *dDelta;
+		this.transformCmds[5]=deltaF *dDelta;
+		this.drawCmds[0]=textureSource;
+		this.drawCmds[1]=texture.uv[0] *sourceWidth;
+		this.drawCmds[2]=texture.uv[1] *sourceHeight;
+		this.drawCmds[3]=textureWidth;
+		this.drawCmds[4]=textureHeight;
+		this.drawCmds[5]=texture.uv[0] *sourceWidth;
+		this.drawCmds[6]=texture.uv[1] *sourceHeight;
+		this.drawCmds[7]=textureWidth;
+		this.drawCmds[8]=textureHeight;
+		context.save();
+		if (this.transform){
+			var mt=this.transform;
+			context.transform(mt.a,mt.b,mt.c,mt.d,mt.tx,mt.ty);
+		}
+		context.transform.apply(context,this.transformCmds);
+		context.drawImage.apply(context,this.drawCmds);
+		context.restore();
+	}
+
+	/**
+	*绘制缓存的命令
+	*@param mesh
+	*
+	*/
+	__proto.renderByCache=function(mesh){
+		var context=this.context;
+		context.save();
+		if (this.transform){
+			var mt=this.transform;
+			context.transform(mt.a,mt.b,mt.c,mt.d,mt.tx,mt.ty);
+		}
+		context.transform.apply(context,this.transformCmds);
+		context.drawImage.apply(context,this.drawCmds);
+		context.restore();
+	}
+
+	return SimpleSkinMeshCanvas;
+})(SkinMeshCanvas)
+
+
+/**
+*骨骼动画由<code>Templet</code>，<code>AnimationPlayer</code>，<code>Skeleton</code>三部分组成。
+*/
+//class laya.ani.bone.Skeleton extends laya.display.Sprite
+var Skeleton=(function(_super){
+	function Skeleton(templet,aniMode){
+		this._templet=null;
+		/**@private */
+		this._player=null;
+		/**@private */
+		this._curOriginalData=null;
+		//当前骨骼的偏移数据
+		this._boneMatrixArray=[];
+		//当前骨骼动画的最终结果数据
+		this._lastTime=0;
+		//上次的帧时间
+		this._currAniName=null;
+		this._currAniIndex=-1;
+		this._pause=true;
+		/**@private */
+		this._aniClipIndex=-1;
+		/**@private */
+		this._clipIndex=-1;
+		this._skinIndex=0;
+		this._skinName="default";
+		this._aniMode=0;
+		//当前动画自己的缓冲区
+		this._graphicsCache=null;
+		this._boneSlotDic=null;
+		this._bindBoneBoneSlotDic=null;
+		this._boneSlotArray=null;
+		this._index=-1;
+		this._total=-1;
+		this._indexControl=false;
+		//加载路径
+		this._aniPath=null;
+		this._texturePath=null;
+		this._complete=null;
+		this._loadAniMode=0;
+		this._yReverseMatrix=null;
+		this._ikArr=null;
+		this._tfArr=null;
+		this._pathDic=null;
+		this._rootBone=null;
+		/**@private */
+		this._boneList=null;
+		/**@private */
+		this._aniSectionDic=null;
+		this._eventIndex=0;
+		this._drawOrderIndex=0;
+		this._drawOrder=null;
+		this._lastAniClipIndex=-1;
+		this._lastUpdateAniClipIndex=-1;
+		Skeleton.__super.call(this);
+		(aniMode===void 0)&& (aniMode=0);
+		if (templet)this.init(templet,aniMode);
+	}
+
+	__class(Skeleton,'laya.ani.bone.Skeleton',_super);
+	var __proto=Skeleton.prototype;
+	/**
+	*初始化动画
+	*@param templet 模板
+	*@param aniMode 动画模式
+	*<table>
+	*<tr><th>模式</th><th>描述</th></tr>
+	*<tr>
+	*<td>0</td> <td>使用模板缓冲的数据，模板缓冲的数据，不允许修改（内存开销小，计算开销小，不支持换装）</td>
+	*</tr>
+	*<tr>
+	*<td>1</td> <td>使用动画自己的缓冲区，每个动画都会有自己的缓冲区，相当耗费内存 （内存开销大，计算开销小，支持换装）</td>
+	*</tr>
+	*<tr>
+	*<td>2</td> <td>使用动态方式，去实时去画（内存开销小，计算开销大，支持换装,不建议使用）</td>
+	*</tr>
+	*</table>
+	*/
+	__proto.init=function(templet,aniMode){
+		(aniMode===void 0)&& (aniMode=0);
+		var i=0,n=0;
+		if (aniMode==1){
+			this._graphicsCache=[];
+			for (i=0,n=templet.getAnimationCount();i < n;i++){
+				this._graphicsCache.push([]);
+			}
+		}
+		this._yReverseMatrix=templet.yReverseMatrix;
+		this._aniMode=aniMode;
+		this._templet=templet;
+		this._player=new AnimationPlayer();
+		this._player.cacheFrameRate=templet.rate;
+		this._player.templet=templet;
+		this._player.play();
+		this._parseSrcBoneMatrix();
+		this._boneList=templet.mBoneArr;
+		this._rootBone=templet.mRootBone;
+		this._aniSectionDic=templet.aniSectionDic;
+		if (templet.ikArr.length > 0){
+			this._ikArr=[];
+			for (i=0,n=templet.ikArr.length;i < n;i++){
+				this._ikArr.push(new IkConstraint(templet.ikArr[i],this._boneList));
+			}
+		}
+		if (templet.pathArr.length > 0){
+			var tPathData;
+			var tPathConstraint;
+			if (this._pathDic==null)this._pathDic={};
+			var tBoneSlot;
+			for (i=0,n=templet.pathArr.length;i < n;i++){
+				tPathData=templet.pathArr[i];
+				tPathConstraint=new PathConstraint(tPathData,this._boneList);
+				tBoneSlot=this._boneSlotDic[tPathData.name];
+				if (tBoneSlot){
+					tPathConstraint=new PathConstraint(tPathData,this._boneList);
+					tPathConstraint.target=tBoneSlot;
+				}
+				this._pathDic[tPathData.name]=tPathConstraint;
+			}
+		}
+		if (templet.tfArr.length > 0){
+			this._tfArr=[];
+			for (i=0,n=templet.tfArr.length;i < n;i++){
+				this._tfArr.push(new TfConstraint(templet.tfArr[i],this._boneList));
+			}
+		}
+		if (templet.skinDataArray.length > 0){
+			var tSkinData=this._templet.skinDataArray[this._skinIndex];
+			this._skinName=tSkinData.name;
+		}
+		this._player.on(/*laya.events.Event.PLAYED*/"played",this,this._onPlay);
+		this._player.on(/*laya.events.Event.STOPPED*/"stopped",this,this._onStop);
+		this._player.on(/*laya.events.Event.PAUSED*/"paused",this,this._onPause);
+	}
+
+	/**
+	*通过加载直接创建动画
+	*@param path 要加载的动画文件路径
+	*@param complete 加载完成的回调函数
+	*@param aniMode 与<code>Skeleton.init</code>的<code>aniMode</code>作用一致
+	*/
+	__proto.load=function(path,complete,aniMode){
+		(aniMode===void 0)&& (aniMode=0);
+		this._aniPath=path;
+		this._complete=complete;
+		this._loadAniMode=aniMode;
+		Laya.loader.load([{url:path,type:/*laya.net.Loader.BUFFER*/"arraybuffer"}],Handler.create(this,this._onLoaded));
+	}
+
+	/**
+	*加载完成
+	*/
+	__proto._onLoaded=function(){
+		var arraybuffer=Loader.getRes(this._aniPath);
+		if (arraybuffer==null)return;
+		if (Templet.TEMPLET_DICTIONARY==null){
+			Templet.TEMPLET_DICTIONARY={};
+		};
+		var tFactory;
+		tFactory=Templet.TEMPLET_DICTIONARY[this._aniPath];
+		if (tFactory){
+			if (tFactory.isParseFail){
+				this._parseFail();
+				}else {
+				if (tFactory.isParserComplete){
+					this._parseComplete();
+					}else {
+					tFactory.on(/*laya.events.Event.COMPLETE*/"complete",this,this._parseComplete);
+					tFactory.on(/*laya.events.Event.ERROR*/"error",this,this._parseFail);
+				}
+			}
+			}else {
+			tFactory=new Templet();
+			tFactory._setUrl(this._aniPath);
+			Templet.TEMPLET_DICTIONARY[this._aniPath]=tFactory;
+			tFactory.on(/*laya.events.Event.COMPLETE*/"complete",this,this._parseComplete);
+			tFactory.on(/*laya.events.Event.ERROR*/"error",this,this._parseFail);
+			tFactory.isParserComplete=false;
+			tFactory.parseData(null,arraybuffer);
+		}
+	}
+
+	/**
+	*解析完成
+	*/
+	__proto._parseComplete=function(){
+		var tTemple=Templet.TEMPLET_DICTIONARY[this._aniPath];
+		if (tTemple){
+			this.init(tTemple,this._loadAniMode);
+			this.play(0,true);
+		}
+		this._complete && this._complete.runWith(this);
+	}
+
+	/**
+	*解析失败
+	*/
+	__proto._parseFail=function(){
+		console.log("[Error]:"+this._aniPath+"解析失败");
+	}
+
+	/**
+	*传递PLAY事件
+	*/
+	__proto._onPlay=function(){
+		this.event(/*laya.events.Event.PLAYED*/"played");
+	}
+
+	/**
+	*传递STOP事件
+	*/
+	__proto._onStop=function(){
+		var tEventData;
+		var tEventAniArr=this._templet.eventAniArr;
+		var tEventArr=tEventAniArr[this._aniClipIndex];
+		if (tEventArr && this._eventIndex < tEventArr.length){
+			for (;this._eventIndex < tEventArr.length;this._eventIndex++){
+				tEventData=tEventArr[this._eventIndex];
+				if (tEventData.time >=this._player.playStart && tEventData.time <=this._player.playEnd){
+					this.event(/*laya.events.Event.LABEL*/"label",tEventData);
+				}
+			}
+		}
+		this._eventIndex=0;
+		this._drawOrder=null;
+		this.event(/*laya.events.Event.STOPPED*/"stopped");
+	}
+
+	/**
+	*传递PAUSE事件
+	*/
+	__proto._onPause=function(){
+		this.event(/*laya.events.Event.PAUSED*/"paused");
+	}
+
+	/**
+	*创建骨骼的矩阵，保存每次计算的最终结果
+	*/
+	__proto._parseSrcBoneMatrix=function(){
+		var i=0,n=0;
+		n=this._templet.srcBoneMatrixArr.length;
+		for (i=0;i < n;i++){
+			this._boneMatrixArray.push(new Matrix());
+		}
+		if (this._aniMode==0){
+			this._boneSlotDic=this._templet.boneSlotDic;
+			this._bindBoneBoneSlotDic=this._templet.bindBoneBoneSlotDic;
+			this._boneSlotArray=this._templet.boneSlotArray;
+			}else {
+			if (this._boneSlotDic==null)this._boneSlotDic={};
+			if (this._bindBoneBoneSlotDic==null)this._bindBoneBoneSlotDic={};
+			if (this._boneSlotArray==null)this._boneSlotArray=[];
+			var tArr=this._templet.boneSlotArray;
+			var tBS;
+			var tBSArr;
+			for (i=0,n=tArr.length;i < n;i++){
+				tBS=tArr[i];
+				tBSArr=this._bindBoneBoneSlotDic[tBS.parent];
+				if (tBSArr==null){
+					this._bindBoneBoneSlotDic[tBS.parent]=tBSArr=[];
+				}
+				this._boneSlotDic[tBS.name]=tBS=tBS.copy();
+				tBSArr.push(tBS);
+				this._boneSlotArray.push(tBS);
+			}
+		}
+	}
+
+	__proto._emitMissedEvents=function(startTime,endTime,startIndex){
+		(startIndex===void 0)&& (startIndex=0);
+		var tEventAniArr=this._templet.eventAniArr;
+		var tEventArr=tEventAniArr[this._player.currentAnimationClipIndex];
+		if (tEventArr){
+			var i=0,len=0;
+			var tEventData;
+			len=tEventArr.length;
+			for (i=startIndex;i < len;i++){
+				tEventData=tEventArr[i];
+				if (tEventData.time >=this._player.playStart && tEventData.time <=this._player.playEnd){
+					this.event(/*laya.events.Event.LABEL*/"label",tEventData);
+				}
+			}
+		}
+	}
+
+	/**
+	*更新动画
+	*@param autoKey true为正常更新，false为index手动更新
+	*/
+	__proto._update=function(autoKey){
+		(autoKey===void 0)&& (autoKey=true);
+		if (this._pause)return;
+		if (autoKey && this._indexControl){
+			return;
+		};
+		var tCurrTime=this.timer.currTimer;
+		var preIndex=this._player.currentKeyframeIndex;
+		var dTime=tCurrTime-this._lastTime;
+		if (autoKey){
+			this._player._update(dTime);
+			}else {
+			preIndex=-1;
+		}
+		this._lastTime=tCurrTime;
+		if (!this._player)return;
+		this._index=this._clipIndex=this._player.currentKeyframeIndex;
+		if (this._index < 0)return;
+		if (dTime > 0 && this._clipIndex==preIndex && this._lastUpdateAniClipIndex==this._aniClipIndex){
+			return;
+		}
+		this._lastUpdateAniClipIndex=this._aniClipIndex;
+		if (preIndex > this._clipIndex && this._eventIndex !=0){
+			this._emitMissedEvents(this._player.playStart,this._player.playEnd,this._eventIndex);
+			this._eventIndex=0;
+		};
+		var tEventData;
+		var tEventAniArr=this._templet.eventAniArr;
+		var tEventArr=tEventAniArr[this._aniClipIndex];
+		if (tEventArr && this._eventIndex < tEventArr.length){
+			tEventData=tEventArr[this._eventIndex];
+			if (tEventData.time >=this._player.playStart && tEventData.time <=this._player.playEnd){
+				if (this._player.currentPlayTime >=tEventData.time){
+					this.event(/*laya.events.Event.LABEL*/"label",tEventData);
+					this._eventIndex++;
+				}
+				}else {
+				this._eventIndex++;
+			}
+		};
+		var tGraphics;
+		if (this._aniMode==0){
+			tGraphics=this._templet.getGrahicsDataWithCache(this._aniClipIndex,this._clipIndex);
+			if (tGraphics){
+				if (this.graphics !=tGraphics){
+					this.graphics=tGraphics;
+				}
+				return;
+				}else {
+				var i=0,minIndex=0;
+				minIndex=this._clipIndex;
+				while ((!this._templet.getGrahicsDataWithCache(this._aniClipIndex,minIndex-1))&& (minIndex > 0)){
+					minIndex--;
+				}
+				if (minIndex < this._clipIndex){
+					for (i=minIndex;i < this._clipIndex;i++){
+						this._createGraphics(i);
+					}
+				}
+			}
+			}else if (this._aniMode==1){
+			tGraphics=this._getGrahicsDataWithCache(this._aniClipIndex,this._clipIndex);
+			if (tGraphics){
+				if (this.graphics !=tGraphics){
+					this.graphics=tGraphics;
+				}
+				return;
+				}else {
+				minIndex=this._clipIndex;
+				while ((!this._getGrahicsDataWithCache(this._aniClipIndex,minIndex-1))&& (minIndex > 0)){
+					minIndex--;
+				}
+				if (minIndex < this._clipIndex){
+					for (i=minIndex;i < this._clipIndex;i++){
+						this._createGraphics(i);
+					}
+				}
+			}
+		}
+		this._createGraphics();
+	}
+
+	/**
+	*@private
+	*创建grahics图像
+	*/
+	__proto._createGraphics=function(_clipIndex){
+		(_clipIndex===void 0)&& (_clipIndex=-1);
+		if (_clipIndex==-1)_clipIndex=this._clipIndex;
+		var curTime=_clipIndex *this._player.cacheFrameRateInterval;
+		var tDrawOrderData;
+		var tDrawOrderAniArr=this._templet.drawOrderAniArr;
+		var tDrawOrderArr=tDrawOrderAniArr[this._aniClipIndex];
+		if (tDrawOrderArr && tDrawOrderArr.length > 0){
+			this._drawOrderIndex=0;
+			tDrawOrderData=tDrawOrderArr[this._drawOrderIndex];
+			while (curTime >=tDrawOrderData.time){
+				this._drawOrder=tDrawOrderData.drawOrder;
+				this._drawOrderIndex++;
+				if (this._drawOrderIndex >=tDrawOrderArr.length){
+					break ;
+				}
+				tDrawOrderData=tDrawOrderArr[this._drawOrderIndex];
+			}
+		};
+		var tGraphics;
+		if (this._aniMode==0 || this._aniMode==1){
+			this.graphics=GraphicsAni.create();
+			}else {
+			if ((this.graphics instanceof laya.ani.GraphicsAni )){
+				this.graphics.clear();
+				}else {
+				this.graphics=GraphicsAni.create();
+			}
+		}
+		tGraphics=this.graphics;
+		var bones=this._templet.getNodes(this._aniClipIndex);
+		this._templet.getOriginalData(this._aniClipIndex,this._curOriginalData,this._player._fullFrames[this._aniClipIndex],_clipIndex,curTime);
+		var tSectionArr=this._aniSectionDic[this._aniClipIndex];
+		var tParentMatrix;
+		var tStartIndex=0;
+		var i=0,j=0,k=0,n=0;
+		var tDBBoneSlot;
+		var tDBBoneSlotArr;
+		var tParentTransform;
+		var tSrcBone;
+		var boneCount=this._templet.srcBoneMatrixArr.length;
+		for (i=0,n=tSectionArr[0];i < boneCount;i++){
+			tSrcBone=this._boneList[i];
+			tParentTransform=this._templet.srcBoneMatrixArr[i];
+			tSrcBone.resultTransform.scX=tParentTransform.scX *this._curOriginalData[tStartIndex++];
+			tSrcBone.resultTransform.skX=tParentTransform.skX+this._curOriginalData[tStartIndex++];
+			tSrcBone.resultTransform.skY=tParentTransform.skY+this._curOriginalData[tStartIndex++];
+			tSrcBone.resultTransform.scY=tParentTransform.scY *this._curOriginalData[tStartIndex++];
+			tSrcBone.resultTransform.x=tParentTransform.x+this._curOriginalData[tStartIndex++];
+			tSrcBone.resultTransform.y=tParentTransform.y+this._curOriginalData[tStartIndex++];
+			if (this._templet.tMatrixDataLen===8){
+				tSrcBone.resultTransform.skewX=tParentTransform.skewX+this._curOriginalData[tStartIndex++];
+				tSrcBone.resultTransform.skewY=tParentTransform.skewY+this._curOriginalData[tStartIndex++];
+			}
+		};
+		var tSlotDic={};
+		var tSlotAlphaDic={};
+		var tBoneData;
+		for (n+=tSectionArr[1];i < n;i++){
+			tBoneData=bones[i];
+			tSlotDic[tBoneData.name]=this._curOriginalData[tStartIndex++];
+			tSlotAlphaDic[tBoneData.name]=this._curOriginalData[tStartIndex++];
+			this._curOriginalData[tStartIndex++];
+			this._curOriginalData[tStartIndex++];
+			this._curOriginalData[tStartIndex++];
+			this._curOriginalData[tStartIndex++];
+		};
+		var tBendDirectionDic={};
+		var tMixDic={};
+		for (n+=tSectionArr[2];i < n;i++){
+			tBoneData=bones[i];
+			tBendDirectionDic[tBoneData.name]=this._curOriginalData[tStartIndex++];
+			tMixDic[tBoneData.name]=this._curOriginalData[tStartIndex++];
+			this._curOriginalData[tStartIndex++];
+			this._curOriginalData[tStartIndex++];
+			this._curOriginalData[tStartIndex++];
+			this._curOriginalData[tStartIndex++];
+		}
+		if (this._pathDic){
+			var tPathConstraint;
+			for (n+=tSectionArr[3];i < n;i++){
+				tBoneData=bones[i];
+				tPathConstraint=this._pathDic[tBoneData.name];
+				if (tPathConstraint){
+					var tByte=new Byte(tBoneData.extenData);
+					switch (tByte.getByte()){
+						case 1:
+							tPathConstraint.position=this._curOriginalData[tStartIndex++];
+							break ;
+						case 2:
+							tPathConstraint.spacing=this._curOriginalData[tStartIndex++];
+							break ;
+						case 3:
+							tPathConstraint.rotateMix=this._curOriginalData[tStartIndex++];
+							tPathConstraint.translateMix=this._curOriginalData[tStartIndex++];
+							break ;
+						}
+				}
+			}
+		}
+		if (this._yReverseMatrix){
+			this._rootBone.update(this._yReverseMatrix);
+			}else {
+			this._rootBone.update(Matrix.TEMP.identity());
+		}
+		if (this._ikArr){
+			var tIkConstraint;
+			for (i=0,n=this._ikArr.length;i < n;i++){
+				tIkConstraint=this._ikArr[i];
+				if (tBendDirectionDic.hasOwnProperty(tIkConstraint.name)){
+					tIkConstraint.bendDirection=tBendDirectionDic[tIkConstraint.name];
+				}
+				if (tMixDic.hasOwnProperty(tIkConstraint.name)){
+					tIkConstraint.mix=tMixDic[tIkConstraint.name]
+				}
+				tIkConstraint.apply();
+			}
+		}
+		if (this._pathDic){
+			for (var tPathStr in this._pathDic){
+				tPathConstraint=this._pathDic[tPathStr];
+				tPathConstraint.apply(this._boneList,tGraphics);
+			}
+		}
+		if (this._tfArr){
+			var tTfConstraint;
+			for (i=0,k=this._tfArr.length;i < k;i++){
+				tTfConstraint=this._tfArr[i];
+				tTfConstraint.apply();
+			}
+		}
+		for (i=0,k=this._boneList.length;i < k;i++){
+			tSrcBone=this._boneList[i];
+			tDBBoneSlotArr=this._bindBoneBoneSlotDic[tSrcBone.name];
+			tSrcBone.resultMatrix.copyTo(this._boneMatrixArray[i]);
+			if (tDBBoneSlotArr){
+				for (j=0,n=tDBBoneSlotArr.length;j < n;j++){
+					tDBBoneSlot=tDBBoneSlotArr[j];
+					if (tDBBoneSlot){
+						tDBBoneSlot.setParentMatrix(tSrcBone.resultMatrix);
+					}
+				}
+			}
+		};
+		var tDeformDic={};
+		var tDeformAniArr=this._templet.deformAniArr;
+		var tDeformAniData;
+		var tDeformSlotData;
+		var tDeformSlotDisplayData;
+		if (tDeformAniArr && tDeformAniArr.length > 0){
+			if (this._lastAniClipIndex !=this._aniClipIndex){
+				this._lastAniClipIndex=this._aniClipIndex;
+				for (i=0,n=this._boneSlotArray.length;i < n;i++){
+					tDBBoneSlot=this._boneSlotArray[i];
+					tDBBoneSlot.deformData=null;
+				}
+			};
+			var tSkinDeformAni=tDeformAniArr[this._aniClipIndex];
+			tDeformAniData=(tSkinDeformAni["default"]);
+			this._setDeform(tDeformAniData,tDeformDic,this._boneSlotArray,curTime);
+			var tSkin;
+			for (tSkin in tSkinDeformAni){
+				if (tSkin !="default" && tSkin !=this._skinName){
+					tDeformAniData=tSkinDeformAni [tSkin];
+					this._setDeform(tDeformAniData,tDeformDic,this._boneSlotArray,curTime);
+				}
+			}
+			tDeformAniData=(tSkinDeformAni[this._skinName]);
+			this._setDeform(tDeformAniData,tDeformDic,this._boneSlotArray,curTime);
+		};
+		var tSlotData2;
+		var tSlotData3;
+		var tObject;
+		if (this._drawOrder){
+			for (i=0,n=this._drawOrder.length;i < n;i++){
+				tDBBoneSlot=this._boneSlotArray[this._drawOrder[i]];
+				tSlotData2=tSlotDic[tDBBoneSlot.name];
+				tSlotData3=tSlotAlphaDic[tDBBoneSlot.name];
+				if (!isNaN(tSlotData3)){
+					tGraphics.save();
+					tGraphics.alpha(tSlotData3);
+				}
+				if (!isNaN(tSlotData2)&& tSlotData2 !=-2){
+					if (this._templet.attachmentNames){
+						tDBBoneSlot.showDisplayByName(this._templet.attachmentNames[tSlotData2]);
+						}else {
+						tDBBoneSlot.showDisplayByIndex(tSlotData2);
+					}
+				}
+				if (tDeformDic[this._drawOrder[i]]){
+					tObject=tDeformDic[this._drawOrder[i]];
+					if (tDBBoneSlot.currDisplayData && tObject[tDBBoneSlot.currDisplayData.attachmentName]){
+						tDBBoneSlot.deformData=tObject[tDBBoneSlot.currDisplayData.attachmentName];
+						}else {
+						tDBBoneSlot.deformData=null;
+					}
+					}else {
+					tDBBoneSlot.deformData=null;
+				}
+				if (!isNaN(tSlotData3)){
+					tDBBoneSlot.draw(tGraphics,this._boneMatrixArray,this._aniMode==2,tSlotData3);
+					}else {
+					tDBBoneSlot.draw(tGraphics,this._boneMatrixArray,this._aniMode==2);
+				}
+				if (!isNaN(tSlotData3)){
+					tGraphics.restore();
+				}
+			}
+			}else {
+			for (i=0,n=this._boneSlotArray.length;i < n;i++){
+				tDBBoneSlot=this._boneSlotArray[i];
+				tSlotData2=tSlotDic[tDBBoneSlot.name];
+				tSlotData3=tSlotAlphaDic[tDBBoneSlot.name];
+				if (!isNaN(tSlotData3)){
+					tGraphics.save();
+					tGraphics.alpha(tSlotData3);
+				}
+				if (!isNaN(tSlotData2)&& tSlotData2 !=-2){
+					if (this._templet.attachmentNames){
+						tDBBoneSlot.showDisplayByName(this._templet.attachmentNames[tSlotData2]);
+						}else {
+						tDBBoneSlot.showDisplayByIndex(tSlotData2);
+					}
+				}
+				if (tDeformDic[i]){
+					tObject=tDeformDic[i];
+					if (tDBBoneSlot.currDisplayData && tObject[tDBBoneSlot.currDisplayData.attachmentName]){
+						tDBBoneSlot.deformData=tObject[tDBBoneSlot.currDisplayData.attachmentName];
+						}else {
+						tDBBoneSlot.deformData=null;
+					}
+					}else {
+					tDBBoneSlot.deformData=null;
+				}
+				if (!isNaN(tSlotData3)){
+					tDBBoneSlot.draw(tGraphics,this._boneMatrixArray,this._aniMode==2,tSlotData3);
+					}else {
+					tDBBoneSlot.draw(tGraphics,this._boneMatrixArray,this._aniMode==2);
+				}
+				if (!isNaN(tSlotData3)){
+					tGraphics.restore();
+				}
+			}
+		}
+		if (this._aniMode==0){
+			this._templet.setGrahicsDataWithCache(this._aniClipIndex,_clipIndex,tGraphics);
+			}else if (this._aniMode==1){
+			this._setGrahicsDataWithCache(this._aniClipIndex,_clipIndex,tGraphics);
+		}
+	}
+
+	/**
+	*设置deform数据
+	*@param tDeformAniData
+	*@param tDeformDic
+	*@param _boneSlotArray
+	*@param curTime
+	*/
+	__proto._setDeform=function(tDeformAniData,tDeformDic,_boneSlotArray,curTime){
+		if (!tDeformAniData)return;
+		var tDeformSlotData;
+		var tDeformSlotDisplayData;
+		var tDBBoneSlot;
+		var i=0,n=0,j=0;
+		if (tDeformAniData){
+			for (i=0,n=tDeformAniData.deformSlotDataList.length;i < n;i++){
+				tDeformSlotData=tDeformAniData.deformSlotDataList[i];
+				for (j=0;j < tDeformSlotData.deformSlotDisplayList.length;j++){
+					tDeformSlotDisplayData=tDeformSlotData.deformSlotDisplayList[j];
+					tDBBoneSlot=_boneSlotArray[tDeformSlotDisplayData.slotIndex];
+					tDeformSlotDisplayData.apply(curTime,tDBBoneSlot);
+					if (!tDeformDic[tDeformSlotDisplayData.slotIndex]){
+						tDeformDic[tDeformSlotDisplayData.slotIndex]={};
+					}
+					tDeformDic[tDeformSlotDisplayData.slotIndex][tDeformSlotDisplayData.attachment]=tDeformSlotDisplayData.deformData;
+				}
+			}
+		}
+	}
+
+	/**
+	*得到当前动画的数量
+	*@return 当前动画的数量
+	*/
+	__proto.getAnimNum=function(){
+		return this._templet.getAnimationCount();
+	}
+
+	/**
+	*得到指定动画的名字
+	*@param index 动画的索引
+	*/
+	__proto.getAniNameByIndex=function(index){
+		return this._templet.getAniNameByIndex(index);
+	}
+
+	/**
+	*通过名字得到插槽的引用
+	*@param name 动画的名字
+	*@return 插槽的引用
+	*/
+	__proto.getSlotByName=function(name){
+		return this._boneSlotDic[name];
+	}
+
+	/**
+	*通过名字显示一套皮肤
+	*@param name 皮肤的名字
+	*@param freshSlotIndex 是否将插槽纹理重置到初始化状态
+	*/
+	__proto.showSkinByName=function(name,freshSlotIndex){
+		(freshSlotIndex===void 0)&& (freshSlotIndex=true);
+		this.showSkinByIndex(this._templet.getSkinIndexByName(name),freshSlotIndex);
+	}
+
+	/**
+	*通过索引显示一套皮肤
+	*@param skinIndex 皮肤索引
+	*@param freshSlotIndex 是否将插槽纹理重置到初始化状态
+	*/
+	__proto.showSkinByIndex=function(skinIndex,freshSlotIndex){
+		(freshSlotIndex===void 0)&& (freshSlotIndex=true);
+		for (var i=0;i < this._boneSlotArray.length;i++){
+			(this._boneSlotArray [i]).showSlotData(null,freshSlotIndex);
+		}
+		if (this._templet.showSkinByIndex(this._boneSlotDic,skinIndex,freshSlotIndex)){
+			var tSkinData=this._templet.skinDataArray[skinIndex];
+			this._skinIndex=skinIndex;
+			this._skinName=tSkinData.name;
+		}
+		this._clearCache();
+	}
+
+	/**
+	*设置某插槽的皮肤
+	*@param slotName 插槽名称
+	*@param index 插糟皮肤的索引
+	*/
+	__proto.showSlotSkinByIndex=function(slotName,index){
+		if (this._aniMode==0)return;
+		var tBoneSlot=this.getSlotByName(slotName);
+		if (tBoneSlot){
+			tBoneSlot.showDisplayByIndex(index);
+		}
+		this._clearCache();
+	}
+
+	/**
+	*设置某插槽的皮肤
+	*@param slotName 插槽名称
+	*@param name 皮肤名称
+	*/
+	__proto.showSlotSkinByName=function(slotName,name){
+		if (this._aniMode==0)return;
+		var tBoneSlot=this.getSlotByName(slotName);
+		if (tBoneSlot){
+			tBoneSlot.showDisplayByName(name);
+		}
+		this._clearCache();
+	}
+
+	/**
+	*替换插槽贴图名
+	*@param slotName 插槽名称
+	*@param oldName 要替换的贴图名
+	*@param newName 替换后的贴图名
+	*/
+	__proto.replaceSlotSkinName=function(slotName,oldName,newName){
+		if (this._aniMode==0)return;
+		var tBoneSlot=this.getSlotByName(slotName);
+		if (tBoneSlot){
+			tBoneSlot.replaceDisplayByName(oldName,newName);
+		}
+		this._clearCache();
+	}
+
+	/**
+	*替换插槽的贴图索引
+	*@param slotName 插槽名称
+	*@param oldIndex 要替换的索引
+	*@param newIndex 替换后的索引
+	*/
+	__proto.replaceSlotSkinByIndex=function(slotName,oldIndex,newIndex){
+		if (this._aniMode==0)return;
+		var tBoneSlot=this.getSlotByName(slotName);
+		if (tBoneSlot){
+			tBoneSlot.replaceDisplayByIndex(oldIndex,newIndex);
+		}
+		this._clearCache();
+	}
+
+	/**
+	*设置自定义皮肤
+	*@param name 插糟的名字
+	*@param texture 自定义的纹理
+	*/
+	__proto.setSlotSkin=function(slotName,texture){
+		if (this._aniMode==0)return;
+		var tBoneSlot=this.getSlotByName(slotName);
+		if (tBoneSlot){
+			tBoneSlot.replaceSkin(texture);
+		}
+		this._clearCache();
+	}
+
+	/**
+	*换装的时候，需要清一下缓冲区
+	*/
+	__proto._clearCache=function(){
+		if (this._aniMode==1){
+			for (var i=0,n=this._graphicsCache.length;i < n;i++){
+				for (var j=0,len=this._graphicsCache[i].length;j < len;j++){
+					var gp=this._graphicsCache[i][j];
+					if (gp !=this.graphics){
+						GraphicsAni.recycle(gp);
+					}
+				}
+				this._graphicsCache[i].length=0;
+			}
+		}
+	}
+
+	/**
+	*播放动画
+	*
+	*@param nameOrIndex 动画名字或者索引
+	*@param loop 是否循环播放
+	*@param force false,如果要播的动画跟上一个相同就不生效,true,强制生效
+	*@param start 起始时间
+	*@param end 结束时间
+	*@param freshSkin 是否刷新皮肤数据
+	*/
+	__proto.play=function(nameOrIndex,loop,force,start,end,freshSkin){
+		(force===void 0)&& (force=true);
+		(start===void 0)&& (start=0);
+		(end===void 0)&& (end=0);
+		(freshSkin===void 0)&& (freshSkin=true);
+		this._indexControl=false;
+		var index=-1;
+		var duration=NaN;
+		if (loop){
+			duration=2147483647;
+			}else {
+			duration=0;
+		}
+		if ((typeof nameOrIndex=='string')){
+			for (var i=0,n=this._templet.getAnimationCount();i < n;i++){
+				var animation=this._templet.getAnimation(i);
+				if (animation && nameOrIndex==animation.name){
+					index=i;
+					break ;
+				}
+			}
+			}else {
+			index=nameOrIndex;
+		}
+		if (index >-1 && index < this.getAnimNum()){
+			this._aniClipIndex=index;
+			if (force || this._pause || this._currAniIndex !=index){
+				this._currAniIndex=index;
+				this._curOriginalData=new Float32Array(this._templet.getTotalkeyframesLength(index));
+				this._drawOrder=null;
+				this._eventIndex=0;
+				this._player.play(index,this._player.playbackRate,duration,start,end);
+				if (freshSkin)
+					this._templet.showSkinByIndex(this._boneSlotDic,this._skinIndex);
+				if (this._pause){
+					this._pause=false;
+					this._lastTime=Browser.now();
+					this.timer.frameLoop(1,this,this._update,null,true);
+				}
+				this._update();
+			}
+		}
+	}
+
+	/**
+	*停止动画
+	*/
+	__proto.stop=function(){
+		if (!this._pause){
+			this._pause=true;
+			if (this._player){
+				this._player.stop(true);
+			}
+			this.timer.clear(this,this._update);
+		}
+	}
+
+	/**
+	*设置动画播放速率
+	*@param value 1为标准速率
+	*/
+	__proto.playbackRate=function(value){
+		if (this._player){
+			this._player.playbackRate=value;
+		}
+	}
+
+	/**
+	*暂停动画的播放
+	*/
+	__proto.paused=function(){
+		if (!this._pause){
+			this._pause=true;
+			if (this._player){
+				this._player.paused=true;
+			}
+			this.timer.clear(this,this._update);
+		}
+	}
+
+	/**
+	*恢复动画的播放
+	*/
+	__proto.resume=function(){
+		this._indexControl=false;
+		if (this._pause){
+			this._pause=false;
+			if (this._player){
+				this._player.paused=false;
+			}
+			this._lastTime=Browser.now();
+			this.timer.frameLoop(1,this,this._update,null,true);
+		}
+	}
+
+	/**
+	*@private
+	*得到缓冲数据
+	*@param aniIndex
+	*@param frameIndex
+	*@return
+	*/
+	__proto._getGrahicsDataWithCache=function(aniIndex,frameIndex){
+		return this._graphicsCache[aniIndex][frameIndex];
+	}
+
+	/**
+	*@private
+	*保存缓冲grahpics
+	*@param aniIndex
+	*@param frameIndex
+	*@param graphics
+	*/
+	__proto._setGrahicsDataWithCache=function(aniIndex,frameIndex,graphics){
+		this._graphicsCache[aniIndex][frameIndex]=graphics;
+	}
+
+	/**
+	*销毁当前动画
+	*/
+	__proto.destroy=function(destroyChild){
+		(destroyChild===void 0)&& (destroyChild=true);
+		_super.prototype.destroy.call(this,destroyChild);
+		this._templet=null;
+		if (this._player)this._player.offAll();
+		this._player=null;
+		this._curOriginalData=null;
+		this._boneMatrixArray.length=0;
+		this._lastTime=0;
+		this.timer.clear(this,this._update);
+	}
+
+	/**
+	*设置动画路径
+	*/
+	/**
+	*得到资源的URL
+	*/
+	__getset(0,__proto,'url',function(){
+		return this._aniPath;
+		},function(path){
+		this.load(path);
+	});
+
+	/**
+	*@private
+	*设置帧索引
+	*/
+	/**
+	*@private
+	*得到帧索引
+	*/
+	__getset(0,__proto,'index',function(){
+		return this._index;
+		},function(value){
+		if (this.player){
+			this._index=value;
+			this._player.currentTime=this._index *1000 / this._player.cacheFrameRate;
+			this._indexControl=true;
+			this._update(false);
+		}
+	});
+
+	/**
+	*得到总帧数据
+	*/
+	__getset(0,__proto,'total',function(){
+		if (this._templet && this._player){
+			this._total=Math.floor(this._templet.getAniDuration(this._player.currentAnimationClipIndex)/ 1000 *this._player.cacheFrameRate);
+			}else {
+			this._total=-1;
+		}
+		return this._total;
+	});
+
+	/**
+	*得到动画模板的引用
+	*/
+	__getset(0,__proto,'templet',function(){
+		return this._templet;
+	});
+
+	/**
+	*得到播放器的引用
+	*/
+	__getset(0,__proto,'player',function(){
+		return this._player;
+	});
+
+	Skeleton.useSimpleMeshInCanvas=false;
+	return Skeleton;
+})(Sprite)
+
+
+/**
+*<p> <code>MovieClip</code> 用于播放经过工具处理后的 swf 动画。</p>
+*/
+//class laya.ani.swf.MovieClip extends laya.display.Sprite
+var MovieClip=(function(_super){
+	function MovieClip(parentMovieClip){
+		/**@private 数据起始位置。*/
+		this._start=0;
+		/**@private 当前位置。*/
+		this._Pos=0;
+		/**@private 数据。*/
+		this._data=null;
+		/**@private */
+		this._curIndex=0;
+		/**@private */
+		this._preIndex=0;
+		/**@private */
+		this._playIndex=0;
+		/**@private */
+		this._playing=false;
+		/**@private */
+		this._ended=true;
+		/**@private 总帧数。*/
+		this._count=0;
+		/**@private id_data起始位置表*/
+		this._ids=null;
+		/**@private */
+		this._loadedImage={};
+		/**@private id_实例表*/
+		this._idOfSprite=null;
+		/**@private 父mc*/
+		this._parentMovieClip=null;
+		/**@private 需要更新的movieClip表*/
+		this._movieClipList=null;
+		/**@private */
+		this._labels=null;
+		/**资源根目录。*/
+		this.basePath=null;
+		/**@private */
+		this._atlasPath=null;
+		/**@private */
+		this._url=null;
+		/**@private */
+		this._isRoot=false;
+		/**@private */
+		this._completeHandler=null;
+		/**@private */
+		this._endFrame=-1;
+		/**播放间隔(单位：毫秒)。*/
+		this.interval=30;
+		/**是否循环播放 */
+		this.loop=false;
+		MovieClip.__super.call(this);
+		this._ids={};
+		this._idOfSprite=[];
+		this._reset();
+		this._playing=false;
+		this._parentMovieClip=parentMovieClip;
+		if (!parentMovieClip){
+			this._movieClipList=[this];
+			this._isRoot=true;
+			this._setUpNoticeType(/*laya.display.Node.NOTICE_DISPLAY*/0x1);
+			}else {
+			this._isRoot=false;
+			this._movieClipList=parentMovieClip._movieClipList;
+			this._movieClipList.push(this);
+		}
+	}
+
+	__class(MovieClip,'laya.ani.swf.MovieClip',_super);
+	var __proto=MovieClip.prototype;
+	/**
+	*<p>销毁此对象。以及销毁引用的Texture</p>
+	*@param destroyChild 是否同时销毁子节点，若值为true,则销毁子节点，否则不销毁子节点。
+	*/
+	__proto.destroy=function(destroyChild){
+		(destroyChild===void 0)&& (destroyChild=true);
+		this._clear();
+		_super.prototype.destroy.call(this,destroyChild);
+	}
+
+	/**@private */
+	__proto._setDisplay=function(value){
+		_super.prototype._setDisplay.call(this,value);
+		if (this._isRoot){
+			this._$3__onDisplay(value);
+		}
+	}
+
+	/**@private */
+	__proto._$3__onDisplay=function(value){
+		if (value)this.timer.loop(this.interval,this,this.updates,null,true);
+		else this.timer.clear(this,this.updates);
+	}
+
+	/**@private 更新时间轴*/
+	__proto.updates=function(){
+		if (this._parentMovieClip)return;
+		var i=0,len=0;
+		len=this._movieClipList.length;
+		for (i=0;i < len;i++){
+			this._movieClipList[i]&&this._movieClipList[i]._update();
+		}
+	}
+
+	/**
+	*增加一个标签到index帧上，播放到此index后会派发label事件
+	*@param label 标签名称
+	*@param index 索引位置
+	*/
+	__proto.addLabel=function(label,index){
+		if (!this._labels)this._labels={};
+		this._labels[index]=label;
+	}
+
+	/**
+	*删除某个标签
+	*@param label 标签名字，如果label为空，则删除所有Label
+	*/
+	__proto.removeLabel=function(label){
+		if (!label)this._labels=null;
+		else if (!this._labels){
+			for (var name in this._labels){
+				if (this._labels[name]===label){
+					delete this._labels[name];
+					break ;
+				}
+			}
+		}
+	}
+
+	/**
+	*@private
+	*动画的帧更新处理函数。
+	*/
+	__proto._update=function(){
+		if (!this._data)return;
+		if (!this._playing)return;
+		this._playIndex++;
+		if (this._playIndex >=this._count){
+			if (!this.loop){
+				this._playIndex--;
+				this.stop();
+				return;
+			}
+			this._playIndex=0;
+		}
+		this._parse(this._playIndex);
+		if (this._labels && this._labels[this._playIndex])this.event(/*laya.events.Event.LABEL*/"label",this._labels[this._playIndex]);
+		if (this._endFrame!=-1&&this._endFrame==this._playIndex){
+			this._endFrame=-1;
+			if (this._completeHandler !=null){
+				var handler=this._completeHandler;
+				this._completeHandler=null;
+				handler.run();
+			}
+			this.stop();
+		}
+	}
+
+	/**
+	*停止播放动画。
+	*/
+	__proto.stop=function(){
+		this._playing=false;
+	}
+
+	/**
+	*跳到某帧并停止播放动画。
+	*@param frame 要跳到的帧
+	*/
+	__proto.gotoAndStop=function(index){
+		this.index=index;
+		this.stop();
+	}
+
+	/**
+	*@private
+	*清理。
+	*/
+	__proto._clear=function(){
+		this.stop();
+		this._idOfSprite.length=0;
+		if (!this._parentMovieClip){
+			this.timer.clear(this,this.updates);
+			var i=0,len=0;
+			len=this._movieClipList.length;
+			for (i=0;i < len;i++){
+				if (this._movieClipList[i] !=this)
+					this._movieClipList[i]._clear();
+			}
+			this._movieClipList.length=0;
+		}
+		if (this._atlasPath){
+			Loader.clearRes(this._atlasPath);
+		};
+		var key;
+		for (key in this._loadedImage){
+			if (this._loadedImage[key]){
+				Loader.clearRes(key);
+				this._loadedImage[key]=false;
+			}
+		}
+		this.removeChildren();
+		this.graphics=null;
+		this._parentMovieClip=null;
+	}
+
+	/**
+	*播放动画。
+	*@param index 帧索引。
+	*/
+	__proto.play=function(index,loop){
+		(index===void 0)&& (index=0);
+		(loop===void 0)&& (loop=true);
+		this.loop=loop;
+		this._playing=true;
+		if (this._data)
+			this._displayFrame(index);
+	}
+
+	/**@private */
+	__proto._displayFrame=function(frameIndex){
+		(frameIndex===void 0)&& (frameIndex=-1);
+		if (frameIndex !=-1){
+			if (this._curIndex > frameIndex)this._reset();
+			this._parse(frameIndex);
+		}
+	}
+
+	/**@private */
+	__proto._reset=function(rm){
+		(rm===void 0)&& (rm=true);
+		if (rm && this._curIndex !=1)this.removeChildren();
+		this._preIndex=this._curIndex=-1;
+		this._Pos=this._start;
+	}
+
+	/**@private */
+	__proto._parse=function(frameIndex){
+		var curChild=this;
+		var mc,sp,key=0,type=0,tPos=0,ttype=0,ifAdd=false;
+		var _idOfSprite=this._idOfSprite,_data=this._data,eStr;
+		if (this._ended)this._reset();
+		_data.pos=this._Pos;
+		this._ended=false;
+		this._playIndex=frameIndex;
+		if (this._curIndex > frameIndex&&frameIndex<this._preIndex){
+			this._reset(true);
+			_data.pos=this._Pos;
+		}
+		while ((this._curIndex <=frameIndex)&& (!this._ended)){
+			type=_data.getUint16();
+			switch (type){
+				case 12:
+					key=_data.getUint16();
+					tPos=this._ids[_data.getUint16()];
+					this._Pos=_data.pos;
+					_data.pos=tPos;
+					if ((ttype=_data.getUint8())==0){
+						var pid=_data.getUint16();
+						sp=_idOfSprite[key]
+						if (!sp){
+							sp=_idOfSprite[key]=new Sprite();
+							var spp=new Sprite();
+							spp.loadImage(this.basePath+pid+".png");
+							this._loadedImage[this.basePath+pid+".png"]=true;
+							sp.addChild(spp);
+							spp.size(_data.getFloat32(),_data.getFloat32());
+							var mat=_data._getMatrix();
+							spp.transform=mat;
+						}
+						sp.alpha=1;
+						}else if (ttype==1){
+						mc=_idOfSprite[key]
+						if (!mc){
+							_idOfSprite[key]=mc=new MovieClip(this);
+							mc.interval=this.interval;
+							mc._ids=this._ids;
+							mc.basePath=this.basePath;
+							mc._setData(_data,tPos);
+							mc._initState();
+							mc.play(0);
+						}
+						mc.alpha=1;
+					}
+					_data.pos=this._Pos;
+					break ;
+				case 3:;
+					var node=_idOfSprite[ _data.getUint16()];
+					if (node){
+						this.addChild(node);
+						node.zOrder=_data.getUint16();
+						ifAdd=true;
+					}
+					break ;
+				case 4:
+					node=_idOfSprite[ _data.getUint16()];
+					node && node.removeSelf();
+					break ;
+				case 5:
+					_idOfSprite[_data.getUint16()][MovieClip._ValueList[_data.getUint16()]]=(_data.getFloat32());
+					break ;
+				case 6:
+					_idOfSprite[_data.getUint16()].visible=(_data.getUint8()> 0);
+					break ;
+				case 7:
+					sp=_idOfSprite[ _data.getUint16()];
+					var mt=sp.transform || Matrix.create();
+					mt.setTo(_data.getFloat32(),_data.getFloat32(),_data.getFloat32(),_data.getFloat32(),_data.getFloat32(),_data.getFloat32());
+					sp.transform=mt;
+					break ;
+				case 8:
+					_idOfSprite[_data.getUint16()].setPos(_data.getFloat32(),_data.getFloat32());
+					break ;
+				case 9:
+					_idOfSprite[_data.getUint16()].setSize(_data.getFloat32(),_data.getFloat32());
+					break ;
+				case 10:
+					_idOfSprite[ _data.getUint16()].alpha=_data.getFloat32();
+					break ;
+				case 11:
+					_idOfSprite[_data.getUint16()].setScale(_data.getFloat32(),_data.getFloat32());
+					break ;
+				case 98:
+					eStr=_data.getString();
+					this.event(eStr);
+					if (eStr=="stop")this.stop();
+					break ;
+				case 99:
+					this._curIndex=_data.getUint16();
+					ifAdd && this.updateZOrder();
+					break ;
+				case 100:
+					this._count=this._curIndex+1;
+					this._ended=true;
+					if (this._playing){
+						this.event(/*laya.events.Event.FRAME*/"enterframe");
+						this.event(/*laya.events.Event.END*/"end");
+						this.event(/*laya.events.Event.COMPLETE*/"complete");
+					}
+					this._reset(false);
+					break ;
+				}
+		}
+		if (this._playing&&!this._ended)this.event(/*laya.events.Event.FRAME*/"enterframe");
+		this._Pos=_data.pos;
+	}
+
+	/**@private */
+	__proto._setData=function(data,start){
+		this._data=data;
+		this._start=start+3;
+	}
+
+	/**
+	*加载资源。
+	*@param url swf 资源地址。
+	*@param atlas 是否使用图集资源
+	*@param atlasPath 图集路径，默认使用与swf同名的图集
+	*/
+	__proto.load=function(url,atlas,atlasPath){
+		(atlas===void 0)&& (atlas=false);
+		this._url=url=URL.formatURL(url);
+		if(atlas)this._atlasPath=atlasPath?atlasPath:url.split(".swf")[0]+".json";
+		this.stop();
+		this._clear();
+		this._movieClipList=[this];
+		var urls;
+		urls=[ {url:url,type:/*laya.net.Loader.BUFFER*/"arraybuffer" }];
+		if (this._atlasPath){
+			urls.push({url:this._atlasPath,type:/*laya.net.Loader.ATLAS*/"atlas" });
+		}
+		Laya.loader.load(urls,Handler.create(this,this._onLoaded));
+	}
+
+	/**@private */
+	__proto._onLoaded=function(){
+		var data;
+		data=Loader.getRes(this._url);
+		if (!data){
+			this.event(/*laya.events.Event.ERROR*/"error","file not find");
+			return;
+		}
+		this.basePath=this._atlasPath?Loader.getAtlas(this._atlasPath).dir:this._url.split(".swf")[0]+"/image/";
+		this._initData(data);
+	}
+
+	/**@private */
+	__proto._initState=function(){
+		this._reset();
+		this._ended=false;
+		var preState=this._playing;
+		this._playing=false;
+		this._curIndex=0;
+		while (!this._ended)this._parse(++this._curIndex);
+		this._playing=preState;
+	}
+
+	/**@private */
+	__proto._initData=function(data){
+		this._data=new Byte(data);
+		var i=0,len=this._data.getUint16();
+		for (i=0;i < len;i++)this._ids[this._data.getInt16()]=this._data.getInt32();
+		this.interval=1000 / this._data.getUint16();
+		this._setData(this._data,this._ids[32767]);
+		this._initState();
+		this.play(0);
+		this.event(/*laya.events.Event.LOADED*/"loaded");
+		if (!this._parentMovieClip)this.timer.loop(this.interval,this,this.updates,null,true);
+	}
+
+	/**
+	*从开始索引播放到结束索引，结束之后出发complete回调
+	*@param start 开始索引
+	*@param end 结束索引
+	*@param complete 结束回调
+	*/
+	__proto.playTo=function(start,end,complete){
+		this._completeHandler=complete;
+		this._endFrame=end;
+		this.play(start,false);
+	}
+
+	/**当前播放索引。*/
+	__getset(0,__proto,'index',function(){
+		return this._playIndex;
+		},function(value){
+		this._playIndex=value;
+		if (this._data)
+			this._displayFrame(this._playIndex);
+		if (this._labels && this._labels[value])this.event(/*laya.events.Event.LABEL*/"label",this._labels[value]);
+	});
+
+	/**
+	*帧总数。
+	*/
+	__getset(0,__proto,'count',function(){
+		return this._count;
+	});
+
+	/**
+	*是否在播放中
+	*/
+	__getset(0,__proto,'playing',function(){
+		return this._playing;
+	});
+
+	/**
+	*资源地址。
+	*/
+	__getset(0,__proto,'url',null,function(path){
+		this.load(path);
+	});
+
+	MovieClip._ValueList=["x","y","width","height","scaleX","scaleY","rotation","alpha"];
+	return MovieClip;
+})(Sprite)
+
+
+/**
+*动画模板类
+*/
+//class laya.ani.bone.Templet extends laya.ani.AnimationTemplet
+var Templet=(function(_super){
+	function Templet(){
+		this._mainTexture=null;
+		this._textureJson=null;
+		this._graphicsCache=[];
+		/**存放原始骨骼信息 */
+		this.srcBoneMatrixArr=[];
+		/**IK数据 */
+		this.ikArr=[];
+		/**transform数据 */
+		this.tfArr=[];
+		/**path数据 */
+		this.pathArr=[];
+		/**存放插槽数据的字典 */
+		this.boneSlotDic={};
+		/**绑定插槽数据的字典 */
+		this.bindBoneBoneSlotDic={};
+		/**存放插糟数据的数组 */
+		this.boneSlotArray=[];
+		/**皮肤数据 */
+		this.skinDataArray=[];
+		/**皮肤的字典数据 */
+		this.skinDic={};
+		/**存放纹理数据 */
+		this.subTextureDic={};
+		/**是否解析失败 */
+		this.isParseFail=false;
+		/**反转矩阵，有些骨骼动画要反转才能显示 */
+		this.yReverseMatrix=null;
+		/**渲染顺序动画数据 */
+		this.drawOrderAniArr=[];
+		/**事件动画数据 */
+		this.eventAniArr=[];
+		/**@private 索引对应的名称 */
+		this.attachmentNames=null;
+		/**顶点动画数据 */
+		this.deformAniArr=[];
+		this._isDestroyed=false;
+		this._rate=30;
+		this.isParserComplete=false;
+		this.aniSectionDic={};
+		this._skBufferUrl=null;
+		this._textureDic={};
+		this._loadList=null;
+		this._path=null;
+		/**@private */
+		this.tMatrixDataLen=0;
+		this.mRootBone=null;
+		Templet.__super.call(this);
+		this.skinSlotDisplayDataArr=[];
+		this.mBoneArr=[];
+	}
+
+	__class(Templet,'laya.ani.bone.Templet',_super);
+	var __proto=Templet.prototype;
+	__proto.loadAni=function(url){
+		this._skBufferUrl=url;
+		Laya.loader.load(url,Handler.create(this,this.onComplete),null,/*laya.net.Loader.BUFFER*/"arraybuffer");
+	}
+
+	__proto.onComplete=function(content){
+		if (this._isDestroyed){
+			this.destroy();
+			return;
+		};
+		var tSkBuffer=Loader.getRes(this._skBufferUrl);
+		if (!tSkBuffer){
+			this.event(/*laya.events.Event.ERROR*/"error","load failed:"+this._skBufferUrl);
+			return;
+		}
+		this._path=this._skBufferUrl.slice(0,this._skBufferUrl.lastIndexOf("/"))+"/";
+		this.parseData(null,tSkBuffer);
+	}
+
+	/**
+	*解析骨骼动画数据
+	*@param texture 骨骼动画用到的纹理
+	*@param skeletonData 骨骼动画信息及纹理分块信息
+	*@param playbackRate 缓冲的帧率数据（会根据帧率去分帧）
+	*/
+	__proto.parseData=function(texture,skeletonData,playbackRate){
+		(playbackRate===void 0)&& (playbackRate=30);
+		if(!this._path&&this.url)this._path=this.url.slice(0,this.url.lastIndexOf("/"))+"/";
+		this._mainTexture=texture;
+		if (this._mainTexture){
+			if (Render.isWebGL && texture.bitmap){
+				texture.bitmap.enableMerageInAtlas=false;
+			}
+		}
+		this._rate=playbackRate;
+		this.parse(skeletonData);
+	}
+
+	/**
+	*创建动画
+	*0,使用模板缓冲的数据，模板缓冲的数据，不允许修改 （内存开销小，计算开销小，不支持换装）
+	*1,使用动画自己的缓冲区，每个动画都会有自己的缓冲区，相当耗费内存 （内存开销大，计算开销小，支持换装）
+	*2,使用动态方式，去实时去画 （内存开销小，计算开销大，支持换装,不建议使用）
+	*@param aniMode 0 动画模式，0:不支持换装,1,2支持换装
+	*@return
+	*/
+	__proto.buildArmature=function(aniMode){
+		(aniMode===void 0)&& (aniMode=0);
+		return new Skeleton(this,aniMode);
+	}
+
+	/**
+	*@private
+	*解析动画
+	*@param data 解析的二进制数据
+	*@param playbackRate 帧率
+	*/
+	__proto.parse=function(data){
+		_super.prototype.parse.call(this,data);
+		this._endLoaded();
+		if (this._aniVersion !=Templet.LAYA_ANIMATION_VISION){
+			console.log("[Error] 版本不一致，请使用IDE版本配套的重新导出"+this._aniVersion+"->"+Templet.LAYA_ANIMATION_VISION);
+			this._loaded=false;
+		}
+		if (this.loaded){
+			if (this._mainTexture){
+				this._parsePublicExtData();
+				}else {
+				this._parseTexturePath();
+			}
+			}else {
+			this.event(/*laya.events.Event.ERROR*/"error",this);
+			this.isParseFail=true;
+		}
+	}
+
+	__proto._parseTexturePath=function(){
+		if (this._isDestroyed){
+			this.destroy();
+			return;
+		};
+		var i=0;
+		this._loadList=[];
+		var tByte=new Byte(this.getPublicExtData());
+		var tX=0,tY=0,tWidth=0,tHeight=0;
+		var tFrameX=0,tFrameY=0,tFrameWidth=0,tFrameHeight=0;
+		var tTempleData=0;
+		var tTextureLen=tByte.getInt32();
+		var tTextureName=tByte.readUTFString();
+		var tTextureNameArr=tTextureName.split("\n");
+		var tTexture;
+		var tSrcTexturePath;
+		for (i=0;i < tTextureLen;i++){
+			tSrcTexturePath=this._path+tTextureNameArr[i *2];
+			tTextureName=tTextureNameArr[i *2+1];
+			tX=tByte.getFloat32();
+			tY=tByte.getFloat32();
+			tWidth=tByte.getFloat32();
+			tHeight=tByte.getFloat32();
+			tTempleData=tByte.getFloat32();
+			tFrameX=isNaN(tTempleData)? 0 :tTempleData;
+			tTempleData=tByte.getFloat32();
+			tFrameY=isNaN(tTempleData)? 0 :tTempleData;
+			tTempleData=tByte.getFloat32();
+			tFrameWidth=isNaN(tTempleData)? tWidth :tTempleData;
+			tTempleData=tByte.getFloat32();
+			tFrameHeight=isNaN(tTempleData)? tHeight :tTempleData;
+			if (this._loadList.indexOf(tSrcTexturePath)==-1){
+				this._loadList.push(tSrcTexturePath);
+			}
+		}
+		Laya.loader.load(this._loadList,Handler.create(this,this._textureComplete));
+	}
+
+	/**
+	*纹理加载完成
+	*/
+	__proto._textureComplete=function(){
+		var tTexture;
+		var tTextureName;
+		for (var i=0,n=this._loadList.length;i < n;i++){
+			tTextureName=this._loadList[i];
+			tTexture=this._textureDic[tTextureName]=Loader.getRes(tTextureName);
+			if (Render.isWebGL && tTexture && tTexture.bitmap){
+				tTexture.bitmap.enableMerageInAtlas=false;
+			}
+		}
+		this._parsePublicExtData();
+	}
+
+	/**
+	*解析自定义数据
+	*/
+	__proto._parsePublicExtData=function(){
+		var i=0,j=0,k=0,l=0,n=0;
+		for (i=0,n=this.getAnimationCount();i < n;i++){
+			this._graphicsCache.push([]);
+		};
+		var isSpine=false;
+		isSpine=this._aniClassName !="Dragon";
+		var tByte=new Byte(this.getPublicExtData());
+		var tX=0,tY=0,tWidth=0,tHeight=0;
+		var tFrameX=0,tFrameY=0,tFrameWidth=0,tFrameHeight=0;
+		var tTempleData=0;
+		var tTextureLen=tByte.getInt32();
+		var tTextureName=tByte.readUTFString();
+		var tTextureNameArr=tTextureName.split("\n");
+		var tTexture;
+		var tSrcTexturePath;
+		for (i=0;i < tTextureLen;i++){
+			tTexture=this._mainTexture;
+			tSrcTexturePath=this._path+tTextureNameArr[i *2];
+			tTextureName=tTextureNameArr[i *2+1];
+			if (this._mainTexture==null){
+				tTexture=this._textureDic[tSrcTexturePath];
+			}
+			if (!tTexture){
+				this.event(/*laya.events.Event.ERROR*/"error",this);
+				this.isParseFail=true;
+				return;
+			}
+			tX=tByte.getFloat32();
+			tY=tByte.getFloat32();
+			tWidth=tByte.getFloat32();
+			tHeight=tByte.getFloat32();
+			tTempleData=tByte.getFloat32();
+			tFrameX=isNaN(tTempleData)? 0 :tTempleData;
+			tTempleData=tByte.getFloat32();
+			tFrameY=isNaN(tTempleData)? 0 :tTempleData;
+			tTempleData=tByte.getFloat32();
+			tFrameWidth=isNaN(tTempleData)? tWidth :tTempleData;
+			tTempleData=tByte.getFloat32();
+			tFrameHeight=isNaN(tTempleData)? tHeight :tTempleData;
+			this.subTextureDic[tTextureName]=Texture.create(tTexture,tX,tY,tWidth,tHeight,-tFrameX,-tFrameY,tFrameWidth,tFrameHeight);
+		}
+		this._mainTexture=tTexture;
+		var tAniCount=tByte.getUint16();
+		var tSectionArr;
+		for (i=0;i < tAniCount;i++){
+			tSectionArr=[];
+			tSectionArr.push(tByte.getUint16());
+			tSectionArr.push(tByte.getUint16());
+			tSectionArr.push(tByte.getUint16());
+			tSectionArr.push(tByte.getUint16());
+			this.aniSectionDic[i]=tSectionArr;
+		};
+		var tBone;
+		var tParentBone;
+		var tName;
+		var tParentName;
+		var tBoneLen=tByte.getInt16();
+		var tBoneDic={};
+		var tRootBone;
+		for (i=0;i < tBoneLen;i++){
+			tBone=new Bone();
+			if (i==0){
+				tRootBone=tBone;
+				}else {
+				tBone.root=tRootBone;
+			}
+			tBone.d=isSpine?-1:1;
+			tName=tByte.readUTFString();
+			tParentName=tByte.readUTFString();
+			tBone.length=tByte.getFloat32();
+			if (tByte.getByte()==1){
+				tBone.inheritRotation=false;
+			}
+			if (tByte.getByte()==1){
+				tBone.inheritScale=false;
+			}
+			tBone.name=tName;
+			if (tParentName){
+				tParentBone=tBoneDic[tParentName];
+				if (tParentBone){
+					tParentBone.addChild(tBone);
+					}else {
+					this.mRootBone=tBone;
+				}
+			}
+			tBoneDic[tName]=tBone;
+			this.mBoneArr.push(tBone);
+		}
+		this.tMatrixDataLen=tByte.getUint16();
+		var tLen=tByte.getUint16();
+		var parentIndex=0;
+		var boneLength=Math.floor(tLen / this.tMatrixDataLen);
+		var tResultTransform;
+		var tMatrixArray=this.srcBoneMatrixArr;
+		for (i=0;i < boneLength;i++){
+			tResultTransform=new Transform();
+			tResultTransform.scX=tByte.getFloat32();
+			tResultTransform.skX=tByte.getFloat32();
+			tResultTransform.skY=tByte.getFloat32();
+			tResultTransform.scY=tByte.getFloat32();
+			tResultTransform.x=tByte.getFloat32();
+			tResultTransform.y=tByte.getFloat32();
+			if (this.tMatrixDataLen===8){
+				tResultTransform.skewX=tByte.getFloat32();
+				tResultTransform.skewY=tByte.getFloat32();
+			}
+			tMatrixArray.push(tResultTransform);
+			tBone=this.mBoneArr[i];
+			tBone.transform=tResultTransform;
+		};
+		var tIkConstraintData;
+		var tIkLen=tByte.getUint16();
+		var tIkBoneLen=0;
+		for (i=0;i < tIkLen;i++){
+			tIkConstraintData=new IkConstraintData();
+			tIkBoneLen=tByte.getUint16();
+			for (j=0;j < tIkBoneLen;j++){
+				tIkConstraintData.boneNames.push(tByte.readUTFString());
+				tIkConstraintData.boneIndexs.push(tByte.getInt16());
+			}
+			tIkConstraintData.name=tByte.readUTFString();
+			tIkConstraintData.targetBoneName=tByte.readUTFString();
+			tIkConstraintData.targetBoneIndex=tByte.getInt16();
+			tIkConstraintData.bendDirection=tByte.getFloat32();
+			tIkConstraintData.mix=tByte.getFloat32();
+			tIkConstraintData.isSpine=isSpine;
+			this.ikArr.push(tIkConstraintData);
+		};
+		var tTfConstraintData;
+		var tTfLen=tByte.getUint16();
+		var tTfBoneLen=0;
+		for (i=0;i < tTfLen;i++){
+			tTfConstraintData=new TfConstraintData();
+			tTfBoneLen=tByte.getUint16();
+			for (j=0;j < tTfBoneLen;j++){
+				tTfConstraintData.boneIndexs.push(tByte.getInt16());
+			}
+			tTfConstraintData.name=tByte.getUTFString();
+			tTfConstraintData.targetIndex=tByte.getInt16();
+			tTfConstraintData.rotateMix=tByte.getFloat32();
+			tTfConstraintData.translateMix=tByte.getFloat32();
+			tTfConstraintData.scaleMix=tByte.getFloat32();
+			tTfConstraintData.shearMix=tByte.getFloat32();
+			tTfConstraintData.offsetRotation=tByte.getFloat32();
+			tTfConstraintData.offsetX=tByte.getFloat32();
+			tTfConstraintData.offsetY=tByte.getFloat32();
+			tTfConstraintData.offsetScaleX=tByte.getFloat32();
+			tTfConstraintData.offsetScaleY=tByte.getFloat32();
+			tTfConstraintData.offsetShearY=tByte.getFloat32();
+			this.tfArr.push(tTfConstraintData);
+		};
+		var tPathConstraintData;
+		var tPathLen=tByte.getUint16();
+		var tPathBoneLen=0;
+		for (i=0;i < tPathLen;i++){
+			tPathConstraintData=new PathConstraintData();
+			tPathConstraintData.name=tByte.readUTFString();
+			tPathBoneLen=tByte.getUint16();
+			for (j=0;j < tPathBoneLen;j++){
+				tPathConstraintData.bones.push(tByte.getInt16());
+			}
+			tPathConstraintData.target=tByte.readUTFString();
+			tPathConstraintData.positionMode=tByte.readUTFString();
+			tPathConstraintData.spacingMode=tByte.readUTFString();
+			tPathConstraintData.rotateMode=tByte.readUTFString();
+			tPathConstraintData.offsetRotation=tByte.getFloat32();
+			tPathConstraintData.position=tByte.getFloat32();
+			tPathConstraintData.spacing=tByte.getFloat32();
+			tPathConstraintData.rotateMix=tByte.getFloat32();
+			tPathConstraintData.translateMix=tByte.getFloat32();
+			this.pathArr.push(tPathConstraintData);
+		};
+		var tDeformSlotLen=0;
+		var tDeformSlotDisplayLen=0;
+		var tDSlotIndex=0;
+		var tDAttachment;
+		var tDeformTimeLen=0;
+		var tDTime=NaN;
+		var tDeformVecticesLen=0;
+		var tDeformAniData;
+		var tDeformSlotData;
+		var tDeformSlotDisplayData;
+		var tDeformVectices;
+		var tDeformAniLen=tByte.getInt16();
+		for (i=0;i < tDeformAniLen;i++){
+			var tDeformSkinLen=tByte.getUint8();
+			var tSkinDic={};
+			this.deformAniArr.push(tSkinDic);
+			for (var f=0;f < tDeformSkinLen;f++){
+				tDeformAniData=new DeformAniData();
+				tDeformAniData.skinName=tByte.getUTFString();
+				tSkinDic[tDeformAniData.skinName]=tDeformAniData;
+				tDeformSlotLen=tByte.getInt16();
+				for (j=0;j < tDeformSlotLen;j++){
+					tDeformSlotData=new DeformSlotData();
+					tDeformAniData.deformSlotDataList.push(tDeformSlotData);
+					tDeformSlotDisplayLen=tByte.getInt16();
+					for (k=0;k < tDeformSlotDisplayLen;k++){
+						tDeformSlotDisplayData=new DeformSlotDisplayData();
+						tDeformSlotData.deformSlotDisplayList.push(tDeformSlotDisplayData);
+						tDeformSlotDisplayData.slotIndex=tDSlotIndex=tByte.getInt16();
+						tDeformSlotDisplayData.attachment=tDAttachment=tByte.getUTFString();
+						tDeformTimeLen=tByte.getInt16();
+						for (l=0;l < tDeformTimeLen;l++){
+							if (tByte.getByte()==1){
+								tDeformSlotDisplayData.tweenKeyList.push(true);
+								}else {
+								tDeformSlotDisplayData.tweenKeyList.push(false);
+							}
+							tDTime=tByte.getFloat32();
+							tDeformSlotDisplayData.timeList.push(tDTime);
+							tDeformVectices=[];
+							tDeformSlotDisplayData.vectices.push(tDeformVectices);
+							tDeformVecticesLen=tByte.getInt16();
+							for (n=0;n < tDeformVecticesLen;n++){
+								tDeformVectices.push(tByte.getFloat32());
+							}
+						}
+					}
+				}
+			}
+		};
+		var tDrawOrderArr;
+		var tDrawOrderAniLen=tByte.getInt16();
+		var tDrawOrderLen=0;
+		var tDrawOrderData;
+		var tDoLen=0;
+		for (i=0;i < tDrawOrderAniLen;i++){
+			tDrawOrderLen=tByte.getInt16();
+			tDrawOrderArr=[];
+			for (j=0;j < tDrawOrderLen;j++){
+				tDrawOrderData=new DrawOrderData();
+				tDrawOrderData.time=tByte.getFloat32();
+				tDoLen=tByte.getInt16();
+				for (k=0;k < tDoLen;k++){
+					tDrawOrderData.drawOrder.push(tByte.getInt16());
+				}
+				tDrawOrderArr.push(tDrawOrderData);
+			}
+			this.drawOrderAniArr.push(tDrawOrderArr);
+		};
+		var tEventArr;
+		var tEventAniLen=tByte.getInt16();
+		var tEventLen=0;
+		var tEventData;
+		for (i=0;i < tEventAniLen;i++){
+			tEventLen=tByte.getInt16();
+			tEventArr=[];
+			for (j=0;j < tEventLen;j++){
+				tEventData=new EventData();
+				tEventData.name=tByte.getUTFString();
+				tEventData.intValue=tByte.getInt32();
+				tEventData.floatValue=tByte.getFloat32();
+				tEventData.stringValue=tByte.getUTFString();
+				tEventData.time=tByte.getFloat32();
+				tEventArr.push(tEventData);
+			}
+			this.eventAniArr.push(tEventArr);
+		};
+		var tAttachmentLen=tByte.getInt16();
+		if (tAttachmentLen > 0){
+			this.attachmentNames=[];
+			for (i=0;i < tAttachmentLen;i++){
+				this.attachmentNames.push(tByte.getUTFString());
+			}
+		};
+		var tBoneSlotLen=tByte.getInt16();
+		var tDBBoneSlot;
+		var tDBBoneSlotArr;
+		for (i=0;i < tBoneSlotLen;i++){
+			tDBBoneSlot=new BoneSlot();
+			tDBBoneSlot.name=tByte.readUTFString();
+			tDBBoneSlot.parent=tByte.readUTFString();
+			tDBBoneSlot.attachmentName=tByte.readUTFString();
+			tDBBoneSlot.srcDisplayIndex=tDBBoneSlot.displayIndex=tByte.getInt16();
+			tDBBoneSlot.templet=this;
+			this.boneSlotDic[tDBBoneSlot.name]=tDBBoneSlot;
+			tDBBoneSlotArr=this.bindBoneBoneSlotDic[tDBBoneSlot.parent];
+			if (tDBBoneSlotArr==null){
+				this.bindBoneBoneSlotDic[tDBBoneSlot.parent]=tDBBoneSlotArr=[];
+			}
+			tDBBoneSlotArr.push(tDBBoneSlot);
+			this.boneSlotArray.push(tDBBoneSlot);
+		};
+		var tNameString=tByte.readUTFString();
+		var tNameArray=tNameString.split("\n");
+		var tNameStartIndex=0;
+		var tSkinDataLen=tByte.getUint8();
+		var tSkinData,tSlotData,tDisplayData;
+		var tSlotDataLen=0,tDisplayDataLen=0;
+		var tUvLen=0,tWeightLen=0,tTriangleLen=0,tVerticeLen=0,tLengthLen=0;
+		for (i=0;i < tSkinDataLen;i++){
+			tSkinData=new SkinData();
+			tSkinData.name=tNameArray[tNameStartIndex++];
+			tSlotDataLen=tByte.getUint8();
+			for (j=0;j < tSlotDataLen;j++){
+				tSlotData=new SlotData();
+				tSlotData.name=tNameArray[tNameStartIndex++];
+				tDBBoneSlot=this.boneSlotDic[tSlotData.name];
+				tDisplayDataLen=tByte.getUint8();
+				for (k=0;k < tDisplayDataLen;k++){
+					tDisplayData=new SkinSlotDisplayData();
+					this.skinSlotDisplayDataArr.push(tDisplayData);
+					tDisplayData.name=tNameArray[tNameStartIndex++];
+					tDisplayData.attachmentName=tNameArray[tNameStartIndex++];
+					tDisplayData.transform=new Transform();
+					tDisplayData.transform.scX=tByte.getFloat32();
+					tDisplayData.transform.skX=tByte.getFloat32();
+					tDisplayData.transform.skY=tByte.getFloat32();
+					tDisplayData.transform.scY=tByte.getFloat32();
+					tDisplayData.transform.x=tByte.getFloat32();
+					tDisplayData.transform.y=tByte.getFloat32();
+					tSlotData.displayArr.push(tDisplayData);
+					tDisplayData.width=tByte.getFloat32();
+					tDisplayData.height=tByte.getFloat32();
+					tDisplayData.type=tByte.getUint8();
+					tDisplayData.verLen=tByte.getUint16();
+					tBoneLen=tByte.getUint16();
+					if (tBoneLen > 0){
+						tDisplayData.bones=[];
+						for (l=0;l < tBoneLen;l++){
+							var tBoneId=tByte.getUint16();
+							tDisplayData.bones.push(tBoneId);
+						}
+					}
+					tUvLen=tByte.getUint16();
+					if (tUvLen > 0){
+						tDisplayData.uvs=[];
+						for (l=0;l < tUvLen;l++){
+							tDisplayData.uvs.push(tByte.getFloat32());
+						}
+					}
+					tWeightLen=tByte.getUint16();
+					if (tWeightLen > 0){
+						tDisplayData.weights=[];
+						for (l=0;l < tWeightLen;l++){
+							tDisplayData.weights.push(tByte.getFloat32());
+						}
+					}
+					tTriangleLen=tByte.getUint16();
+					if (tTriangleLen > 0){
+						tDisplayData.triangles=[];
+						for (l=0;l < tTriangleLen;l++){
+							tDisplayData.triangles.push(tByte.getUint16());
+						}
+					}
+					tVerticeLen=tByte.getUint16();
+					if (tVerticeLen > 0){
+						tDisplayData.vertices=[];
+						for (l=0;l < tVerticeLen;l++){
+							tDisplayData.vertices.push(tByte.getFloat32());
+						}
+					}
+					tLengthLen=tByte.getUint16();
+					if (tLengthLen > 0){
+						tDisplayData.lengths=[];
+						for (l=0;l < tLengthLen;l++){
+							tDisplayData.lengths.push(tByte.getFloat32());
+						}
+					}
+				}
+				tSkinData.slotArr.push(tSlotData);
+			}
+			this.skinDic[tSkinData.name]=tSkinData;
+			this.skinDataArray.push(tSkinData);
+		};
+		var tReverse=tByte.getUint8();
+		if (tReverse==1){
+			this.yReverseMatrix=new Matrix(1,0,0,-1,0,0);
+			if (tRootBone){
+				tRootBone.setTempMatrix(this.yReverseMatrix);
+			}
+			}else {
+			if (tRootBone){
+				tRootBone.setTempMatrix(new Matrix());
+			}
+		}
+		this.showSkinByIndex(this.boneSlotDic,0);
+		this.isParserComplete=true;
+		this.event(/*laya.events.Event.COMPLETE*/"complete",this);
+	}
+
+	/**
+	*得到指定的纹理
+	*@param name 纹理的名字
+	*@return
+	*/
+	__proto.getTexture=function(name){
+		var tTexture=this.subTextureDic[name];
+		if (!tTexture){
+			tTexture=this.subTextureDic[name.substr(0,name.length-1)];
+		}
+		if (tTexture==null){
+			return this._mainTexture;
+		}
+		return tTexture;
+	}
+
+	/**
+	*@private
+	*显示指定的皮肤
+	*@param boneSlotDic 插糟字典的引用
+	*@param skinIndex 皮肤的索引
+	*@param freshDisplayIndex 是否重置插槽纹理
+	*/
+	__proto.showSkinByIndex=function(boneSlotDic,skinIndex,freshDisplayIndex){
+		(freshDisplayIndex===void 0)&& (freshDisplayIndex=true);
+		if (skinIndex < 0 && skinIndex >=this.skinDataArray.length)return false;
+		var i=0,n=0;
+		var tBoneSlot;
+		var tSlotData;
+		var tSkinData=this.skinDataArray[skinIndex];
+		if (tSkinData){
+			for (i=0,n=tSkinData.slotArr.length;i < n;i++){
+				tSlotData=tSkinData.slotArr[i];
+				if (tSlotData){
+					tBoneSlot=boneSlotDic[tSlotData.name];
+					if (tBoneSlot){
+						tBoneSlot.showSlotData(tSlotData,freshDisplayIndex);
+						if (freshDisplayIndex&&tBoneSlot.attachmentName !="undefined" && tBoneSlot.attachmentName !="null"){
+							tBoneSlot.showDisplayByName(tBoneSlot.attachmentName);
+							}else {
+							tBoneSlot.showDisplayByIndex(tBoneSlot.displayIndex);
+						}
+					}
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	*通过皮肤名字得到皮肤索引
+	*@param skinName 皮肤名称
+	*@return
+	*/
+	__proto.getSkinIndexByName=function(skinName){
+		var tSkinData;
+		for (var i=0,n=this.skinDataArray.length;i < n;i++){
+			tSkinData=this.skinDataArray[i];
+			if (tSkinData.name==skinName){
+				return i;
+			}
+		}
+		return-1;
+	}
+
+	/**
+	*@private
+	*得到缓冲数据
+	*@param aniIndex 动画索引
+	*@param frameIndex 帧索引
+	*@return
+	*/
+	__proto.getGrahicsDataWithCache=function(aniIndex,frameIndex){
+		return this._graphicsCache[aniIndex][frameIndex];
+	}
+
+	/**
+	*@private
+	*保存缓冲grahpics
+	*@param aniIndex 动画索引
+	*@param frameIndex 帧索引
+	*@param graphics 要保存的数据
+	*/
+	__proto.setGrahicsDataWithCache=function(aniIndex,frameIndex,graphics){
+		this._graphicsCache[aniIndex][frameIndex]=graphics;
+	}
+
+	/**
+	*释放纹理
+	*/
+	__proto.destroy=function(){
+		this._isDestroyed=true;
+		var tTexture;
+		/*for each*/for(var $each_tTexture in this.subTextureDic){
+			tTexture=this.subTextureDic[$each_tTexture];
+			if(tTexture)
+				tTexture.destroy();
+		}
+		var $each_tTexture;
+		/*for each*/for($each_tTexture in this._textureDic){
+			tTexture=this._textureDic[$each_tTexture];
+			if(tTexture)
+				tTexture.destroy();
+		};
+		var tSkinSlotDisplayData;
+		for (var i=0,n=this.skinSlotDisplayDataArr.length;i < n;i++){
+			tSkinSlotDisplayData=this.skinSlotDisplayDataArr[i];
+			tSkinSlotDisplayData.destory();
+		}
+		this.skinSlotDisplayDataArr.length=0;
+		if (this.url){
+			delete Templet.TEMPLET_DICTIONARY[this.url];
+		}
+		laya.resource.Resource.prototype.destroy.call(this);
+	}
+
+	/**
+	*通过索引得动画名称
+	*@param index
+	*@return
+	*/
+	__proto.getAniNameByIndex=function(index){
+		var tAni=this.getAnimation(index);
+		if (tAni)return tAni.name;
+		return null;
+	}
+
+	__getset(0,__proto,'rate',function(){
+		return this._rate;
+		},function(v){
+		this._rate=v;
+	});
+
+	Templet.LAYA_ANIMATION_VISION="LAYAANIMATION:1.6.0";
+	Templet.TEMPLET_DICTIONARY=null;
+	return Templet;
+})(AnimationTemplet)
+
+
+
+})(window,document,Laya);
+
+if (typeof define === 'function' && define.amd){
+	define('laya.core', ['require', "exports"], function(require, exports) {
+        'use strict';
+        Object.defineProperty(exports, '__esModule', { value: true });
+        for (var i in Laya) {
+			var o = Laya[i];
+            o && o.__isclass && (exports[i] = o);
+        }
+    });
+}

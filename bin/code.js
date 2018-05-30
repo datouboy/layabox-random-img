@@ -53425,6 +53425,7 @@ if (typeof define === 'function' && define.amd){
     var start_menu;//按钮
     var show_img;//图片切换Sprite
     var switch_OnOff = true;//是否切换
+    var imgI;//当前选中图片
 
     function startPage() {
         var _this = this;
@@ -53507,17 +53508,21 @@ if (typeof define === 'function' && define.amd){
         start_menu.on(Event.CLICK, this, gameMenuClick);
 
         //图片切换按钮点击
-        var changeNum = 3;//3次机会
+        var changeNum = 4;//3次机会
         function gameMenuClick(){
             start_menu.graphics.clear();
             if(switch_OnOff){
                 switch_OnOff = false;
-                start_menu.graphics.loadImage(ossUrl+"res/images/menu_2_"+changeNum+".png");
+                start_menu.graphics.loadImage(ossUrl+"res/images/menu_2_"+(changeNum-1)+".png");
                 changeNum--;
+
+                $('#imgPrint').html('<img src="./res/images/pic/z_'+imgI+'.jpg" />');
+                $('#imgPrint').show();
             }else{
                 if(changeNum > 0){
                     switch_OnOff = true;
                     start_menu.graphics.loadImage(ossUrl+"res/images/menu.png");
+                    $('#imgPrint').hide();
                 }else{
                     switch_OnOff = false;
                     start_menu.graphics.loadImage(ossUrl+"res/images/menu_2_0.png");
@@ -53534,7 +53539,8 @@ if (typeof define === 'function' && define.amd){
     _proto.gameRun = function (){
         var _this = this;
         //切换用的图片
-        var picArray = ['z_1.jpg','z_2.jpg','z_3.jpg'];
+        var picArray = ['z_1.jpg','z_2.jpg','z_3.jpg','z_4.jpg','z_5.jpg','z_6.jpg','z_7.jpg','z_8.jpg','z_9.jpg','z_10.jpg','z_11.jpg','z_12.jpg','z_13.jpg','z_14.jpg','z_15.jpg','z_16.jpg','z_17.jpg','z_18.jpg','z_19.jpg','z_20.jpg','z_21.jpg','z_22.jpg','z_23.jpg','z_24.jpg','z_25.jpg','z_26.jpg','z_27.jpg','z_28.jpg','z_29.jpg'];
+
         //开始主时间循环
         Laya.timer.loop(1, _this, gameRunPlay);
         //主时间循环
@@ -53544,7 +53550,7 @@ if (typeof define === 'function' && define.amd){
             if(!switch_OnOff){
                 return false;
             }
-            if(num % 5 == 0){
+            if(num % 3 == 0){
                 //console.log(num);
                 show_img.graphics.clear();
                 show_img.graphics.loadImage(ossUrl+"res/images/"+picArray[i]);
@@ -53552,6 +53558,7 @@ if (typeof define === 'function' && define.amd){
                 if(i >= picArray.length){
                     i = 0;
                 }
+                imgI = i;
             }
             num++;
             if(num >= 100000){
@@ -53590,7 +53597,7 @@ if (typeof define === 'function' && define.amd){
 		Laya.stage.bgColor   = "#ffe241";
 
         //加载静态文件资源
-        var imgArray = ['bg.gif','title.png','hua_1.png','hua_2.png','hua_3.png','hua_4.png','hua_5.png','hua_6.png','qrcode.png','kuang.png','menu.png','menu_2_3.png','menu_2_2.png','menu_2_1.png','menu_2_0.png','z_1.jpg','z_2.jpg','z_3.jpg'];
+        var imgArray = ['bg.gif','title.png','hua_1.png','hua_2.png','hua_3.png','hua_4.png','hua_5.png','hua_6.png','qrcode.png','kuang.png','menu.png','menu_2_3.png','menu_2_2.png','menu_2_1.png','menu_2_0.png','z_1.jpg','z_2.jpg','z_3.jpg','z_4.jpg','z_5.jpg','z_6.jpg','z_7.jpg','z_8.jpg','z_9.jpg','z_10.jpg','z_11.jpg','z_12.jpg','z_13.jpg','z_14.jpg','z_15.jpg','z_16.jpg','z_17.jpg','z_18.jpg','z_19.jpg','z_20.jpg','z_21.jpg','z_22.jpg','z_23.jpg','z_24.jpg','z_25.jpg','z_26.jpg','z_27.jpg','z_28.jpg','z_29.jpg'];
         var atlasArray = [];//['game_hua_l1.atlas'];
         var soundsArray = [];
         var assets = [];

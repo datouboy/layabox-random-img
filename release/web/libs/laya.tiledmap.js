@@ -1,1 +1,2349 @@
-!function(t,i,e){e.un,e.uns,e.static;var r=e.class,h=e.getset,s=(e.__newvec,laya.utils.Browser),a=laya.resource.HTMLCanvas,o=(laya.utils.Handler,laya.net.Loader),n=laya.maths.Point,l=laya.maths.Rectangle,_=laya.renders.Render,p=laya.renders.RenderContext,c=laya.display.Sprite,m=laya.resource.Texture,d=function(){function t(){this._jsonData=null,this._tileTexSetArr=[],this._texArray=[],this._x=0,this._y=0,this._width=0,this._height=0,this._mapW=0,this._mapH=0,this._mapTileW=0,this._mapTileH=0,this._mapSprite=null,this._layerArray=[],this._renderLayerArray=[],this._gridArray=[],this._showGridKey=!1,this._totalGridNum=0,this._gridW=0,this._gridH=0,this._gridWidth=450,this._gridHeight=450,this._jsonLoader=null,this._loader=null,this._tileSetArray=[],this._currTileSet=null,this._completeHandler=null,this._index=0,this._animationDic={},this._properties=null,this._tileProperties={},this._tileProperties2={},this._orientation="orthogonal",this._renderOrder="right-down",this._colorArray=["FF","00","33","66"],this._scale=1,this._pivotScaleX=.5,this._pivotScaleY=.5,this._centerX=0,this._centerY=0,this._viewPortX=0,this._viewPortY=0,this._viewPortWidth=0,this._viewPortHeight=0,this._enableLinear=!0,this._resPath=null,this._pathArray=null,this._limitRange=!1,this._fastDirty=!0,this.autoCache=!0,this.autoCacheType="normal",this.enableMergeLayer=!1,this.removeCoveredTile=!1,this.showGridTextureCount=!1,this.antiCrack=!0,this.cacheAllAfterInit=!1,this._texutreStartDic={},this._rect=new l,this._paddingRect=new l,this._mapRect=new i,this._mapLogicRect=new i,this._mapLastRect=new i,this._mapSprite=new c}var i,s,n;r(t,"laya.map.TiledMap");var d=t.prototype;return d.createMap=function(t,i,e,r,h,s,a){void 0===s&&(s=!0),void 0===a&&(a=!1),this._enableLinear=s,this._limitRange=a,this._rect.x=i.x,this._rect.y=i.y,this._rect.width=i.width,this._rect.height=i.height,this._viewPortWidth=i.width/this._scale,this._viewPortHeight=i.height/this._scale,this._completeHandler=e,r?this._paddingRect.copyFrom(r):this._paddingRect.setTo(0,0,0,0),h&&(this._gridWidth=h.x,this._gridHeight=h.y);var n=t.lastIndexOf("/");n>-1?(this._resPath=t.substr(0,n),this._pathArray=this._resPath.split("/")):(this._resPath="",this._pathArray=[]),this._jsonLoader=new o,this._jsonLoader.once("complete",this,this.onJsonComplete),this._jsonLoader.load(t,"json",!1)},d.onJsonComplete=function(t){var i=this._jsonData=t;this._properties=i.properties,this._orientation=i.orientation,this._renderOrder=i.renderorder,this._mapW=i.width,this._mapH=i.height,this._mapTileW=i.tilewidth,this._mapTileH=i.tileheight,this._width=this._mapTileW*this._mapW,this._height=this._mapTileH*this._mapH,"staggered"==this._orientation&&(this._height=(.5+.5*this._mapH)*this._mapTileH),this._mapLastRect.top=this._mapLastRect.bottom=this._mapLastRect.left=this._mapLastRect.right=-1;var e,r,h=i.tilesets,a=0;for(a=0;a<h.length;a++)if(e=h[a],(r=new n).init(e),!r.properties||!r.properties.ignore){this._tileProperties[a]=r.tileproperties,this.addTileProperties(r.tileproperties),this._tileSetArray.push(r);var l=e.tiles;if(l)for(var _ in l){var p=l[_].animation;if(p){var c=new s;this._animationDic[_]=c,c.image=e.image;for(var m=0;m<p.length;m++){var d=p[m];c.mAniIdArray.push(d.tileid),c.mDurationTimeArray.push(d.duration)}}}}if(this._tileTexSetArr.push(null),this._tileSetArray.length>0){r=this._currTileSet=this._tileSetArray.shift(),this._loader=new o,this._loader.once("complete",this,this.onTextureComplete);var u=this.mergePath(this._resPath,r.image);this._loader.load(u,"image",!1)}},d.mergePath=function(t,i){var e="",r=i.split("/"),h=0,s=0;for(s=r.length-1;s>=0;s--)".."==r[s]&&h++;if(0==h)return e=this._pathArray.length>0?t+"/"+i:i;var a=this._pathArray.length-h;for(a<0&&console.log("[error]path does not exist",this._pathArray,r,t,i),s=0;s<a;s++)0==s?e+=this._pathArray[s]:e=e+"/"+this._pathArray[s];for(s=h;s<r.length;s++)e=e+"/"+r[s];return e},d.onTextureComplete=function(t){this._jsonData;var i=t;_.isWebGL&&!this._enableLinear&&(i.bitmap.minFifter=9728,i.bitmap.magFifter=9728,i.bitmap.enableMerageInAtlas=!1),this._texArray.push(i);var e=this._currTileSet,r=e.tilewidth,h=e.tileheight,s=e.imagewidth,a=e.imageheight,o=(e.firstgid,Math.floor((s-e.margin-r)/(r+e.spacing))+1),n=Math.floor((a-e.margin-h)/(h+e.spacing))+1,l=null;this._texutreStartDic[e.image]=this._tileTexSetArr.length;for(var p=0;p<n;p++)for(var c=0;c<o;c++)(l=new u).offX=e.titleoffsetX,l.offY=e.titleoffsetY-(h-this._mapTileH),l.texture=m.createFromTexture(i,e.margin+(r+e.spacing)*c,e.margin+(h+e.spacing)*p,r,h),this.antiCrack&&this.adptTexture(l.texture),this._tileTexSetArr.push(l),l.gid=this._tileTexSetArr.length;if(this._tileSetArray.length>0){e=this._currTileSet=this._tileSetArray.shift(),this._loader.once("complete",this,this.onTextureComplete);var d=this.mergePath(this._resPath,e.image);this._loader.load(d,"image",!1)}else this._currTileSet=null,this.initMap()},d.adptTexture=function(t){if(t){var i=t.uv[0],e=t.uv[2],r=t.uv[1],h=t.uv[7],s=1/t.bitmap.width,a=1/t.bitmap.height;t.uv[0]=t.uv[6]=i+s,t.uv[2]=t.uv[4]=e-s,t.uv[1]=t.uv[3]=r+a,t.uv[5]=t.uv[7]=h-a}},d.initMap=function(){var t=0,i=0;for(var r in this._animationDic){var h=this._animationDic[r],s=0;s=this._texutreStartDic[h.image];var a=this.getTexture(parseInt(r)+s);if(h.mAniIdArray.length>0){for(a.textureArray=[],a.durationTimeArray=h.mDurationTimeArray,a.isAnimation=!0,a.animationTotalTime=0,t=0,i=a.durationTimeArray.length;t<i;t++)a.animationTotalTime+=a.durationTimeArray[t];for(t=0,i=h.mAniIdArray.length;t<i;t++){var o=this.getTexture(h.mAniIdArray[t]+s);a.textureArray.push(o)}}}for(this._gridWidth=Math.floor(this._gridWidth/this._mapTileW)*this._mapTileW,this._gridHeight=Math.floor(this._gridHeight/this._mapTileH)*this._mapTileH,this._gridWidth<this._mapTileW&&(this._gridWidth=this._mapTileW),this._gridHeight<this._mapTileH&&(this._gridHeight=this._mapTileH),this._gridW=Math.ceil(this._width/this._gridWidth),this._gridH=Math.ceil(this._height/this._gridHeight),this._totalGridNum=this._gridW*this._gridH,t=0;t<this._gridH;t++){var n=[];this._gridArray.push(n);for(var l=0;l<this._gridW;l++)n.push(null)}for(var _,p,c,m=this._jsonData.layers,d=!0,u=0;u<m.length;u++){var g=m[u];if(1==g.visible){var y=new f;y.init(g,this),this.enableMergeLayer?(_=y.getLayerProperties("layer"),(d=d||!c||_!=p)?(d=!1,y.tarLayer=y,c=y,this._mapSprite.addChild(y),this._renderLayerArray.push(y)):y.tarLayer=c,p=_):(this._mapSprite.addChild(y),this._renderLayerArray.push(y)),this._layerArray.push(y)}}this.removeCoveredTile&&this.adptTiledMapData(),this.cacheAllAfterInit&&this.cacheAllGrid(),this.moveViewPort(this._rect.x,this._rect.y),e.stage.addChild(this.mapSprite()),null!=this._completeHandler&&this._completeHandler.run()},d.addTileProperties=function(t){var i;for(i in t)this._tileProperties2[i]=t[i]},d.getTileUserData=function(t,i,e){return this._tileProperties2&&this._tileProperties2[t]&&i in this._tileProperties2[t]?this._tileProperties2[t][i]:e},d.adptTiledMapData=function(){var t,i=0,e={};for(i=this._layerArray.length-1;i>=0;i--)(t=this._layerArray[i]._mapData)&&(this.removeCoverd(t,e),this.collectCovers(t,e,i))},d.removeCoverd=function(t,i){var e=0,r=0;for(r=t.length,e=0;e<r;e++)i[e]&&(t[e]=0)},d.collectCovers=function(t,i,e){var r=0,h=0;h=t.length;var s=0;for(r=0;r<h;r++)(s=t[r])>0&&this.getTileUserData(s-1,"type",0)>0&&(i[r]=s)},d.getTexture=function(t){return t<this._tileTexSetArr.length?this._tileTexSetArr[t]:null},d.getMapProperties=function(t){return this._properties?this._properties[t]:null},d.getTileProperties=function(t,i,e){return this._tileProperties[t]&&this._tileProperties[t][i]?this._tileProperties[t][i][e]:null},d.getSprite=function(t,i,e){if(0<this._tileTexSetArr.length){var r=new g;r.initData(this,!0),r.size(i,e);var h=this._tileTexSetArr[t];if(null!=h&&null!=h.texture){if(h.isAnimation){var s=new y;this._index++,s.setTileTextureSet(this._index.toString(),h),r.addAniSprite(s),r.addChild(s)}else r.graphics.drawTexture(h.texture,0,0,i,e);r.drawImageNum++}return r}return null},d.setViewPortPivotByScale=function(t,i){this._pivotScaleX=t,this._pivotScaleY=i,this._fastDirty=!0},d.moveViewPort=function(t,i){if(this._x=-t,this._y=-i,this._fastDirty)this._rect.x=t,this._rect.y=i,this.updateViewPort();else{var e=NaN,r=NaN;e=t-this._rect.x,r=i-this._rect.y,this._rect.x=t,this._rect.y=i,this.updateViewPortFast(e,r)}},d.changeViewPort=function(t,i,e,r){t==this._rect.x&&i==this._rect.y&&e==this._rect.width&&r==this._rect.height||(e!=this._rect.width||r!=this._rect.height?(this._fastDirty=!0,this._x=-t,this._y=-i,this._rect.x=t,this._rect.y=i,this._rect.width=e,this._rect.height=r,this._viewPortWidth=e/this._scale,this._viewPortHeight=r/this._scale,this.updateViewPort()):this.moveViewPort(t,i))},d.changeViewPortBySize=function(t,i,e){return null==e&&(e=new l),this._centerX=this._rect.x+this._rect.width*this._pivotScaleX,this._centerY=this._rect.y+this._rect.height*this._pivotScaleY,e.x=this._centerX-t*this._pivotScaleX,e.y=this._centerY-i*this._pivotScaleY,e.width=t,e.height=i,this.changeViewPort(e.x,e.y,e.width,e.height),e},d.updateViewPortFast=function(t,i){this._centerX+=t,this._centerY+=i,this._viewPortX+=t,this._viewPortY+=i;var e=!1,r=i/this._gridHeight,h=t/this._gridWidth;this._mapLogicRect.top+=r,this._mapLogicRect.bottom+=r,this._mapLogicRect.left+=h,this._mapLogicRect.right+=h,this._mapRect.top=0|this._mapLogicRect.top,this._mapRect.bottom=0|this._mapLogicRect.bottom,this._mapRect.left=0|this._mapLogicRect.left,this._mapRect.right=0|this._mapLogicRect.right,this._mapRect.top==this._mapLastRect.top&&this._mapRect.bottom==this._mapLastRect.bottom&&this._mapRect.left==this._mapLastRect.left&&this._mapRect.right==this._mapLastRect.right||(this.clipViewPort(),this._mapLastRect.top=this._mapRect.top,this._mapLastRect.bottom=this._mapRect.bottom,this._mapLastRect.left=this._mapRect.left,this._mapLastRect.right=this._mapRect.right,e=!0),(e=e||0!=t||0!=i)&&this.updateMapLayersPos()},d.updateMapLayersPos=function(){for(var t,i=this._renderLayerArray.length,e=0;e<i;e++)(t=this._renderLayerArray[e])._gridSpriteArray.length>0&&(t.updateAloneObject(),t.pos(-this._viewPortX,-this._viewPortY))},d.updateViewPort=function(){this._fastDirty=!1;var t=this._rect.width*this._pivotScaleX,i=this._rect.height*this._pivotScaleY;this._centerX=this._rect.x+t,this._centerY=this._rect.y+i;var e=!1,r=this._viewPortX;if(this._viewPortX=this._centerX-t/this._scale,r!=this._viewPortX?e=!0:r=this._viewPortY,this._viewPortY=this._centerY-i/this._scale,e||r==this._viewPortY||(e=!0),this._limitRange){this._viewPortX+this._viewPortWidth>this._width&&(this._viewPortX=this._width-this._viewPortWidth);this._viewPortY+this._viewPortHeight>this._height&&(this._viewPortY=this._height-this._viewPortHeight),this._viewPortX<0&&(this._viewPortX=0),this._viewPortY<0&&(this._viewPortY=0)}var h=this._paddingRect;this._mapLogicRect.top=(this._viewPortY-h.y)/this._gridHeight,this._mapLogicRect.bottom=(this._viewPortY+this._viewPortHeight+h.height+h.y)/this._gridHeight,this._mapLogicRect.left=(this._viewPortX-h.x)/this._gridWidth,this._mapLogicRect.right=(this._viewPortX+this._viewPortWidth+h.width+h.x)/this._gridWidth,this._mapRect.top=0|this._mapLogicRect.top,this._mapRect.bottom=0|this._mapLogicRect.bottom,this._mapRect.left=0|this._mapLogicRect.left,this._mapRect.right=0|this._mapLogicRect.right,this._mapRect.top==this._mapLastRect.top&&this._mapRect.bottom==this._mapLastRect.bottom&&this._mapRect.left==this._mapLastRect.left&&this._mapRect.right==this._mapLastRect.right||(this.clipViewPort(),this._mapLastRect.top=this._mapRect.top,this._mapLastRect.bottom=this._mapRect.bottom,this._mapLastRect.left=this._mapRect.left,this._mapLastRect.right=this._mapRect.right,e=!0),e&&this.updateMapLayersPos()},d.clipViewPort=function(){var t=0,i=0,e=0,r=0;if(this._mapRect.left>this._mapLastRect.left){if((t=this._mapRect.left-this._mapLastRect.left)>0)for(r=this._mapLastRect.left;r<this._mapLastRect.left+t;r++)for(e=this._mapLastRect.top;e<=this._mapLastRect.bottom;e++)this.hideGrid(r,e)}else if((i=Math.min(this._mapLastRect.left,this._mapRect.right+1)-this._mapRect.left)>0)for(r=this._mapRect.left;r<this._mapRect.left+i;r++)for(e=this._mapRect.top;e<=this._mapRect.bottom;e++)this.showGrid(r,e);if(this._mapRect.right>this._mapLastRect.right){if((i=this._mapRect.right-this._mapLastRect.right)>0)for(r=Math.max(this._mapLastRect.right+1,this._mapRect.left);r<=this._mapLastRect.right+i;r++)for(e=this._mapRect.top;e<=this._mapRect.bottom;e++)this.showGrid(r,e)}else if((t=this._mapLastRect.right-this._mapRect.right)>0)for(r=this._mapRect.right+1;r<=this._mapRect.right+t;r++)for(e=this._mapLastRect.top;e<=this._mapLastRect.bottom;e++)this.hideGrid(r,e);if(this._mapRect.top>this._mapLastRect.top){if((t=this._mapRect.top-this._mapLastRect.top)>0)for(e=this._mapLastRect.top;e<this._mapLastRect.top+t;e++)for(r=this._mapLastRect.left;r<=this._mapLastRect.right;r++)this.hideGrid(r,e)}else if((i=Math.min(this._mapLastRect.top,this._mapRect.bottom+1)-this._mapRect.top)>0)for(e=this._mapRect.top;e<this._mapRect.top+i;e++)for(r=this._mapRect.left;r<=this._mapRect.right;r++)this.showGrid(r,e);if(this._mapRect.bottom>this._mapLastRect.bottom){if((i=this._mapRect.bottom-this._mapLastRect.bottom)>0)for(e=Math.max(this._mapLastRect.bottom+1,this._mapRect.top);e<=this._mapLastRect.bottom+i;e++)for(r=this._mapRect.left;r<=this._mapRect.right;r++)this.showGrid(r,e)}else if((t=this._mapLastRect.bottom-this._mapRect.bottom)>0)for(e=this._mapRect.bottom+1;e<=this._mapRect.bottom+t;e++)for(r=this._mapLastRect.left;r<=this._mapLastRect.right;r++)this.hideGrid(r,e)},d.showGrid=function(t,i){if(!(t<0||t>=this._gridW||i<0||i>=this._gridH)){var e,r=0,h=this._gridArray[i][t];if(null==h)h=this.getGridArray(t,i);else for(r=0;r<h.length&&r<this._layerArray.length;r++){this._layerArray[r]&&h[r]&&0==(e=h[r]).visible&&e.drawImageNum>0&&e.show()}}},d.cacheAllGrid=function(){var t,i=0,e=0;for(i=0;i<this._gridW;i++)for(e=0;e<this._gridH;e++)t=this.getGridArray(i,e),this.cacheGridsArray(t)},d.cacheGridsArray=function(i){var e;t._tempContext||(t._tempContext=new p(1,1,a.create("AUTO"))),(e=t._tempContext.canvas).context.asBitmap=!1;var r=0,h=0;h=i.length;var s;for(r=0;r<h;r++)s=i[r],e.clear(),e.size(1,1),s.render(t._tempContext,0,0),s.hide();e.clear(),e.size(1,1)},d.getGridArray=function(t,i){var e,r=0,h=0,s=this._gridArray[i][t];if(null==s){s=this._gridArray[i][t]=[];var a=0,o=0,n=0,l=0,_=this._gridWidth,p=this._gridHeight;switch(this.orientation){case"isometric":a=Math.floor(t*_),o=Math.floor(t*_+_),n=Math.floor(i*p),l=Math.floor(i*p+p);var c=0,m=0,d=0,u=0;break;case"staggered":a=Math.floor(t*_/this._mapTileW),o=Math.floor((t*_+_)/this._mapTileW),n=Math.floor(i*p/(this._mapTileH/2)),l=Math.floor((i*p+p)/(this._mapTileH/2));break;case"orthogonal":a=Math.floor(t*_/this._mapTileW),o=Math.floor((t*_+_)/this._mapTileW),n=Math.floor(i*p/this._mapTileH),l=Math.floor((i*p+p)/this._mapTileH);break;case"hexagonal":var g=2*this._mapTileH/3;a=Math.floor(t*_/this._mapTileW),o=Math.ceil((t*_+_)/this._mapTileW),n=Math.floor(i*p/g),l=Math.ceil((i*p+p)/g)}for(var f,y,v=null,w=0;w<this._layerArray.length;w++){v=this._layerArray[w],this.enableMergeLayer?(v.tarLayer!=y&&(f=null,y=v.tarLayer),f||(f=y.getDrawSprite(t,i),s.push(f)),e=f):(e=v.getDrawSprite(t,i),s.push(e));var A;switch(this._showGridKey&&(A="#",A+=this._colorArray[Math.floor(Math.random()*this._colorArray.length)],A+=this._colorArray[Math.floor(Math.random()*this._colorArray.length)],A+=this._colorArray[Math.floor(Math.random()*this._colorArray.length)]),this.orientation){case"isometric":var T=this.tileHeight/2,x=this.tileWidth/2,R=this._width/2;d=Math.floor(n/T),u=Math.floor(l/T),c=this._mapW+Math.floor((a-R)/x),m=this._mapW+Math.floor((o-R)/x);this._mapW;var P=2*this._mapH;for(d<0&&(d=0),d>=P&&(d=P-1),u<0&&(l=0),u>=P&&(u=P-1),e.zOrder=this._totalGridNum*w+i*this._gridW+t,r=d;r<u;r++)for(h=0;h<=r;h++){var H=r-h,L=h,S=H-L+this._mapW;S>c&&S<=m&&v.drawTileTexture(e,H,L)&&e.drawImageNum++}break;case"staggered":for(e.zOrder=w*this._totalGridNum+i*this._gridW+t,r=n;r<l;r++)for(h=a;h<o;h++)v.drawTileTexture(e,h,r)&&e.drawImageNum++;break;case"orthogonal":case"hexagonal":switch(this._renderOrder){case"right-down":for(e.zOrder=w*this._totalGridNum+i*this._gridW+t,r=n;r<l;r++)for(h=a;h<o;h++)v.drawTileTexture(e,h,r)&&e.drawImageNum++;break;case"right-up":for(e.zOrder=w*this._totalGridNum+(this._gridH-1-i)*this._gridW+t,r=l-1;r>=n;r--)for(h=a;h<o;h++)v.drawTileTexture(e,h,r)&&e.drawImageNum++;break;case"left-down":for(e.zOrder=w*this._totalGridNum+i*this._gridW+(this._gridW-1-t),r=n;r<l;r++)for(h=o-1;h>=a;h--)v.drawTileTexture(e,h,r)&&e.drawImageNum++;break;case"left-up":for(e.zOrder=w*this._totalGridNum+(this._gridH-1-i)*this._gridW+(this._gridW-1-t),r=l-1;r>=n;r--)for(h=o-1;h>=a;h--)v.drawTileTexture(e,h,r)&&e.drawImageNum++}}e.isHaveAnimation||(e.autoSize=!0,this.autoCache&&(e.cacheAs=this.autoCacheType),e.autoSize=!1),this.enableMergeLayer?f&&f.drawImageNum>0&&y&&(y.addChild(f),f.visible=!1,f.show()):(e.drawImageNum>0&&(v.addChild(e),e.visible=!1,e.show()),this._showGridKey&&e.graphics.drawRect(0,0,_,p,null,A))}this.enableMergeLayer&&this.showGridTextureCount&&f&&f.graphics.fillText(f.drawImageNum+"",20,20,null,"#ff0000","left")}return s},d.hideGrid=function(t,i){if(!(t<0||t>=this._gridW||i<0||i>=this._gridH)){var e=this._gridArray[i][t];if(e)for(var r,h=0;h<e.length;h++)(r=e[h]).drawImageNum>0&&null!=r&&r.hide()}},d.getLayerObject=function(t,i){for(var e=null,r=0;r<this._layerArray.length&&(e=this._layerArray[r]).layerName!=t;r++);return e?e.getObjectByName(i):null},d.destroy=function(){this._orientation="orthogonal",this._jsonData=null;var t=0;this._gridArray=[];var i;for(t=0;t<this._tileTexSetArr.length;t++)(i=this._tileTexSetArr[t])&&i.clearAll();this._tileTexSetArr=[];for(t=0;t<this._texArray.length;t++)this._texArray[t].destroy();this._texArray=[],this._width=0,this._height=0,this._mapW=0,this._mapH=0,this._mapTileW=0,this._mapTileH=0,this._rect.setTo(0,0,0,0);for(t=0;t<this._layerArray.length;t++)this._layerArray[t].clearAll();this._layerArray=[],this._renderLayerArray=[],this._mapSprite&&(this._mapSprite.destroy(),this._mapSprite=null),this._jsonLoader=null,this._loader=null;var e=this._animationDic;for(var r in e)delete e[r];this._properties=null,e=this._tileProperties;for(r in e)delete e[r];this._currTileSet=null,this._completeHandler=null,this._mapRect.clearAll(),this._mapLastRect.clearAll(),this._tileSetArray=[],this._gridWidth=450,this._gridHeight=450,this._gridW=0,this._gridH=0,this._x=0,this._y=0,this._index=0,this._enableLinear=!0,this._resPath=null,this._pathArray=null},d.mapSprite=function(){return this._mapSprite},d.getLayerByName=function(t){for(var i,e=0;e<this._layerArray.length;e++)if(i=this._layerArray[e],t==i.layerName)return i;return null},d.getLayerByIndex=function(t){return t<this._layerArray.length?this._layerArray[t]:null},h(0,d,"orientation",function(){return this._orientation}),h(0,d,"viewPortX",function(){return-this._viewPortX}),h(0,d,"scale",function(){return this._scale},function(t){t<=0||(this._scale=t,this._viewPortWidth=this._rect.width/t,this._viewPortHeight=this._rect.height/t,this._mapSprite.scale(this._scale,this._scale),this.updateViewPort())}),h(0,d,"tileWidth",function(){return this._mapTileW}),h(0,d,"viewPortY",function(){return-this._viewPortY}),h(0,d,"tileHeight",function(){return this._mapTileH}),h(0,d,"width",function(){return this._width}),h(0,d,"numRowsTile",function(){return this._mapH}),h(0,d,"numColumnsTile",function(){return this._mapW}),h(0,d,"height",function(){return this._height}),h(0,d,"viewPortWidth",function(){return this._viewPortWidth}),h(0,d,"viewPortHeight",function(){return this._viewPortHeight}),h(0,d,"x",function(){return this._x}),h(0,d,"y",function(){return this._y}),h(0,d,"gridWidth",function(){return this._gridWidth}),h(0,d,"gridHeight",function(){return this._gridHeight}),h(0,d,"numColumnsGrid",function(){return this._gridW}),h(0,d,"numRowsGrid",function(){return this._gridH}),h(0,d,"renderOrder",function(){return this._renderOrder}),t.ORIENTATION_ORTHOGONAL="orthogonal",t.ORIENTATION_ISOMETRIC="isometric",t.ORIENTATION_STAGGERED="staggered",t.ORIENTATION_HEXAGONAL="hexagonal",t.RENDERORDER_RIGHTDOWN="right-down",t.RENDERORDER_RIGHTUP="right-up",t.RENDERORDER_LEFTDOWN="left-down",t.RENDERORDER_LEFTUP="left-up",t._tempContext=null,t.__init$=function(){i=function(){function t(){this.left=0,this.top=0,this.right=0,this.bottom=0}r(t,"");return t.prototype.clearAll=function(){this.left=this.top=this.right=this.bottom=0},t}(),s=function(){function t(){this.mAniIdArray=[],this.mDurationTimeArray=[],this.mTileTexSetArr=[],this.image=null}return r(t,""),t}(),n=function(){function t(){this.firstgid=0,this.image="",this.imageheight=0,this.imagewidth=0,this.margin=0,this.name=0,this.properties=null,this.spacing=0,this.tileheight=0,this.tilewidth=0,this.titleoffsetX=0,this.titleoffsetY=0,this.tileproperties=null}r(t,"");return t.prototype.init=function(t){this.firstgid=t.firstgid,this.image=t.image,this.imageheight=t.imageheight,this.imagewidth=t.imagewidth,this.margin=t.margin,this.name=t.name,this.properties=t.properties,this.spacing=t.spacing,this.tileheight=t.tileheight,this.tilewidth=t.tilewidth,this.tileproperties=t.tileproperties;var i=t.tileoffset;i&&(this.titleoffsetX=i.x,this.titleoffsetY=i.y)},t}()},t}(),u=function(){function t(){this.gid=-1,this.texture=null,this.offX=0,this.offY=0,this.textureArray=null,this.durationTimeArray=null,this.animationTotalTime=0,this.isAnimation=!1,this._spriteNum=0,this._aniDic=null,this._frameIndex=0,this._time=0,this._interval=0,this._preFrameTime=0}r(t,"laya.map.TileTexSet");var i=t.prototype;return i.addAniSprite=function(t,i){if(0!=this.animationTotalTime&&(null==this._aniDic&&(this._aniDic={}),0==this._spriteNum&&(e.timer.frameLoop(3,this,this.animate),this._preFrameTime=s.now(),this._frameIndex=0,this._time=0,this._interval=0),this._spriteNum++,this._aniDic[t]=i,this.textureArray&&this._frameIndex<this.textureArray.length)){var r=this.textureArray[this._frameIndex];this.drawTexture(i,r)}},i.animate=function(){if(this.textureArray&&this.textureArray.length>0&&this.durationTimeArray&&this.durationTimeArray.length>0){var t=s.now();this._interval=t-this._preFrameTime,this._preFrameTime=t,this._interval>this.animationTotalTime&&(this._interval=this._interval%this.animationTotalTime),this._time+=this._interval;for(var i=this.durationTimeArray[this._frameIndex];this._time>i;){this._time-=i,this._frameIndex++,(this._frameIndex>=this.durationTimeArray.length||this._frameIndex>=this.textureArray.length)&&(this._frameIndex=0);var e,r=this.textureArray[this._frameIndex];for(var h in this._aniDic)e=this._aniDic[h],this.drawTexture(e,r);i=this.durationTimeArray[this._frameIndex]}}},i.drawTexture=function(t,i){t.graphics.clear(),t.graphics.drawTexture(i.texture,i.offX,i.offY)},i.removeAniSprite=function(t){this._aniDic&&this._aniDic[t]&&(delete this._aniDic[t],this._spriteNum--,0==this._spriteNum&&e.timer.clear(this,this.animate))},i.showDebugInfo=function(){var t=null;return this._spriteNum>0&&(t="TileTextureSet::gid:"+this.gid.toString()+" 动画数:"+this._spriteNum.toString()),t},i.clearAll=function(){this.gid=-1,this.texture&&(this.texture.destroy(),this.texture=null),this.offX=0,this.offY=0,this.textureArray=null,this.durationTimeArray=null,this.isAnimation=!1,this._spriteNum=0,this._aniDic=null,this._frameIndex=0,this._preFrameTime=0,this._time=0,this._interval=0},t}(),g=function(t){function i(){this.relativeX=0,this.relativeY=0,this.isAloneObject=!1,this.isHaveAnimation=!1,this.aniSpriteArray=null,this.drawImageNum=0,this._map=null,i.__super.call(this)}r(i,"laya.map.GridSprite",t);var e=i.prototype;return e.initData=function(t,i){void 0===i&&(i=!1),this._map=t,this.isAloneObject=i},e._setDisplay=function(i){if(!i){var e=this._$P.cacheCanvas;e&&e.ctx&&(e.ctx.canvas.destroy(),e.ctx=null);var r=this._$P._filterCache;r&&(r.destroy(),r.recycle(),this._set$P("_filterCache",null)),this._$P._isHaveGlowFilter&&this._set$P("_isHaveGlowFilter",!1)}t.prototype._setDisplay.call(this,i)},e.addAniSprite=function(t){null==this.aniSpriteArray&&(this.aniSpriteArray=[]),this.aniSpriteArray.push(t)},e.show=function(){if(!this.visible){if(this.visible=!0,!this.isAloneObject){var t;(t=this.parent)&&t.showGridSprite(this)}if(!_.isWebGL&&this._map.autoCache&&(this.cacheAs=this._map.autoCacheType),null==this.aniSpriteArray)return;for(var i=0;i<this.aniSpriteArray.length;i++)this.aniSpriteArray[i].show()}},e.hide=function(){if(this.visible){if(this.visible=!1,!this.isAloneObject){var t;(t=this.parent)&&t.hideGridSprite(this)}if(!_.isWebGL&&this._map.autoCache&&(this.cacheAs="none"),null==this.aniSpriteArray)return;for(var i=0;i<this.aniSpriteArray.length;i++)this.aniSpriteArray[i].hide()}},e.updatePos=function(){this.isAloneObject?(this._map&&(this.x=this.relativeX,this.y=this.relativeY),this.x<0||this.x>this._map.viewPortWidth||this.y<0||this.y>this._map.viewPortHeight?this.hide():this.show()):this._map&&(this.x=this.relativeX,this.y=this.relativeY)},e.clearAll=function(){this._map&&(this._map=null),this.visible=!1;if(null!=this.aniSpriteArray)for(var t=0;t<this.aniSpriteArray.length;t++)this.aniSpriteArray[t].clearAll();this.destroy(),this.relativeX=0,this.relativeY=0,this.isHaveAnimation=!1,this.aniSpriteArray=null,this.drawImageNum=0},i}(c),f=function(t){function i(){this._map=null,this._mapData=null,this._tileWidthHalf=0,this._tileHeightHalf=0,this._mapWidthHalf=0,this._mapHeightHalf=0,this._gridSpriteArray=[],this._objDic=null,this._dataDic=null,this._properties=null,this.tarLayer=null,this.layerName=null,this._showGridList=[],this._aloneObjs=[],i.__super.call(this),this._tempMapPos=new n}r(i,"laya.map.MapLayer",t);var e=i.prototype;return e.init=function(t,i){this._map=i,this._mapData=t.data;t.height,t.width;var e=i.tileWidth,r=i.tileHeight;switch(this.layerName=t.name,this._properties=t.properties,this.alpha=t.opacity,this._tileWidthHalf=e/2,this._tileHeightHalf=r/2,this._mapWidthHalf=this._map.width/2-this._tileWidthHalf,this._mapHeightHalf=this._map.height/2,t.type){case"tilelayer":break;case"objectgroup":var h=t.objects;h.length>0&&(this._objDic={},this._dataDic={});for(var s,a=NaN,o=NaN,l=0;l<h.length;l++)if(s=h[l],this._dataDic[s.name]=s,1==s.visible){a=s.width,o=s.height;var _=i.getSprite(s.gid,a,o);if(null!=_){switch(this._map.orientation){case"isometric":this.getScreenPositionByTilePos(s.x/r,s.y/r,n.TEMP),_.pivot(a/2,o/2),_.rotation=s.rotation,_.x=_.relativeX=n.TEMP.x+this._map.viewPortX,_.y=_.relativeY=n.TEMP.y+this._map.viewPortY-o/2;break;case"staggered":case"orthogonal":_.pivot(a/2,o/2),_.rotation=s.rotation,_.x=_.relativeX=s.x+a/2,_.y=_.relativeY=s.y-o/2;break;case"hexagonal":_.x=_.relativeX=s.x,_.y=_.relativeY=s.y}this.addChild(_),this._gridSpriteArray.push(_),_.isAloneObject&&(this._showGridList.push(_),this._aloneObjs.push(_)),this._objDic[s.name]=_}}}},e.getObjectByName=function(t){return this._objDic?this._objDic[t]:null},e.getObjectDataByName=function(t){return this._dataDic?this._dataDic[t]:null},e.getLayerProperties=function(t){return this._properties?this._properties[t]:null},e.getTileData=function(t,i){if(i>=0&&i<this._map.numRowsTile&&t>=0&&t<this._map.numColumnsTile){var e=i*this._map.numColumnsTile+t,r=this._mapData;if(null!=r&&e<r.length)return r[e]}return 0},e.getScreenPositionByTilePos=function(t,i,e){if(e){switch(this._map.orientation){case"isometric":e.x=this._map.width/2-(i-t)*this._tileWidthHalf,e.y=(i+t)*this._tileHeightHalf;break;case"staggered":t=Math.floor(t),i=Math.floor(i),e.x=t*this._map.tileWidth+(1&i)*this._tileWidthHalf,e.y=i*this._tileHeightHalf;break;case"orthogonal":e.x=t*this._map.tileWidth,e.y=i*this._map.tileHeight;break;case"hexagonal":t=Math.floor(t),i=Math.floor(i);var r=2*this._map.tileHeight/3;e.x=(t*this._map.tileWidth+i%2*this._tileWidthHalf)%this._map.gridWidth,e.y=i*r%this._map.gridHeight}e.x=(e.x+this._map.viewPortX)*this._map.scale,e.y=(e.y+this._map.viewPortY)*this._map.scale}},e.getTileDataByScreenPos=function(t,i){var e=0;return this.getTilePositionByScreenPos(t,i,this._tempMapPos)&&(e=this.getTileData(Math.floor(this._tempMapPos.x),Math.floor(this._tempMapPos.y))),e},e.getTilePositionByScreenPos=function(t,i,e){t=t/this._map.scale-this._map.viewPortX,i=i/this._map.scale-this._map.viewPortY;var r=this._map.tileWidth,h=this._map.tileHeight,s=0,a=0;switch(this._map.orientation){case"isometric":var o=t-this._map.width/2;return s=-(o/r-i/h),a=o/r+i/h,e&&(e.x=a,e.y=s),!0;case"staggered":if(e){var n=0,l=0;n=(t-(Math.floor(t/r)*r+r/2))*h/2,l=(i-(Math.floor(i/h)*h+h/2))*r/2,Math.abs(n)+Math.abs(l)<=r*h/4?(a=Math.floor(t/r),s=2*Math.floor(i/h)):(t-=r/2,a=Math.floor(t/r)+1,i-=h/2,s=2*Math.floor(i/h)+1),e.x=a-(1&s),e.y=s}return!0;case"orthogonal":return a=t/r,s=i/h,e&&(e.x=a,e.y=s),!0;case"hexagonal":a=(t-(s=i/(2*h/3))%2*this._tileWidthHalf)/r,e&&(e.x=a,e.y=s)}return!1},e.getDrawSprite=function(t,i){var e=new g;return e.relativeX=t*this._map.gridWidth,e.relativeY=i*this._map.gridHeight,e.initData(this._map),e.updatePos(),this._gridSpriteArray.push(e),e},e.showGridSprite=function(t){var i=this._showGridList,e=0,r=0;r=i.length;var h,s=-1;for(e=0;e<r;e++){if((h=i[e])==t)return;h.isAloneObject||h.visible||(s=e)}s>=0?i[s]=t:i.push(t)},e.hideGridSprite=function(t){t.visible=!1},e.updateGridPos=function(){var t,i,e=0;e=(i=this._showGridList).length;for(var r=0;r<e;r++)((t=i[r])._style.visible||t.isAloneObject)&&t.drawImageNum>0&&t.updatePos()},e.updateAloneObject=function(){var t,i,e=0;e=(i=this._aloneObjs).length;for(var r=0;r<e;r++)(t=i[r]).drawImageNum>0&&t.updatePos()},e.render=function(i,e,r){var h=this._childs;this._childs=this._showGridList,t.prototype.render.call(this,i,e,r),this._childs=h},e.drawTileTexture=function(t,i,e){if(e>=0&&e<this._map.numRowsTile&&i>=0&&i<this._map.numColumnsTile){var r=e*this._map.numColumnsTile+i,h=this._mapData;if(null!=h&&r<h.length&&0!=h[r]){var s=this._map.getTexture(h[r]);if(s){var a=0,o=0;s.texture;switch(this._map.orientation){case"staggered":a=i*this._map.tileWidth%this._map.gridWidth+(1&e)*this._tileWidthHalf,o=e*this._tileHeightHalf%this._map.gridHeight;break;case"orthogonal":a=i*this._map.tileWidth%this._map.gridWidth,o=e*this._map.tileHeight%this._map.gridHeight;break;case"isometric":a=(this._mapWidthHalf+(i-e)*this._tileWidthHalf)%this._map.gridWidth,o=(i+e)*this._tileHeightHalf%this._map.gridHeight;break;case"hexagonal":var n=2*this._map.tileHeight/3;a=(i*this._map.tileWidth+e%2*this._tileWidthHalf)%this._map.gridWidth,o=e*n%this._map.gridHeight}if(s.isAnimation){var l=new y;l.x=a,l.y=o,l.setTileTextureSet(r.toString(),s),t.addAniSprite(l),t.addChild(l),t.isHaveAnimation=!0}else t.graphics.drawTexture(s.texture,a+s.offX,o+s.offY);return!0}}}return!1},e.clearAll=function(){this._map=null,this._mapData=null,this._tileWidthHalf=0,this._tileHeightHalf=0,this._mapWidthHalf=0,this._mapHeightHalf=0,this.layerName=null;var t=0;if(this._objDic){for(var i in this._objDic)delete this._objDic[i];this._objDic=null}if(this._dataDic){for(i in this._dataDic)delete this._dataDic[i];this._dataDic=null}for(t=0;t<this._gridSpriteArray.length;t++)this._gridSpriteArray[t].clearAll();this._properties=null,this._tempMapPos=null,this.tarLayer=null},i}(c),y=function(t){function i(){this._tileTextureSet=null,this._aniName=null,i.__super.call(this)}r(i,"laya.map.TileAniSprite",c);var e=i.prototype;return e.setTileTextureSet=function(t,i){this._aniName=t,this._tileTextureSet=i,i.addAniSprite(this._aniName,this)},e.show=function(){this._tileTextureSet.addAniSprite(this._aniName,this)},e.hide=function(){this._tileTextureSet.removeAniSprite(this._aniName)},e.clearAll=function(){this._tileTextureSet.removeAniSprite(this._aniName),this.destroy(),this._tileTextureSet=null,this._aniName=null},i}();e.__init([d])}(window,document,Laya),"function"==typeof define&&define.amd&&define("laya.core",["require","exports"],function(t,i){"use strict";Object.defineProperty(i,"__esModule",{value:!0});for(var e in Laya){var r=Laya[e];r&&r.__isclass&&(i[e]=r)}});
+
+(function(window,document,Laya){
+	var __un=Laya.un,__uns=Laya.uns,__static=Laya.static,__class=Laya.class,__getset=Laya.getset,__newvec=Laya.__newvec;
+
+	var Browser=laya.utils.Browser,HTMLCanvas=laya.resource.HTMLCanvas,Handler=laya.utils.Handler,Loader=laya.net.Loader;
+	var Point=laya.maths.Point,Rectangle=laya.maths.Rectangle,Render=laya.renders.Render,RenderContext=laya.renders.RenderContext;
+	var Sprite=laya.display.Sprite,Texture=laya.resource.Texture;
+/**
+*tiledMap是整个地图的核心
+*地图以层级来划分地图（例如：地表层，植被层，建筑层）
+*每层又以分块（GridSprite)来处理显示对象，只显示在视口区域的区
+*每块又包括N*N个格子（tile)
+*格子类型又分为动画格子跟图片格子两种
+*@author ...
+*/
+//class laya.map.TiledMap
+var TiledMap=(function(){
+	var GRect,TileMapAniData,TileSet;
+	function TiledMap(){
+		//json数据
+		this._jsonData=null;
+		//存放地图中用到的所有子纹理数据
+		this._tileTexSetArr=[];
+		//主纹理数据，主要在释放纹理资源时使用
+		this._texArray=[];
+		//地图信息中的一些基本数据
+		this._x=0;
+		//地图的坐标
+		this._y=0;
+		//_height=_mapTileH *_mapH
+		this._width=0;
+		//地图的宽度
+		this._height=0;
+		//地图的高度
+		this._mapW=0;
+		//地图的横向格子数
+		this._mapH=0;
+		//地图的竖向格子数
+		this._mapTileW=0;
+		//tile的宽度
+		this._mapTileH=0;
+		//地图的显示对象
+		this._mapSprite=null;
+		//地图的显示对象
+		this._layerArray=[];
+		//这里保存所有的MapLayer对象
+		this._renderLayerArray=[];
+		//这里保存需要渲染的MapLayer对象
+		this._gridArray=[];
+		//地图块相关的
+		this._showGridKey=false;
+		//是否显示块边界线（用来调试用）
+		this._totalGridNum=0;
+		//一层中的GridSprite的总数
+		this._gridW=0;
+		//地图的横向块数
+		this._gridH=0;
+		//地图的坚向块数
+		this._gridWidth=450;
+		//块的默认宽度
+		this._gridHeight=450;
+		//块的默认高度
+		this._jsonLoader=null;
+		//用来加载JSON文件用的LOADER
+		this._loader=null;
+		//用来加载纹理数据用的LOADER
+		this._tileSetArray=[];
+		//用来存放还需要哪些儿纹理等待加载
+		this._currTileSet=null;
+		//正在加载的纹理需要的数据源
+		this._completeHandler=null;
+		//上次视口显示的块范围
+		this._index=0;
+		this._animationDic={};
+		//需要创建的动画数据
+		this._properties=null;
+		//当前地图的自定义属性
+		this._tileProperties={};
+		//图块属性
+		this._tileProperties2={};
+		//默认的地图类型（具体要看JSON文件）
+		this._orientation="orthogonal";
+		//默认的tile渲染顺序（具体要看JSON文件）
+		this._renderOrder="right-down";
+		//调试用的颜色组合
+		this._colorArray=["FF","00","33","66"];
+		//缩放相关的操作
+		this._scale=1;
+		this._pivotScaleX=0.5;
+		this._pivotScaleY=0.5;
+		this._centerX=0;
+		this._centerY=0;
+		/**@private */
+		this._viewPortX=0;
+		/**@private */
+		this._viewPortY=0;
+		this._viewPortWidth=0;
+		this._viewPortHeight=0;
+		//是否开启线性取样
+		this._enableLinear=true;
+		//资源的相对路径
+		this._resPath=null;
+		this._pathArray=null;
+		//把地图限制在显示区域
+		this._limitRange=false;
+		/**
+		*快速更新模式是否不可用
+		*/
+		this._fastDirty=true;
+		/**
+		*是否自动缓存没有动画的地块
+		*/
+		this.autoCache=true;
+		/**
+		*自动缓存类型,地图较大时建议使用normal
+		*/
+		this.autoCacheType="normal";
+		/**
+		*是否合并图层,开启合并图层时，图层属性内可添加layer属性，运行时将会将相邻的layer属性相同的图层进行合并以提高性能
+		*/
+		this.enableMergeLayer=false;
+		/**
+		*是否移除被覆盖的格子,地块可添加type属性，type不为0时表示不透明，被不透明地块遮挡的地块将会被剔除以提高性能
+		*/
+		this.removeCoveredTile=false;
+		/**
+		*是否显示大格子里显示的贴图数量
+		*/
+		this.showGridTextureCount=false;
+		/**
+		*是否调整地块边缘消除缩放导致的缝隙
+		*/
+		this.antiCrack=true;
+		/**
+		*是否在加载完成之后cache所有大格子
+		*/
+		this.cacheAllAfterInit=false;
+		this._texutreStartDic={};
+		this._rect=new Rectangle();
+		this._paddingRect=new Rectangle();
+		this._mapRect=new GRect();
+		this._mapLogicRect=new GRect();
+		this._mapLastRect=new GRect();
+		this._mapSprite=new Sprite();
+	}
+
+	__class(TiledMap,'laya.map.TiledMap');
+	var __proto=TiledMap.prototype;
+	/**
+	*创建地图
+	*@param mapName JSON文件名字
+	*@param viewRect 视口区域
+	*@param completeHandler 地图创建完成的回调函数
+	*@param viewRectPadding 视口扩充区域，把视口区域上、下、左、右扩充一下，防止视口移动时的穿帮
+	*@param gridSize grid大小
+	*@param enableLinear 是否开启线性取样（为false时，可以解决地图黑线的问题，但画质会锐化）
+	*@param limitRange 把地图限制在显示区域
+	*/
+	__proto.createMap=function(mapName,viewRect,completeHandler,viewRectPadding,gridSize,enableLinear,limitRange){
+		(enableLinear===void 0)&& (enableLinear=true);
+		(limitRange===void 0)&& (limitRange=false);
+		this._enableLinear=enableLinear;
+		this._limitRange=limitRange;
+		this._rect.x=viewRect.x;
+		this._rect.y=viewRect.y;
+		this._rect.width=viewRect.width;
+		this._rect.height=viewRect.height;
+		this._viewPortWidth=viewRect.width / this._scale;
+		this._viewPortHeight=viewRect.height / this._scale;
+		this._completeHandler=completeHandler;
+		if (viewRectPadding){
+			this._paddingRect.copyFrom(viewRectPadding);
+		}
+		else {
+			this._paddingRect.setTo(0,0,0,0);
+		}
+		if (gridSize){
+			this._gridWidth=gridSize.x;
+			this._gridHeight=gridSize.y;
+		};
+		var tIndex=mapName.lastIndexOf("/");
+		if (tIndex >-1){
+			this._resPath=mapName.substr(0,tIndex);
+			this._pathArray=this._resPath.split("/");
+		}
+		else {
+			this._resPath="";
+			this._pathArray=[];
+		}
+		this._jsonLoader=new Loader();
+		this._jsonLoader.once("complete",this,this.onJsonComplete);
+		this._jsonLoader.load(mapName,/*laya.net.Loader.JSON*/"json",false);
+	}
+
+	/**
+	*json文件读取成功后，解析里面的纹理数据，进行加载
+	*@param e JSON数据
+	*/
+	__proto.onJsonComplete=function(e){
+		var tJsonData=this._jsonData=e;
+		this._properties=tJsonData.properties;
+		this._orientation=tJsonData.orientation;
+		this._renderOrder=tJsonData.renderorder;
+		this._mapW=tJsonData.width;
+		this._mapH=tJsonData.height;
+		this._mapTileW=tJsonData.tilewidth;
+		this._mapTileH=tJsonData.tileheight;
+		this._width=this._mapTileW *this._mapW;
+		this._height=this._mapTileH *this._mapH;
+		if (this._orientation=="staggered"){
+			this._height=(0.5+this._mapH *0.5)*this._mapTileH;
+		}
+		this._mapLastRect.top=this._mapLastRect.bottom=this._mapLastRect.left=this._mapLastRect.right=-1;
+		var tArray=tJsonData.tilesets;
+		var tileset;
+		var tTileSet;
+		var i=0;
+		for (i=0;i < tArray.length;i++){
+			tileset=tArray[i];
+			tTileSet=new TileSet();
+			tTileSet.init(tileset);
+			if (tTileSet.properties && tTileSet.properties.ignore)continue ;
+			this._tileProperties[i]=tTileSet.tileproperties;
+			this.addTileProperties(tTileSet.tileproperties);
+			this._tileSetArray.push(tTileSet);
+			var tTiles=tileset.tiles;
+			if (tTiles){
+				for (var p in tTiles){
+					var tAnimation=tTiles[p].animation;
+					if (tAnimation){
+						var tAniData=new TileMapAniData();
+						this._animationDic[p]=tAniData;
+						tAniData.image=tileset.image;
+						for (var j=0;j < tAnimation.length;j++){
+							var tAnimationItem=tAnimation[j];
+							tAniData.mAniIdArray.push(tAnimationItem.tileid);
+							tAniData.mDurationTimeArray.push(tAnimationItem.duration);
+						}
+					}
+				}
+			}
+		}
+		this._tileTexSetArr.push(null);
+		if (this._tileSetArray.length > 0){
+			tTileSet=this._currTileSet=this._tileSetArray.shift();
+			this._loader=new Loader();
+			this._loader.once("complete",this,this.onTextureComplete);
+			var tPath=this.mergePath(this._resPath,tTileSet.image);
+			this._loader.load(tPath,/*laya.net.Loader.IMAGE*/"image",false);
+		}
+	}
+
+	/**
+	*合并路径
+	*@param resPath
+	*@param relativePath
+	*@return
+	*/
+	__proto.mergePath=function(resPath,relativePath){
+		var tResultPath="";
+		var tImageArray=relativePath.split("/");
+		var tParentPathNum=0;
+		var i=0;
+		for (i=tImageArray.length-1;i >=0;i--){
+			if (tImageArray[i]==".."){
+				tParentPathNum++;
+			}
+		}
+		if (tParentPathNum==0){
+			if (this._pathArray.length > 0){
+				tResultPath=resPath+"/"+relativePath;
+			}
+			else {
+				tResultPath=relativePath;
+			}
+			return tResultPath;
+		};
+		var tSrcNum=this._pathArray.length-tParentPathNum;
+		if (tSrcNum < 0){
+			console.log("[error]path does not exist",this._pathArray,tImageArray,resPath,relativePath);
+		}
+		for (i=0;i < tSrcNum;i++){
+			if (i==0){
+				tResultPath+=this._pathArray[i];
+			}
+			else {
+				tResultPath=tResultPath+"/"+this._pathArray[i];
+			}
+		}
+		for (i=tParentPathNum;i < tImageArray.length;i++){
+			tResultPath=tResultPath+"/"+tImageArray[i];
+		}
+		return tResultPath;
+	}
+
+	/**
+	*纹理加载完成，如果所有的纹理加载，开始初始化地图
+	*@param e 纹理数据
+	*/
+	__proto.onTextureComplete=function(e){
+		var json=this._jsonData;
+		var tTexture=e;
+		if (Render.isWebGL && (!this._enableLinear)){
+			tTexture.bitmap.minFifter=0x2600;
+			tTexture.bitmap.magFifter=0x2600;
+			tTexture.bitmap.enableMerageInAtlas=false;
+		}
+		this._texArray.push(tTexture);
+		var tSubTexture=null;
+		var tTileSet=this._currTileSet;
+		var tTileTextureW=tTileSet.tilewidth;
+		var tTileTextureH=tTileSet.tileheight;
+		var tImageWidth=tTileSet.imagewidth;
+		var tImageHeight=tTileSet.imageheight;
+		var tFirstgid=tTileSet.firstgid;
+		var tTileWNum=Math.floor((tImageWidth-tTileSet.margin-tTileTextureW)/ (tTileTextureW+tTileSet.spacing))+1;
+		var tTileHNum=Math.floor((tImageHeight-tTileSet.margin-tTileTextureH)/ (tTileTextureH+tTileSet.spacing))+1;
+		var tTileTexSet=null;
+		this._texutreStartDic[tTileSet.image]=this._tileTexSetArr.length;
+		for (var i=0;i < tTileHNum;i++){
+			for (var j=0;j < tTileWNum;j++){
+				tTileTexSet=new TileTexSet();
+				tTileTexSet.offX=tTileSet.titleoffsetX;
+				tTileTexSet.offY=tTileSet.titleoffsetY-(tTileTextureH-this._mapTileH);
+				tTileTexSet.texture=Texture.createFromTexture(tTexture,tTileSet.margin+(tTileTextureW+tTileSet.spacing)*j,tTileSet.margin+(tTileTextureH+tTileSet.spacing)*i,tTileTextureW,tTileTextureH);
+				if(this.antiCrack)
+					this.adptTexture(tTileTexSet.texture);
+				this._tileTexSetArr.push(tTileTexSet);
+				tTileTexSet.gid=this._tileTexSetArr.length;
+			}
+		}
+		if (this._tileSetArray.length > 0){
+			tTileSet=this._currTileSet=this._tileSetArray.shift();
+			this._loader.once("complete",this,this.onTextureComplete);
+			var tPath=this.mergePath(this._resPath,tTileSet.image);
+			this._loader.load(tPath,/*laya.net.Loader.IMAGE*/"image",false);
+		}
+		else {
+			this._currTileSet=null;
+			this.initMap();
+		}
+	}
+
+	__proto.adptTexture=function(tex){
+		if (!tex)return;
+		var pX=tex.uv[0];
+		var pX1=tex.uv[2];
+		var pY=tex.uv[1];
+		var pY1=tex.uv[7];
+		var dW=1 / tex.bitmap.width;
+		var dH=1 / tex.bitmap.height;
+		tex.uv[0]=tex.uv[6]=pX+dW;
+		tex.uv[2]=tex.uv[4]=pX1-dW;
+		tex.uv[1]=tex.uv[3]=pY+dH;
+		tex.uv[5]=tex.uv[7]=pY1-dH;
+	}
+
+	/**
+	*初始化地图
+	*/
+	__proto.initMap=function(){
+		var i=0,n=0;
+		for (var p in this._animationDic){
+			var tAniData=this._animationDic[p];
+			var gStart=0;
+			gStart=this._texutreStartDic[tAniData.image];
+			var tTileTexSet=this.getTexture(parseInt(p)+gStart);
+			if (tAniData.mAniIdArray.length > 0){
+				tTileTexSet.textureArray=[];
+				tTileTexSet.durationTimeArray=tAniData.mDurationTimeArray;
+				tTileTexSet.isAnimation=true;
+				tTileTexSet.animationTotalTime=0;
+				for (i=0,n=tTileTexSet.durationTimeArray.length;i < n;i++){
+					tTileTexSet.animationTotalTime+=tTileTexSet.durationTimeArray[i];
+				}
+				for (i=0,n=tAniData.mAniIdArray.length;i < n;i++){
+					var tTexture=this.getTexture(tAniData.mAniIdArray[i]+gStart);
+					tTileTexSet.textureArray.push(tTexture);
+				}
+			}
+		}
+		this._gridWidth=Math.floor(this._gridWidth / this._mapTileW)*this._mapTileW;
+		this._gridHeight=Math.floor(this._gridHeight / this._mapTileH)*this._mapTileH;
+		if (this._gridWidth < this._mapTileW){
+			this._gridWidth=this._mapTileW;
+		}
+		if (this._gridHeight < this._mapTileH){
+			this._gridHeight=this._mapTileH;
+		}
+		this._gridW=Math.ceil(this._width / this._gridWidth);
+		this._gridH=Math.ceil(this._height / this._gridHeight);
+		this._totalGridNum=this._gridW *this._gridH;
+		for (i=0;i < this._gridH;i++){
+			var tGridArray=[];
+			this._gridArray.push(tGridArray);
+			for (var j=0;j < this._gridW;j++){
+				tGridArray.push(null);
+			}
+		};
+		var tLayerArray=this._jsonData.layers;
+		var isFirst=true;
+		var tTarLayerID=1;
+		var tLayerTarLayerName;
+		var preLayerTarName;
+		var preLayer;
+		for (var tLayerLoop=0;tLayerLoop < tLayerArray.length;tLayerLoop++){
+			var tLayerData=tLayerArray[tLayerLoop];
+			if (tLayerData.visible==true){
+				var tMapLayer=new MapLayer();
+				tMapLayer.init(tLayerData,this);
+				if (!this.enableMergeLayer){
+					this._mapSprite.addChild(tMapLayer);
+					this._renderLayerArray.push(tMapLayer);
+					}else{
+					tLayerTarLayerName=tMapLayer.getLayerProperties("layer");
+					isFirst=isFirst || (!preLayer)|| (tLayerTarLayerName !=preLayerTarName);
+					if (isFirst){
+						isFirst=false;
+						tMapLayer.tarLayer=tMapLayer;
+						preLayer=tMapLayer;
+						this._mapSprite.addChild(tMapLayer);
+						this._renderLayerArray.push(tMapLayer);
+						}else{
+						tMapLayer.tarLayer=preLayer;
+					}
+					preLayerTarName=tLayerTarLayerName;
+				}
+				this._layerArray.push(tMapLayer);
+			}
+		}
+		if (this.removeCoveredTile){
+			this.adptTiledMapData();
+		}
+		if (this.cacheAllAfterInit){
+			this.cacheAllGrid();
+		}
+		this.moveViewPort(this._rect.x,this._rect.y);
+		Laya.stage.addChild(this.mapSprite());
+		if (this._completeHandler !=null){
+			this._completeHandler.run();
+		}
+	}
+
+	//这里应该发送消息，通知上层，地图创建完成
+	__proto.addTileProperties=function(tileDataDic){
+		var key;
+		for (key in tileDataDic){
+			this._tileProperties2[key]=tileDataDic[key];
+		}
+	}
+
+	__proto.getTileUserData=function(id,sign,defaultV){
+		if (!this._tileProperties2 || !this._tileProperties2[id] || !(sign in this._tileProperties2[id]))return defaultV;
+		return this._tileProperties2[id][sign];
+	}
+
+	__proto.adptTiledMapData=function(){
+		var i=0,len=0;
+		len=this._layerArray.length;
+		var tLayer;
+		var noNeeds={};
+		var tDatas;
+		for (i=len-1;i >=0;i--){
+			tLayer=this._layerArray[i];
+			tDatas=tLayer._mapData;
+			if (!tDatas)continue ;
+			this.removeCoverd(tDatas,noNeeds);
+			this.collectCovers(tDatas,noNeeds,i);
+		}
+	}
+
+	__proto.removeCoverd=function(datas,noNeeds){
+		var i=0,len=0;
+		len=datas.length;
+		for (i=0;i < len;i++){
+			if (noNeeds[i]){
+				datas[i]=0;
+			}
+		}
+	}
+
+	__proto.collectCovers=function(datas,noNeeds,layer){
+		var i=0,len=0;
+		len=datas.length;
+		var tTileData=0;
+		var isCover=0;
+		for (i=0;i < len;i++){
+			tTileData=datas[i];
+			if (tTileData > 0){
+				isCover=this.getTileUserData(tTileData-1,"type",0);
+				if (isCover > 0){
+					noNeeds[i]=tTileData;
+				}
+			}
+		}
+	}
+
+	/**
+	*得到一块指定的地图纹理
+	*@param index 纹理的索引值，默认从1开始
+	*@return
+	*/
+	__proto.getTexture=function(index){
+		if (index < this._tileTexSetArr.length){
+			return this._tileTexSetArr[index];
+		}
+		return null;
+	}
+
+	/**
+	*得到地图的自定义属性
+	*@param name 属性名称
+	*@return
+	*/
+	__proto.getMapProperties=function(name){
+		if (this._properties){
+			return this._properties[name];
+		}
+		return null;
+	}
+
+	/**
+	*得到tile自定义属性
+	*@param index 地图块索引
+	*@param id 具体的TileSetID
+	*@param name 属性名称
+	*@return
+	*/
+	__proto.getTileProperties=function(index,id,name){
+		if (this._tileProperties[index] && this._tileProperties[index][id]){
+			return this._tileProperties[index][id][name];
+		}
+		return null;
+	}
+
+	/**
+	*通过纹理索引，生成一个可控制物件
+	*@param index 纹理的索引值，默认从1开始
+	*@return
+	*/
+	__proto.getSprite=function(index,width,height){
+		if (0 < this._tileTexSetArr.length){
+			var tGridSprite=new GridSprite();
+			tGridSprite.initData(this,true);
+			tGridSprite.size(width,height);
+			var tTileTexSet=this._tileTexSetArr[index];
+			if (tTileTexSet !=null && tTileTexSet.texture !=null){
+				if (tTileTexSet.isAnimation){
+					var tAnimationSprite=new TileAniSprite();
+					this._index++;
+					tAnimationSprite.setTileTextureSet(this._index.toString(),tTileTexSet);
+					tGridSprite.addAniSprite(tAnimationSprite);
+					tGridSprite.addChild(tAnimationSprite);
+				}
+				else {
+					tGridSprite.graphics.drawTexture(tTileTexSet.texture,0,0,width,height);
+				}
+				tGridSprite.drawImageNum++;
+			}
+			return tGridSprite;
+		}
+		return null;
+	}
+
+	/**
+	*设置视口的缩放中心点（例如：scaleX=scaleY=0.5,就是以视口中心缩放）
+	*@param scaleX
+	*@param scaleY
+	*/
+	__proto.setViewPortPivotByScale=function(scaleX,scaleY){
+		this._pivotScaleX=scaleX;
+		this._pivotScaleY=scaleY;
+		this._fastDirty=true;
+	}
+
+	/**
+	*移动视口
+	*@param moveX 视口的坐标x
+	*@param moveY 视口的坐标y
+	*/
+	__proto.moveViewPort=function(moveX,moveY){
+		this._x=-moveX;
+		this._y=-moveY;
+		if (this._fastDirty){
+			this._rect.x=moveX;
+			this._rect.y=moveY;
+			this.updateViewPort();
+			}else{
+			var dx=NaN,dy=NaN;
+			dx=moveX-this._rect.x;
+			dy=moveY-this._rect.y;
+			this._rect.x=moveX;
+			this._rect.y=moveY;
+			this.updateViewPortFast(dx,dy);
+		}
+	}
+
+	/**
+	*改变视口大小
+	*@param moveX 视口的坐标x
+	*@param moveY 视口的坐标y
+	*@param width 视口的宽
+	*@param height 视口的高
+	*/
+	__proto.changeViewPort=function(moveX,moveY,width,height){
+		if (moveX==this._rect.x && moveY==this._rect.y && width==this._rect.width && height==this._rect.height)return;
+		if (width==this._rect.width && height==this._rect.height){
+			this.moveViewPort(moveX,moveY);
+			return;
+		}
+		this._fastDirty=true;
+		this._x=-moveX;
+		this._y=-moveY;
+		this._rect.x=moveX;
+		this._rect.y=moveY;
+		this._rect.width=width;
+		this._rect.height=height;
+		this._viewPortWidth=width / this._scale;
+		this._viewPortHeight=height / this._scale;
+		this.updateViewPort();
+	}
+
+	/**
+	*在锚点的基础上计算，通过宽和高，重新计算视口
+	*@param width 新视口宽
+	*@param height 新视口高
+	*@param rect 返回的结果
+	*@return
+	*/
+	__proto.changeViewPortBySize=function(width,height,rect){
+		if (rect==null){
+			rect=new Rectangle();
+		}
+		this._centerX=this._rect.x+this._rect.width *this._pivotScaleX;
+		this._centerY=this._rect.y+this._rect.height *this._pivotScaleY;
+		rect.x=this._centerX-width *this._pivotScaleX;
+		rect.y=this._centerY-height *this._pivotScaleY;
+		rect.width=width;
+		rect.height=height;
+		this.changeViewPort(rect.x,rect.y,rect.width,rect.height);
+		return rect;
+	}
+
+	/**
+	*快速更新视口 ,只有在视口大小和各种缩放信息没有改变时才可以使用这个函数更新
+	*@param dx 视口偏移x
+	*@param dy 视口偏移y
+	*/
+	__proto.updateViewPortFast=function(dx,dy){
+		this._centerX+=dx;
+		this._centerY+=dy;
+		this._viewPortX+=dx;
+		this._viewPortY+=dy;
+		var posChanged=false;
+		var dyG=dy / this._gridHeight;
+		var dxG=dx / this._gridWidth;
+		this._mapLogicRect.top+=dyG;
+		this._mapLogicRect.bottom+=dyG;
+		this._mapLogicRect.left+=dxG;
+		this._mapLogicRect.right+=dxG;
+		this._mapRect.top=0|this._mapLogicRect.top;
+		this._mapRect.bottom=0|this._mapLogicRect.bottom;
+		this._mapRect.left=0|this._mapLogicRect.left;
+		this._mapRect.right=0|this._mapLogicRect.right;
+		if (this._mapRect.top !=this._mapLastRect.top || this._mapRect.bottom !=this._mapLastRect.bottom || this._mapRect.left !=this._mapLastRect.left || this._mapRect.right !=this._mapLastRect.right){
+			this.clipViewPort();
+			this._mapLastRect.top=this._mapRect.top;
+			this._mapLastRect.bottom=this._mapRect.bottom;
+			this._mapLastRect.left=this._mapRect.left;
+			this._mapLastRect.right=this._mapRect.right;
+			posChanged=true;
+		};posChanged=posChanged|| (dx !=0 || dy !=0);
+		if (!posChanged)return;
+		this.updateMapLayersPos();
+	}
+
+	/**
+	*刷新地图层坐标
+	*/
+	__proto.updateMapLayersPos=function(){
+		var tMapLayer;
+		var len=this._renderLayerArray.length;
+		for (var i=0;i < len;i++){
+			tMapLayer=this._renderLayerArray[i];
+			if (tMapLayer._gridSpriteArray.length > 0){
+				tMapLayer.updateAloneObject();
+				tMapLayer.pos(-this._viewPortX,-this._viewPortY);
+			}
+		}
+	}
+
+	/**
+	*刷新视口
+	*/
+	__proto.updateViewPort=function(){
+		this._fastDirty=false;
+		var dw=this._rect.width *this._pivotScaleX;
+		var dh=this._rect.height *this._pivotScaleY;
+		this._centerX=this._rect.x+dw;
+		this._centerY=this._rect.y+dh;
+		var posChanged=false;
+		var preValue=this._viewPortX;
+		this._viewPortX=this._centerX-dw / this._scale;
+		if (preValue !=this._viewPortX){
+			posChanged=true;
+			}else {
+			preValue=this._viewPortY;
+		}
+		this._viewPortY=this._centerY-dh/ this._scale;
+		if (!posChanged && preValue !=this._viewPortY){
+			posChanged=true;
+		}
+		if (this._limitRange){
+			var tRight=this._viewPortX+this._viewPortWidth;
+			if (tRight > this._width){
+				this._viewPortX=this._width-this._viewPortWidth;
+			};
+			var tBottom=this._viewPortY+this._viewPortHeight;
+			if (tBottom > this._height){
+				this._viewPortY=this._height-this._viewPortHeight;
+			}
+			if (this._viewPortX < 0){
+				this._viewPortX=0;
+			}
+			if (this._viewPortY < 0){
+				this._viewPortY=0;
+			}
+		};
+		var tPaddingRect=this._paddingRect;
+		this._mapLogicRect.top=(this._viewPortY-tPaddingRect.y)/ this._gridHeight;
+		this._mapLogicRect.bottom=(this._viewPortY+this._viewPortHeight+tPaddingRect.height+tPaddingRect.y)/ this._gridHeight;
+		this._mapLogicRect.left=(this._viewPortX-tPaddingRect.x)/ this._gridWidth;
+		this._mapLogicRect.right=(this._viewPortX+this._viewPortWidth+tPaddingRect.width+tPaddingRect.x)/ this._gridWidth;
+		this._mapRect.top=0|this._mapLogicRect.top;
+		this._mapRect.bottom=0|this._mapLogicRect.bottom;
+		this._mapRect.left=0|this._mapLogicRect.left;
+		this._mapRect.right=0|this._mapLogicRect.right;
+		if (this._mapRect.top !=this._mapLastRect.top || this._mapRect.bottom !=this._mapLastRect.bottom || this._mapRect.left !=this._mapLastRect.left || this._mapRect.right !=this._mapLastRect.right){
+			this.clipViewPort();
+			this._mapLastRect.top=this._mapRect.top;
+			this._mapLastRect.bottom=this._mapRect.bottom;
+			this._mapLastRect.left=this._mapRect.left;
+			this._mapLastRect.right=this._mapRect.right;
+			posChanged=true;
+		}
+		if (!posChanged)return;
+		this.updateMapLayersPos();
+	}
+
+	/**
+	*GRID裁剪
+	*/
+	__proto.clipViewPort=function(){
+		var tSpriteNum=0;
+		var tSprite;
+		var tIndex=0;
+		var tSub=0;
+		var tAdd=0;
+		var i=0,j=0;
+		if (this._mapRect.left > this._mapLastRect.left){
+			tSub=this._mapRect.left-this._mapLastRect.left;
+			if (tSub > 0){
+				for (j=this._mapLastRect.left;j < this._mapLastRect.left+tSub;j++){
+					for (i=this._mapLastRect.top;i <=this._mapLastRect.bottom;i++){
+						this.hideGrid(j,i);
+					}
+				}
+			}
+		}
+		else {
+			tAdd=Math.min(this._mapLastRect.left,this._mapRect.right+1)-this._mapRect.left;
+			if (tAdd > 0){
+				for (j=this._mapRect.left;j < this._mapRect.left+tAdd;j++){
+					for (i=this._mapRect.top;i <=this._mapRect.bottom;i++){
+						this.showGrid(j,i);
+					}
+				}
+			}
+		}
+		if (this._mapRect.right > this._mapLastRect.right){
+			tAdd=this._mapRect.right-this._mapLastRect.right;
+			if (tAdd > 0){
+				for (j=Math.max(this._mapLastRect.right+1,this._mapRect.left);j <=this._mapLastRect.right+tAdd;j++){
+					for (i=this._mapRect.top;i <=this._mapRect.bottom;i++){
+						this.showGrid(j,i);
+					}
+				}
+			}
+		}
+		else {
+			tSub=this._mapLastRect.right-this._mapRect.right
+			if (tSub > 0){
+				for (j=this._mapRect.right+1;j <=this._mapRect.right+tSub;j++){
+					for (i=this._mapLastRect.top;i <=this._mapLastRect.bottom;i++){
+						this.hideGrid(j,i);
+					}
+				}
+			}
+		}
+		if (this._mapRect.top > this._mapLastRect.top){
+			tSub=this._mapRect.top-this._mapLastRect.top;
+			if (tSub > 0){
+				for (i=this._mapLastRect.top;i < this._mapLastRect.top+tSub;i++){
+					for (j=this._mapLastRect.left;j <=this._mapLastRect.right;j++){
+						this.hideGrid(j,i);
+					}
+				}
+			}
+		}
+		else {
+			tAdd=Math.min(this._mapLastRect.top,this._mapRect.bottom+1)-this._mapRect.top;
+			if (tAdd > 0){
+				for (i=this._mapRect.top;i < this._mapRect.top+tAdd;i++){
+					for (j=this._mapRect.left;j <=this._mapRect.right;j++){
+						this.showGrid(j,i);
+					}
+				}
+			}
+		}
+		if (this._mapRect.bottom > this._mapLastRect.bottom){
+			tAdd=this._mapRect.bottom-this._mapLastRect.bottom;
+			if (tAdd > 0){
+				for (i=Math.max(this._mapLastRect.bottom+1,this._mapRect.top);i <=this._mapLastRect.bottom+tAdd;i++){
+					for (j=this._mapRect.left;j <=this._mapRect.right;j++){
+						this.showGrid(j,i);
+					}
+				}
+			}
+		}
+		else {
+			tSub=this._mapLastRect.bottom-this._mapRect.bottom
+			if (tSub > 0){
+				for (i=this._mapRect.bottom+1;i <=this._mapRect.bottom+tSub;i++){
+					for (j=this._mapLastRect.left;j <=this._mapLastRect.right;j++){
+						this.hideGrid(j,i);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	*显示指定的GRID
+	*@param gridX
+	*@param gridY
+	*/
+	__proto.showGrid=function(gridX,gridY){
+		if (gridX < 0 || gridX >=this._gridW || gridY < 0 || gridY >=this._gridH){
+			return;
+		};
+		var i=0,j=0;
+		var tGridSprite;
+		var tTempArray=this._gridArray[gridY][gridX];
+		if (tTempArray==null){
+			tTempArray=this.getGridArray(gridX,gridY);
+		}
+		else {
+			for (i=0;i < tTempArray.length && i < this._layerArray.length;i++){
+				var tLayerSprite=this._layerArray[i];
+				if (tLayerSprite && tTempArray[i]){
+					tGridSprite=tTempArray[i];
+					if (tGridSprite.visible==false && tGridSprite.drawImageNum > 0){
+						tGridSprite.show();
+					}
+				}
+			}
+		}
+	}
+
+	__proto.cacheAllGrid=function(){
+		var i=0,j=0;
+		var tempArr;
+		for (i=0;i < this._gridW;i++){
+			for (j=0;j < this._gridH;j++){
+				tempArr=this.getGridArray(i,j);
+				this.cacheGridsArray(tempArr);
+			}
+		}
+	}
+
+	__proto.cacheGridsArray=function(arr){
+		var canvas;
+		if (!TiledMap._tempContext){
+			TiledMap._tempContext=new RenderContext(1,1,HTMLCanvas.create(/*laya.resource.HTMLCanvas.TYPEAUTO*/"AUTO"));
+		}
+		canvas=TiledMap._tempContext.canvas;
+		canvas.context.asBitmap=false;
+		var i=0,len=0;
+		len=arr.length;
+		var tGrid;
+		for (i=0;i < len;i++){
+			tGrid=arr[i];
+			canvas.clear();
+			canvas.size(1,1);
+			tGrid.render(TiledMap._tempContext,0,0);
+			tGrid.hide();
+		}
+		canvas.clear();
+		canvas.size(1,1);
+	}
+
+	__proto.getGridArray=function(gridX,gridY){
+		var i=0,j=0;
+		var tGridSprite;
+		var tTempArray=this._gridArray[gridY][gridX];
+		if (tTempArray==null){
+			tTempArray=this._gridArray[gridY][gridX]=[];
+			var tLeft=0;
+			var tRight=0;
+			var tTop=0;
+			var tBottom=0;
+			var tGridWidth=this._gridWidth;
+			var tGridHeight=this._gridHeight;
+			switch (this.orientation){
+				case /*CLASS CONST:laya.map.TiledMap.ORIENTATION_ISOMETRIC*/"isometric":
+					tLeft=Math.floor(gridX *tGridWidth);
+					tRight=Math.floor(gridX *tGridWidth+tGridWidth);
+					tTop=Math.floor(gridY *tGridHeight);
+					tBottom=Math.floor(gridY *tGridHeight+tGridHeight);
+					var tLeft1=0,tRight1=0,tTop1=0,tBottom1=0;
+					break ;
+				case /*CLASS CONST:laya.map.TiledMap.ORIENTATION_STAGGERED*/"staggered":
+					tLeft=Math.floor(gridX *tGridWidth / this._mapTileW);
+					tRight=Math.floor((gridX *tGridWidth+tGridWidth)/ this._mapTileW);
+					tTop=Math.floor(gridY *tGridHeight / (this._mapTileH / 2));
+					tBottom=Math.floor((gridY *tGridHeight+tGridHeight)/ (this._mapTileH / 2));
+					break ;
+				case /*CLASS CONST:laya.map.TiledMap.ORIENTATION_ORTHOGONAL*/"orthogonal":
+					tLeft=Math.floor(gridX *tGridWidth / this._mapTileW);
+					tRight=Math.floor((gridX *tGridWidth+tGridWidth)/ this._mapTileW);
+					tTop=Math.floor(gridY *tGridHeight / this._mapTileH);
+					tBottom=Math.floor((gridY *tGridHeight+tGridHeight)/ this._mapTileH);
+					break ;
+				case /*CLASS CONST:laya.map.TiledMap.ORIENTATION_HEXAGONAL*/"hexagonal":;
+					var tHeight=this._mapTileH *2 / 3;
+					tLeft=Math.floor(gridX *tGridWidth / this._mapTileW);
+					tRight=Math.ceil((gridX *tGridWidth+tGridWidth)/ this._mapTileW);
+					tTop=Math.floor(gridY *tGridHeight / tHeight);
+					tBottom=Math.ceil((gridY *tGridHeight+tGridHeight)/ tHeight);
+					break ;
+				};
+			var tLayer=null;
+			var tTGridSprite;
+			var tDrawMapLayer;
+			for (var z=0;z < this._layerArray.length;z++){
+				tLayer=this._layerArray[z];
+				if (this.enableMergeLayer){
+					if (tLayer.tarLayer !=tDrawMapLayer){
+						tTGridSprite=null;
+						tDrawMapLayer=tLayer.tarLayer;
+					}
+					if (!tTGridSprite){
+						tTGridSprite=tDrawMapLayer.getDrawSprite(gridX,gridY);
+						tTempArray.push(tTGridSprite);
+					}
+					tGridSprite=tTGridSprite;
+				}
+				else {
+					tGridSprite=tLayer.getDrawSprite(gridX,gridY);
+					tTempArray.push(tGridSprite);
+				};
+				var tColorStr;
+				if (this._showGridKey){
+					tColorStr="#";
+					tColorStr+=this._colorArray[Math.floor(Math.random()*this._colorArray.length)];
+					tColorStr+=this._colorArray[Math.floor(Math.random()*this._colorArray.length)];
+					tColorStr+=this._colorArray[Math.floor(Math.random()*this._colorArray.length)];
+				}
+				switch (this.orientation){
+					case /*CLASS CONST:laya.map.TiledMap.ORIENTATION_ISOMETRIC*/"isometric":;
+						var tHalfTileHeight=this.tileHeight / 2;
+						var tHalfTileWidth=this.tileWidth / 2;
+						var tHalfMapWidth=this._width / 2;
+						tTop1=Math.floor(tTop / tHalfTileHeight);
+						tBottom1=Math.floor(tBottom / tHalfTileHeight);
+						tLeft1=this._mapW+Math.floor((tLeft-tHalfMapWidth)/ tHalfTileWidth);
+						tRight1=this._mapW+Math.floor((tRight-tHalfMapWidth)/ tHalfTileWidth);
+						var tMapW=this._mapW *2;
+						var tMapH=this._mapH *2;
+						if (tTop1 < 0){
+							tTop1=0;
+						}
+						if (tTop1 >=tMapH){
+							tTop1=tMapH-1;
+						}
+						if (tBottom1 < 0){
+							tBottom=0;
+						}
+						if (tBottom1 >=tMapH){
+							tBottom1=tMapH-1;
+						}
+						tGridSprite.zOrder=this._totalGridNum *z+gridY *this._gridW+gridX;
+						for (i=tTop1;i < tBottom1;i++){
+							for (j=0;j <=i;j++){
+								var tIndexX=i-j;
+								var tIndexY=j;
+								var tIndexValue=(tIndexX-tIndexY)+this._mapW;
+								if (tIndexValue > tLeft1 && tIndexValue <=tRight1){
+									if (tLayer.drawTileTexture(tGridSprite,tIndexX,tIndexY)){
+										tGridSprite.drawImageNum++;
+									}
+								}
+							}
+						}
+						break ;
+					case /*CLASS CONST:laya.map.TiledMap.ORIENTATION_STAGGERED*/"staggered":
+						tGridSprite.zOrder=z *this._totalGridNum+gridY *this._gridW+gridX;
+						for (i=tTop;i < tBottom;i++){
+							for (j=tLeft;j < tRight;j++){
+								if (tLayer.drawTileTexture(tGridSprite,j,i)){
+									tGridSprite.drawImageNum++;
+								}
+							}
+						}
+						break ;
+					case /*CLASS CONST:laya.map.TiledMap.ORIENTATION_ORTHOGONAL*/"orthogonal":
+					case /*CLASS CONST:laya.map.TiledMap.ORIENTATION_HEXAGONAL*/"hexagonal":
+					switch (this._renderOrder){
+						case "right-down":
+							tGridSprite.zOrder=z *this._totalGridNum+gridY *this._gridW+gridX;
+							for (i=tTop;i < tBottom;i++){
+								for (j=tLeft;j < tRight;j++){
+									if (tLayer.drawTileTexture(tGridSprite,j,i)){
+										tGridSprite.drawImageNum++;
+									}
+								}
+							}
+							break ;
+						case "right-up":
+							tGridSprite.zOrder=z *this._totalGridNum+(this._gridH-1-gridY)*this._gridW+gridX;
+							for (i=tBottom-1;i >=tTop;i--){
+								for (j=tLeft;j < tRight;j++){
+									if (tLayer.drawTileTexture(tGridSprite,j,i)){
+										tGridSprite.drawImageNum++;
+									}
+								}
+							}
+							break ;
+						case "left-down":
+							tGridSprite.zOrder=z *this._totalGridNum+gridY *this._gridW+(this._gridW-1-gridX);
+							for (i=tTop;i < tBottom;i++){
+								for (j=tRight-1;j >=tLeft;j--){
+									if (tLayer.drawTileTexture(tGridSprite,j,i)){
+										tGridSprite.drawImageNum++;
+									}
+								}
+							}
+							break ;
+						case "left-up":
+							tGridSprite.zOrder=z *this._totalGridNum+(this._gridH-1-gridY)*this._gridW+(this._gridW-1-gridX);
+							for (i=tBottom-1;i >=tTop;i--){
+								for (j=tRight-1;j >=tLeft;j--){
+									if (tLayer.drawTileTexture(tGridSprite,j,i)){
+										tGridSprite.drawImageNum++;
+									}
+								}
+							}
+							break ;
+						}
+					break ;
+				}
+				if (!tGridSprite.isHaveAnimation){
+					tGridSprite.autoSize=true;
+					if (this.autoCache)
+						tGridSprite.cacheAs=this.autoCacheType;
+					tGridSprite.autoSize=false;
+				}
+				if (!this.enableMergeLayer){
+					if (tGridSprite.drawImageNum > 0){
+						tLayer.addChild(tGridSprite);
+						tGridSprite.visible=false;
+						tGridSprite.show();
+					}
+					if (this._showGridKey){
+						tGridSprite.graphics.drawRect(0,0,tGridWidth,tGridHeight,null,tColorStr);
+					}
+					}else{
+					if (tTGridSprite && tTGridSprite.drawImageNum > 0&&tDrawMapLayer){
+						tDrawMapLayer.addChild(tTGridSprite);
+						tTGridSprite.visible=false;
+						tTGridSprite.show();
+					}
+				}
+			}
+			if (this.enableMergeLayer&&this.showGridTextureCount){
+				if (tTGridSprite){
+					tTGridSprite.graphics.fillText(tTGridSprite.drawImageNum+"",20,20,null,"#ff0000","left");
+				}
+			}
+		}
+		return tTempArray;
+	}
+
+	/**
+	*隐藏指定的GRID
+	*@param gridX
+	*@param gridY
+	*/
+	__proto.hideGrid=function(gridX,gridY){
+		if (gridX < 0 || gridX >=this._gridW || gridY < 0 || gridY >=this._gridH){
+			return;
+		};
+		var tTempArray=this._gridArray[gridY][gridX];
+		if (tTempArray){
+			var tGridSprite;
+			for (var i=0;i < tTempArray.length;i++){
+				tGridSprite=tTempArray[i];
+				if (tGridSprite.drawImageNum > 0){
+					if (tGridSprite !=null){
+						tGridSprite.hide();
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	*得到对象层上的某一个物品
+	*@param layerName 层的名称
+	*@param objectName 所找物品的名称
+	*@return
+	*/
+	__proto.getLayerObject=function(layerName,objectName){
+		var tLayer=null;
+		for (var i=0;i < this._layerArray.length;i++){
+			tLayer=this._layerArray[i];
+			if (tLayer.layerName==layerName){
+				break ;
+			}
+		}
+		if (tLayer){
+			return tLayer.getObjectByName(objectName);
+		}
+		return null;
+	}
+
+	/**
+	*销毁地图
+	*/
+	__proto.destroy=function(){
+		this._orientation="orthogonal";
+		this._jsonData=null;
+		var i=0;
+		var j=0;
+		var z=0;
+		this._gridArray=[];
+		var tTileTexSet;
+		for (i=0;i < this._tileTexSetArr.length;i++){
+			tTileTexSet=this._tileTexSetArr[i];
+			if (tTileTexSet){
+				tTileTexSet.clearAll();
+			}
+		}
+		this._tileTexSetArr=[];
+		var tTexture;
+		for (i=0;i < this._texArray.length;i++){
+			tTexture=this._texArray[i];
+			tTexture.destroy();
+		}
+		this._texArray=[];
+		this._width=0;
+		this._height=0;
+		this._mapW=0;
+		this._mapH=0;
+		this._mapTileW=0;
+		this._mapTileH=0;
+		this._rect.setTo(0,0,0,0);
+		var tLayer;
+		for (i=0;i < this._layerArray.length;i++){
+			tLayer=this._layerArray[i];
+			tLayer.clearAll();
+		}
+		this._layerArray=[];
+		this._renderLayerArray=[];
+		if (this._mapSprite){
+			this._mapSprite.destroy();
+			this._mapSprite=null;
+		}
+		this._jsonLoader=null;
+		this._loader=null;
+		var tDic=this._animationDic;
+		for (var p in tDic){
+			delete tDic[p];
+		}
+		this._properties=null;
+		tDic=this._tileProperties;
+		for (p in tDic){
+			delete tDic[p];
+		}
+		this._currTileSet=null;
+		this._completeHandler=null;
+		this._mapRect.clearAll();
+		this._mapLastRect.clearAll();
+		this._tileSetArray=[];
+		this._gridWidth=450;
+		this._gridHeight=450;
+		this._gridW=0;
+		this._gridH=0;
+		this._x=0;
+		this._y=0;
+		this._index=0;
+		this._enableLinear=true;
+		this._resPath=null;
+		this._pathArray=null;
+	}
+
+	/**
+	*整个地图的显示容器
+	*@return 地图的显示容器
+	*/
+	__proto.mapSprite=function(){
+		return this._mapSprite;
+	}
+
+	/**
+	*得到指定的MapLayer
+	*@param layerName 要找的层名称
+	*@return
+	*/
+	__proto.getLayerByName=function(layerName){
+		var tMapLayer;
+		for (var i=0;i < this._layerArray.length;i++){
+			tMapLayer=this._layerArray[i];
+			if (layerName==tMapLayer.layerName){
+				return tMapLayer;
+			}
+		}
+		return null;
+	}
+
+	/**
+	*通过索引得MapLayer
+	*@param index 要找的层索引
+	*@return
+	*/
+	__proto.getLayerByIndex=function(index){
+		if (index < this._layerArray.length){
+			return this._layerArray[index];
+		}
+		return null;
+	}
+
+	/**
+	*当前地图类型
+	*/
+	__getset(0,__proto,'orientation',function(){
+		return this._orientation;
+	});
+
+	/**
+	*@private
+	*视口x坐标
+	*/
+	__getset(0,__proto,'viewPortX',function(){
+		return-this._viewPortX;
+	});
+
+	/**
+	*设置地图缩放
+	*@param scale
+	*/
+	/**
+	*得到当前地图的缩放
+	*/
+	__getset(0,__proto,'scale',function(){
+		return this._scale;
+		},function(scale){
+		if (scale <=0)
+			return;
+		this._scale=scale;
+		this._viewPortWidth=this._rect.width / scale;
+		this._viewPortHeight=this._rect.height / scale;
+		this._mapSprite.scale(this._scale,this._scale);
+		this.updateViewPort();
+	});
+
+	/**
+	*格子的宽度
+	*/
+	__getset(0,__proto,'tileWidth',function(){
+		return this._mapTileW;
+	});
+
+	/**
+	*@private
+	*视口的y坐标
+	*/
+	__getset(0,__proto,'viewPortY',function(){
+		return-this._viewPortY;
+	});
+
+	/**
+	*格子的高度
+	*/
+	__getset(0,__proto,'tileHeight',function(){
+		return this._mapTileH;
+	});
+
+	/**
+	*地图的宽度
+	*/
+	__getset(0,__proto,'width',function(){
+		return this._width;
+	});
+
+	/**
+	*地图竖向的格子数
+	*/
+	__getset(0,__proto,'numRowsTile',function(){
+		return this._mapH;
+	});
+
+	/**
+	*地图横向的格子数
+	*/
+	__getset(0,__proto,'numColumnsTile',function(){
+		return this._mapW;
+	});
+
+	/**
+	*地图的高度
+	*/
+	__getset(0,__proto,'height',function(){
+		return this._height;
+	});
+
+	/**
+	*@private
+	*视口的宽度
+	*/
+	__getset(0,__proto,'viewPortWidth',function(){
+		return this._viewPortWidth;
+	});
+
+	/**
+	*@private
+	*视口的高度
+	*/
+	__getset(0,__proto,'viewPortHeight',function(){
+		return this._viewPortHeight;
+	});
+
+	/**
+	*地图的x坐标
+	*/
+	__getset(0,__proto,'x',function(){
+		return this._x;
+	});
+
+	/**
+	*地图的y坐标
+	*/
+	__getset(0,__proto,'y',function(){
+		return this._y;
+	});
+
+	/**
+	*块的宽度
+	*/
+	__getset(0,__proto,'gridWidth',function(){
+		return this._gridWidth;
+	});
+
+	/**
+	*块的高度
+	*/
+	__getset(0,__proto,'gridHeight',function(){
+		return this._gridHeight;
+	});
+
+	/**
+	*地图的横向块数
+	*/
+	__getset(0,__proto,'numColumnsGrid',function(){
+		return this._gridW;
+	});
+
+	/**
+	*地图的坚向块数
+	*/
+	__getset(0,__proto,'numRowsGrid',function(){
+		return this._gridH;
+	});
+
+	/**
+	*tile渲染顺序
+	*/
+	__getset(0,__proto,'renderOrder',function(){
+		return this._renderOrder;
+	});
+
+	TiledMap.ORIENTATION_ORTHOGONAL="orthogonal";
+	TiledMap.ORIENTATION_ISOMETRIC="isometric";
+	TiledMap.ORIENTATION_STAGGERED="staggered";
+	TiledMap.ORIENTATION_HEXAGONAL="hexagonal";
+	TiledMap.RENDERORDER_RIGHTDOWN="right-down";
+	TiledMap.RENDERORDER_RIGHTUP="right-up";
+	TiledMap.RENDERORDER_LEFTDOWN="left-down";
+	TiledMap.RENDERORDER_LEFTUP="left-up";
+	TiledMap._tempContext=null;
+	TiledMap.__init$=function(){
+		//class GRect
+		GRect=(function(){
+			function GRect(){
+				this.left=0;
+				this.top=0;
+				this.right=0;
+				this.bottom=0;
+			}
+			__class(GRect,'');
+			var __proto=GRect.prototype;
+			__proto.clearAll=function(){
+				this.left=this.top=this.right=this.bottom=0;
+			}
+			return GRect;
+		})()
+		//class TileMapAniData
+		TileMapAniData=(function(){
+			function TileMapAniData(){
+				this.mAniIdArray=[];
+				this.mDurationTimeArray=[];
+				this.mTileTexSetArr=[];
+				this.image=null;
+			}
+			__class(TileMapAniData,'');
+			return TileMapAniData;
+		})()
+		//class TileSet
+		TileSet=(function(){
+			function TileSet(){
+				this.firstgid=0;
+				this.image="";
+				this.imageheight=0;
+				this.imagewidth=0;
+				this.margin=0;
+				this.name=0;
+				this.properties=null;
+				this.spacing=0;
+				this.tileheight=0;
+				this.tilewidth=0;
+				this.titleoffsetX=0;
+				this.titleoffsetY=0;
+				this.tileproperties=null;
+			}
+			__class(TileSet,'');
+			var __proto=TileSet.prototype;
+			__proto.init=function(data){
+				this.firstgid=data.firstgid;
+				this.image=data.image;
+				this.imageheight=data.imageheight;
+				this.imagewidth=data.imagewidth;
+				this.margin=data.margin;
+				this.name=data.name;
+				this.properties=data.properties;
+				this.spacing=data.spacing;
+				this.tileheight=data.tileheight;
+				this.tilewidth=data.tilewidth;
+				this.tileproperties=data.tileproperties;
+				var tTileoffset=data.tileoffset;
+				if (tTileoffset){
+					this.titleoffsetX=tTileoffset.x;
+					this.titleoffsetY=tTileoffset.y;
+				}
+			}
+			return TileSet;
+		})()
+	}
+
+	return TiledMap;
+})()
+
+
+/**
+*此类是子纹理类，也包括同类动画的管理
+*TiledMap会把纹理分割成无数子纹理，也可以把其中的某块子纹理替换成一个动画序列
+*本类的实现就是如果发现子纹理被替换成一个动画序列，animationKey会被设为true
+*即animationKey为true,就使用TileAniSprite来做显示，把动画序列根据时间画到TileAniSprite上
+*@author ...
+*/
+//class laya.map.TileTexSet
+var TileTexSet=(function(){
+	function TileTexSet(){
+		/**唯一标识*/
+		this.gid=-1;
+		/**子纹理的引用*/
+		this.texture=null;
+		/**纹理显示时的坐标偏移X*/
+		this.offX=0;
+		/**纹理显示时的坐标偏移Y*/
+		this.offY=0;
+		/**当前要播放动画的纹理序列*/
+		this.textureArray=null;
+		/**当前动画每帧的时间间隔*/
+		this.durationTimeArray=null;
+		/**动画播放的总时间 */
+		this.animationTotalTime=0;
+		/**true表示当前纹理，是一组动画，false表示当前只有一个纹理*/
+		this.isAnimation=false;
+		this._spriteNum=0;
+		//当前动画有多少个显示对象
+		this._aniDic=null;
+		//通过显示对象的唯一名字，去保存显示显示对象
+		this._frameIndex=0;
+		//当前动画播放到第几帧
+		this._time=0;
+		//距离上次动画刷新，过了多少长时间
+		this._interval=0;
+		//每帧刷新的时间间隔
+		this._preFrameTime=0;
+	}
+
+	__class(TileTexSet,'laya.map.TileTexSet');
+	var __proto=TileTexSet.prototype;
+	/**
+	*加入一个动画显示对象到此动画中
+	*@param aniName //显示对象的名字
+	*@param sprite //显示对象
+	*/
+	__proto.addAniSprite=function(aniName,sprite){
+		if (this.animationTotalTime==0){
+			return;
+		}
+		if (this._aniDic==null){
+			this._aniDic={};
+		}
+		if (this._spriteNum==0){
+			Laya.timer.frameLoop(3,this,this.animate);
+			this._preFrameTime=Browser.now();
+			this._frameIndex=0;
+			this._time=0;
+			this._interval=0;
+		}
+		this._spriteNum++;
+		this._aniDic[aniName]=sprite;
+		if (this.textureArray && this._frameIndex < this.textureArray.length){
+			var tTileTextureSet=this.textureArray[this._frameIndex];
+			this.drawTexture(sprite,tTileTextureSet);
+		}
+	}
+
+	/**
+	*把动画画到所有注册的SPRITE上
+	*/
+	__proto.animate=function(){
+		if (this.textureArray && this.textureArray.length > 0 && this.durationTimeArray && this.durationTimeArray.length > 0){
+			var tNow=Browser.now();
+			this._interval=tNow-this._preFrameTime;
+			this._preFrameTime=tNow;
+			if (this._interval > this.animationTotalTime){
+				this._interval=this._interval % this.animationTotalTime;
+			}
+			this._time+=this._interval;
+			var tTime=this.durationTimeArray[this._frameIndex];
+			while (this._time > tTime){
+				this._time-=tTime;
+				this._frameIndex++;
+				if (this._frameIndex >=this.durationTimeArray.length || this._frameIndex >=this.textureArray.length){
+					this._frameIndex=0;
+				};
+				var tTileTextureSet=this.textureArray[this._frameIndex];
+				var tSprite;
+				for (var p in this._aniDic){
+					tSprite=this._aniDic[p];
+					this.drawTexture(tSprite,tTileTextureSet);
+				}
+				tTime=this.durationTimeArray[this._frameIndex];
+			}
+		}
+	}
+
+	__proto.drawTexture=function(sprite,tileTextSet){
+		sprite.graphics.clear();
+		sprite.graphics.drawTexture(tileTextSet.texture,tileTextSet.offX,tileTextSet.offY);
+	}
+
+	/**
+	*移除不需要更新的SPRITE
+	*@param _name
+	*/
+	__proto.removeAniSprite=function(_name){
+		if (this._aniDic && this._aniDic[_name]){
+			delete this._aniDic[_name];
+			this._spriteNum--
+			if (this._spriteNum==0){
+				Laya.timer.clear(this,this.animate);
+			}
+		}
+	}
+
+	/**
+	*显示当前动画的使用情况
+	*/
+	__proto.showDebugInfo=function(){
+		var tInfo=null;
+		if (this._spriteNum > 0){
+			tInfo="TileTextureSet::gid:"+this.gid.toString()+" 动画数:"+this._spriteNum.toString();
+		}
+		return tInfo;
+	}
+
+	/**
+	*清理
+	*/
+	__proto.clearAll=function(){
+		this.gid=-1;
+		if (this.texture){
+			this.texture.destroy();
+			this.texture=null;
+		}
+		this.offX=0;
+		this.offY=0;
+		this.textureArray=null;
+		this.durationTimeArray=null;
+		this.isAnimation=false;
+		this._spriteNum=0;
+		this._aniDic=null;
+		this._frameIndex=0;
+		this._preFrameTime=0;
+		this._time=0;
+		this._interval=0;
+	}
+
+	return TileTexSet;
+})()
+
+
+/**
+*地图的每层都会分块渲染处理
+*本类就是地图的块数据
+*@author ...
+*/
+//class laya.map.GridSprite extends laya.display.Sprite
+var GridSprite=(function(_super){
+	function GridSprite(){
+		/**相对于地图X轴的坐标*/
+		this.relativeX=0;
+		/**相对于地图Y轴的坐标*/
+		this.relativeY=0;
+		/**是否用于对象层的独立物件*/
+		this.isAloneObject=false;
+		/**当前GRID中是否有动画*/
+		this.isHaveAnimation=false;
+		/**当前GRID包含的动画*/
+		this.aniSpriteArray=null;
+		/**当前GRID包含多少个TILE(包含动画)*/
+		this.drawImageNum=0;
+		this._map=null;
+		GridSprite.__super.call(this);
+	}
+
+	__class(GridSprite,'laya.map.GridSprite',_super);
+	var __proto=GridSprite.prototype;
+	/**
+	*传入必要的参数，用于裁剪，跟确认此对象类型
+	*@param map 把地图的引用传进来，参与一些裁剪计算
+	*@param objectKey true:表示当前GridSprite是个活动对象，可以控制，false:地图层的组成块
+	*/
+	__proto.initData=function(map,objectKey){
+		(objectKey===void 0)&& (objectKey=false);
+		this._map=map;
+		this.isAloneObject=objectKey;
+	}
+
+	/**@private */
+	__proto._setDisplay=function(value){
+		if (!value){
+			var cc=this._$P.cacheCanvas;
+			if (cc && cc.ctx){
+				cc.ctx.canvas.destroy();
+				cc.ctx=null;
+			};
+			var fc=this._$P._filterCache;
+			if (fc){
+				fc.destroy();
+				fc.recycle();
+				this._set$P('_filterCache',null);
+			}
+			this._$P._isHaveGlowFilter && this._set$P('_isHaveGlowFilter',false);
+		}
+		_super.prototype._setDisplay.call(this,value);
+	}
+
+	/**
+	*把一个动画对象绑定到当前GridSprite
+	*@param sprite 动画的显示对象
+	*/
+	__proto.addAniSprite=function(sprite){
+		if (this.aniSpriteArray==null){
+			this.aniSpriteArray=[];
+		}
+		this.aniSpriteArray.push(sprite);
+	}
+
+	/**
+	*显示当前GridSprite，并把上面的动画全部显示
+	*/
+	__proto.show=function(){
+		if (!this.visible){
+			this.visible=true;
+			if (!this.isAloneObject){
+				var tParent;
+				tParent=this.parent;
+				if (tParent){
+					tParent.showGridSprite(this);
+				}
+			}
+			if (!Render.isWebGL&&this._map.autoCache){
+				this.cacheAs=this._map.autoCacheType;
+			}
+			if (this.aniSpriteArray==null){
+				return;
+			};
+			var tAniSprite;
+			for (var i=0;i < this.aniSpriteArray.length;i++){
+				tAniSprite=this.aniSpriteArray[i];
+				tAniSprite.show();
+			}
+		}
+	}
+
+	/**
+	*隐藏当前GridSprite，并把上面绑定的动画全部移除
+	*/
+	__proto.hide=function(){
+		if (this.visible){
+			this.visible=false;
+			if (!this.isAloneObject){
+				var tParent;
+				tParent=this.parent;
+				if (tParent){
+					tParent.hideGridSprite(this);
+				}
+			}
+			if (!Render.isWebGL&&this._map.autoCache){
+				this.cacheAs="none";
+			}
+			if (this.aniSpriteArray==null){
+				return;
+			};
+			var tAniSprite;
+			for (var i=0;i < this.aniSpriteArray.length;i++){
+				tAniSprite=this.aniSpriteArray[i];
+				tAniSprite.hide();
+			}
+		}
+	}
+
+	/**
+	*刷新坐标，当我们自己控制一个GridSprite移动时，需要调用此函数，手动刷新
+	*/
+	__proto.updatePos=function(){
+		if (this.isAloneObject){
+			if (this._map){
+				this.x=this.relativeX;
+				this.y=this.relativeY;
+			}
+			if (this.x < 0 || this.x > this._map.viewPortWidth || this.y < 0 || this.y > this._map.viewPortHeight){
+				this.hide();
+				}else {
+				this.show();
+			}
+			}else {
+			if (this._map){
+				this.x=this.relativeX;
+				this.y=this.relativeY;
+			}
+		}
+	}
+
+	/**
+	*重置当前对象的所有属性
+	*/
+	__proto.clearAll=function(){
+		if (this._map){
+			this._map=null;
+		}
+		this.visible=false;
+		var tAniSprite;
+		if (this.aniSpriteArray !=null){
+			for (var i=0;i < this.aniSpriteArray.length;i++){
+				tAniSprite=this.aniSpriteArray[i];
+				tAniSprite.clearAll();
+			}
+		}
+		this.destroy();
+		this.relativeX=0;
+		this.relativeY=0;
+		this.isHaveAnimation=false;
+		this.aniSpriteArray=null;
+		this.drawImageNum=0;
+	}
+
+	return GridSprite;
+})(Sprite)
+
+
+/**
+*地图支持多层渲染（例如，地表层，植被层，建筑层等）
+*本类就是层级类
+*@author ...
+*/
+//class laya.map.MapLayer extends laya.display.Sprite
+var MapLayer=(function(_super){
+	function MapLayer(){
+		this._map=null;
+		this._mapData=null;
+		this._tileWidthHalf=0;
+		this._tileHeightHalf=0;
+		this._mapWidthHalf=0;
+		this._mapHeightHalf=0;
+		/**
+		*@private
+		*/
+		this._gridSpriteArray=[];
+		this._objDic=null;
+		//用来做字典，方便查询
+		this._dataDic=null;
+		//临时变量
+		this._properties=null;
+		/**被合到的层*/
+		this.tarLayer=null;
+		/**当前Layer的名称*/
+		this.layerName=null;
+		/**
+		*当前需要更新的gridSprite列表
+		*/
+		this._showGridList=[];
+		/**
+		*活动对象列表,活动对象不管是否显示都需要更新
+		*/
+		this._aloneObjs=[];
+		MapLayer.__super.call(this);
+		this._tempMapPos=new Point();
+	}
+
+	__class(MapLayer,'laya.map.MapLayer',_super);
+	var __proto=MapLayer.prototype;
+	/**
+	*解析LAYER数据，以及初始化一些数据
+	*@param layerData 地图数据中，layer数据的引用
+	*@param map 地图的引用
+	*/
+	__proto.init=function(layerData,map){
+		this._map=map;
+		this._mapData=layerData.data;
+		var tHeight=layerData.height;
+		var tWidth=layerData.width;
+		var tTileW=map.tileWidth;
+		var tTileH=map.tileHeight;
+		this.layerName=layerData.name;
+		this._properties=layerData.properties;
+		this.alpha=layerData.opacity;
+		this._tileWidthHalf=tTileW / 2;
+		this._tileHeightHalf=tTileH / 2;
+		this._mapWidthHalf=this._map.width / 2-this._tileWidthHalf;
+		this._mapHeightHalf=this._map.height / 2;
+		switch (layerData.type){
+			case "tilelayer":
+				break ;
+			case "objectgroup":;
+				var tObjectGid=0;
+				var tArray=layerData.objects;
+				if (tArray.length > 0){
+					this._objDic={};
+					this._dataDic={};
+				};
+				var tObjectData;
+				var tObjWidth=NaN;
+				var tObjHeight=NaN;
+				for (var i=0;i < tArray.length;i++){
+					tObjectData=tArray[i];
+					this._dataDic[tObjectData.name]=tObjectData;
+					if (tObjectData.visible==true){
+						tObjWidth=tObjectData.width;
+						tObjHeight=tObjectData.height;
+						var tSprite=map.getSprite(tObjectData.gid,tObjWidth,tObjHeight);
+						if (tSprite !=null){
+						switch (this._map.orientation){
+							case /*laya.map.TiledMap.ORIENTATION_ISOMETRIC*/"isometric":
+								this.getScreenPositionByTilePos(tObjectData.x / tTileH,tObjectData.y / tTileH,Point.TEMP);
+								tSprite.pivot(tObjWidth / 2,tObjHeight / 2);
+								tSprite.rotation=tObjectData.rotation;
+								tSprite.x=tSprite.relativeX=Point.TEMP.x+this._map.viewPortX;
+								tSprite.y=tSprite.relativeY=Point.TEMP.y+this._map.viewPortY-tObjHeight / 2;
+								break ;
+							case /*laya.map.TiledMap.ORIENTATION_STAGGERED*/"staggered":
+								tSprite.pivot(tObjWidth / 2,tObjHeight / 2);
+								tSprite.rotation=tObjectData.rotation;
+								tSprite.x=tSprite.relativeX=tObjectData.x+tObjWidth / 2;
+								tSprite.y=tSprite.relativeY=tObjectData.y-tObjHeight / 2;
+								break ;
+							case /*laya.map.TiledMap.ORIENTATION_ORTHOGONAL*/"orthogonal":
+								tSprite.pivot(tObjWidth / 2,tObjHeight / 2);
+								tSprite.rotation=tObjectData.rotation;
+								tSprite.x=tSprite.relativeX=tObjectData.x+tObjWidth / 2;
+								tSprite.y=tSprite.relativeY=tObjectData.y-tObjHeight / 2;
+								break ;
+							case /*laya.map.TiledMap.ORIENTATION_HEXAGONAL*/"hexagonal":
+								tSprite.x=tSprite.relativeX=tObjectData.x;
+								tSprite.y=tSprite.relativeY=tObjectData.y;
+								break ;
+							}
+						this.addChild(tSprite);
+						this._gridSpriteArray.push(tSprite);
+						if (tSprite.isAloneObject){
+							this._showGridList.push(tSprite);
+							this._aloneObjs.push(tSprite);
+						}
+						this._objDic[tObjectData.name]=tSprite;
+					}
+				}
+			}
+			break ;
+		}
+	}
+
+	/**
+	*通过名字获取控制对象，如果找不到返回为null
+	*@param objName 所要获取对象的名字
+	*@return
+	*/
+	__proto.getObjectByName=function(objName){
+		if (this._objDic){
+			return this._objDic[objName];
+		}
+		return null;
+	}
+
+	/**
+	*通过名字获取数据，如果找不到返回为null
+	*@param objName 所要获取对象的名字
+	*@return
+	*/
+	__proto.getObjectDataByName=function(objName){
+		if (this._dataDic){
+			return this._dataDic[objName];
+		}
+		return null;
+	}
+
+	/**
+	*得到地图层的自定义属性
+	*@param name
+	*@return
+	*/
+	__proto.getLayerProperties=function(name){
+		if (this._properties){
+			return this._properties[name];
+		}
+		return null;
+	}
+
+	/**
+	*得到指定格子的数据
+	*@param tileX 格子坐标X
+	*@param tileY 格子坐标Y
+	*@return
+	*/
+	__proto.getTileData=function(tileX,tileY){
+		if (tileY >=0 && tileY < this._map.numRowsTile && tileX >=0 && tileX < this._map.numColumnsTile){
+			var tIndex=tileY *this._map.numColumnsTile+tileX;
+			var tMapData=this._mapData;
+			if (tMapData !=null && tIndex < tMapData.length){
+				return tMapData[tIndex];
+			}
+		}
+		return 0;
+	}
+
+	/**
+	*通过地图坐标得到屏幕坐标
+	*@param tileX 格子坐标X
+	*@param tileY 格子坐标Y
+	*@param screenPos 把计算好的屏幕坐标数据，放到此对象中
+	*/
+	__proto.getScreenPositionByTilePos=function(tileX,tileY,screenPos){
+		if (screenPos){
+			switch (this._map.orientation){
+				case /*laya.map.TiledMap.ORIENTATION_ISOMETRIC*/"isometric":
+					screenPos.x=this._map.width / 2-(tileY-tileX)*this._tileWidthHalf;
+					screenPos.y=(tileY+tileX)*this._tileHeightHalf;
+					break ;
+				case /*laya.map.TiledMap.ORIENTATION_STAGGERED*/"staggered":
+					tileX=Math.floor(tileX);
+					tileY=Math.floor(tileY);
+					screenPos.x=tileX *this._map.tileWidth+(tileY & 1)*this._tileWidthHalf;
+					screenPos.y=tileY *this._tileHeightHalf;
+					break ;
+				case /*laya.map.TiledMap.ORIENTATION_ORTHOGONAL*/"orthogonal":
+					screenPos.x=tileX *this._map.tileWidth;
+					screenPos.y=tileY *this._map.tileHeight;
+					break ;
+				case /*laya.map.TiledMap.ORIENTATION_HEXAGONAL*/"hexagonal":
+					tileX=Math.floor(tileX);
+					tileY=Math.floor(tileY);
+					var tTileHeight=this._map.tileHeight *2 / 3;
+					screenPos.x=(tileX *this._map.tileWidth+tileY % 2 *this._tileWidthHalf)% this._map.gridWidth;
+					screenPos.y=(tileY *tTileHeight)% this._map.gridHeight;
+					break ;
+				}
+			screenPos.x=(screenPos.x+this._map.viewPortX)*this._map.scale;
+			screenPos.y=(screenPos.y+this._map.viewPortY)*this._map.scale;
+		}
+	}
+
+	/**
+	*通过屏幕坐标来获取选中格子的数据
+	*@param screenX 屏幕坐标x
+	*@param screenY 屏幕坐标y
+	*@return
+	*/
+	__proto.getTileDataByScreenPos=function(screenX,screenY){
+		var tData=0;
+		if (this.getTilePositionByScreenPos(screenX,screenY,this._tempMapPos)){
+			tData=this.getTileData(Math.floor(this._tempMapPos.x),Math.floor(this._tempMapPos.y));
+		}
+		return tData;
+	}
+
+	/**
+	*通过屏幕坐标来获取选中格子的索引
+	*@param screenX 屏幕坐标x
+	*@param screenY 屏幕坐标y
+	*@param result 把计算好的格子坐标，放到此对象中
+	*@return
+	*/
+	__proto.getTilePositionByScreenPos=function(screenX,screenY,result){
+		screenX=screenX/this._map.scale-this._map.viewPortX;
+		screenY=screenY/this._map.scale-this._map.viewPortY;
+		var tTileW=this._map.tileWidth;
+		var tTileH=this._map.tileHeight;
+		var tV=0;
+		var tU=0;
+		switch (this._map.orientation){
+			case /*laya.map.TiledMap.ORIENTATION_ISOMETRIC*/"isometric":;
+				var tDirX=screenX-this._map.width / 2;
+				var tDirY=screenY;
+				tV=-(tDirX / tTileW-tDirY / tTileH);
+				tU=tDirX / tTileW+tDirY / tTileH;
+				if (result){
+					result.x=tU;
+					result.y=tV;
+				}
+				return true;
+				break ;
+			case /*laya.map.TiledMap.ORIENTATION_STAGGERED*/"staggered":
+				if (result){
+					var cx=0,cy=0,rx=0,ry=0;
+					cx=Math.floor(screenX / tTileW)*tTileW+tTileW / 2;
+					cy=Math.floor(screenY / tTileH)*tTileH+tTileH / 2;
+					rx=(screenX-cx)*tTileH / 2;
+					ry=(screenY-cy)*tTileW / 2;
+					if (Math.abs(rx)+Math.abs(ry)<=tTileW *tTileH / 4){
+						tU=Math.floor(screenX / tTileW);
+						tV=Math.floor(screenY / tTileH)*2;
+						}else {
+						screenX=screenX-tTileW / 2;
+						tU=Math.floor(screenX / tTileW)+1;
+						screenY=screenY-tTileH / 2;
+						tV=Math.floor(screenY / tTileH)*2+1;
+					}
+					result.x=tU-(tV & 1);
+					result.y=tV;
+				}
+				return true;
+				break ;
+			case /*laya.map.TiledMap.ORIENTATION_ORTHOGONAL*/"orthogonal":
+				tU=screenX / tTileW;
+				tV=screenY / tTileH;
+				if (result){
+					result.x=tU;
+					result.y=tV;
+				}
+				return true;
+				break ;
+			case /*laya.map.TiledMap.ORIENTATION_HEXAGONAL*/"hexagonal":;
+				var tTileHeight=tTileH *2 / 3;
+				tV=screenY / tTileHeight;
+				tU=(screenX-tV % 2 *this._tileWidthHalf)/ tTileW;
+				if (result){
+					result.x=tU;
+					result.y=tV;
+				}
+				break ;
+			}
+		return false;
+	}
+
+	/**
+	*得到一个GridSprite
+	*@param gridX 当前Grid的X轴索引
+	*@param gridY 当前Grid的Y轴索引
+	*@return 一个GridSprite对象
+	*/
+	__proto.getDrawSprite=function(gridX,gridY){
+		var tSprite=new GridSprite();
+		tSprite.relativeX=gridX *this._map.gridWidth;
+		tSprite.relativeY=gridY *this._map.gridHeight;
+		tSprite.initData(this._map);
+		tSprite.updatePos();
+		this._gridSpriteArray.push(tSprite);
+		return tSprite;
+	}
+
+	/**
+	*将gridSprite设为显示状态
+	*@param gridSprite
+	*/
+	__proto.showGridSprite=function(gridSprite){
+		var gridList=this._showGridList;
+		var i=0,len=0;
+		len=gridList.length;
+		var ok_i=-1;
+		var tGridSprite;
+		for (i=0;i < len;i++){
+			tGridSprite=gridList[i];
+			if (tGridSprite==gridSprite)return;
+			if (!tGridSprite.isAloneObject && !tGridSprite.visible){
+				ok_i=i;
+			}
+		}
+		if (ok_i >=0){
+			gridList[ok_i]=gridSprite;
+			}else{
+			gridList.push(gridSprite);
+		}
+	}
+
+	/**
+	*将gridSprite设为隐藏状态
+	*@param gridSprite
+	*
+	*/
+	__proto.hideGridSprite=function(gridSprite){
+		gridSprite.visible=false;
+	}
+
+	/**
+	*更新此层中块的坐标
+	*手动刷新的目的是，保持层级的宽和高保持最小，加快渲染
+	*/
+	__proto.updateGridPos=function(){
+		var tSprite;
+		var tList;
+		tList=this._showGridList;
+		var len=0;
+		len=tList.length;
+		for (var i=0;i < len;i++){
+			tSprite=tList[i];
+			if ((tSprite._style.visible || tSprite.isAloneObject)&& tSprite.drawImageNum > 0){
+				tSprite.updatePos();
+			}
+		}
+	}
+
+	/**
+	*更新此层中的活动对象
+	*/
+	__proto.updateAloneObject=function(){
+		var tSprite;
+		var tList;
+		tList=this._aloneObjs;
+		var len=0;
+		len=tList.length;
+		for (var i=0;i < len;i++){
+			tSprite=tList[i];
+			if (tSprite.drawImageNum > 0){
+				tSprite.updatePos();
+			}
+		}
+	}
+
+	/**
+	*渲染时使用需要更新的列表进行渲染，减少遍历
+	*@param context
+	*@param x
+	*@param y
+	*
+	*/
+	__proto.render=function(context,x,y){
+		var childs=this._childs;
+		this._childs=this._showGridList;
+		_super.prototype.render.call(this,context,x,y);
+		this._childs=childs;
+	}
+
+	/**
+	*@private
+	*把tile画到指定的显示对象上
+	*@param gridSprite 被指定显示的目标
+	*@param tileX 格子的X轴坐标
+	*@param tileY 格子的Y轴坐标
+	*@return
+	*/
+	__proto.drawTileTexture=function(gridSprite,tileX,tileY){
+		if (tileY >=0 && tileY < this._map.numRowsTile && tileX >=0 && tileX < this._map.numColumnsTile){
+			var tIndex=tileY *this._map.numColumnsTile+tileX;
+			var tMapData=this._mapData;
+			if (tMapData !=null && tIndex < tMapData.length){
+				if (tMapData[tIndex] !=0){
+					var tTileTexSet=this._map.getTexture(tMapData[tIndex]);
+					if (tTileTexSet){
+						var tX=0;
+						var tY=0;
+						var tTexture=tTileTexSet.texture;
+						switch (this._map.orientation){
+							case /*laya.map.TiledMap.ORIENTATION_STAGGERED*/"staggered":
+								tX=tileX *this._map.tileWidth % this._map.gridWidth+(tileY & 1)*this._tileWidthHalf;
+								tY=tileY *this._tileHeightHalf % this._map.gridHeight;
+								break ;
+							case /*laya.map.TiledMap.ORIENTATION_ORTHOGONAL*/"orthogonal":
+								tX=tileX *this._map.tileWidth % this._map.gridWidth;
+								tY=tileY *this._map.tileHeight % this._map.gridHeight;
+								break ;
+							case /*laya.map.TiledMap.ORIENTATION_ISOMETRIC*/"isometric":
+								tX=(this._mapWidthHalf+(tileX-tileY)*this._tileWidthHalf)% this._map.gridWidth;
+								tY=((tileX+tileY)*this._tileHeightHalf)% this._map.gridHeight;
+								break ;
+							case /*laya.map.TiledMap.ORIENTATION_HEXAGONAL*/"hexagonal":;
+								var tTileHeight=this._map.tileHeight *2 / 3;
+								tX=(tileX *this._map.tileWidth+tileY % 2 *this._tileWidthHalf)% this._map.gridWidth;
+								tY=(tileY *tTileHeight)% this._map.gridHeight;
+								break ;
+							}
+						if (tTileTexSet.isAnimation){
+							var tAnimationSprite=new TileAniSprite();
+							tAnimationSprite.x=tX;
+							tAnimationSprite.y=tY;
+							tAnimationSprite.setTileTextureSet(tIndex.toString(),tTileTexSet);
+							gridSprite.addAniSprite(tAnimationSprite);
+							gridSprite.addChild(tAnimationSprite);
+							gridSprite.isHaveAnimation=true;
+							}else {
+							gridSprite.graphics.drawTexture(tTileTexSet.texture,tX+tTileTexSet.offX,tY+tTileTexSet.offY);
+						}
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	*@private
+	*清理当前对象
+	*/
+	__proto.clearAll=function(){
+		this._map=null;
+		this._mapData=null;
+		this._tileWidthHalf=0;
+		this._tileHeightHalf=0;
+		this._mapWidthHalf=0;
+		this._mapHeightHalf=0;
+		this.layerName=null;
+		var i=0;
+		if (this._objDic){
+			for (var p in this._objDic){
+				delete this._objDic[p];
+			}
+			this._objDic=null;
+		}
+		if (this._dataDic){
+			for (p in this._dataDic){
+				delete this._dataDic[p];
+			}
+			this._dataDic=null;
+		};
+		var tGridSprite;
+		for (i=0;i < this._gridSpriteArray.length;i++){
+			tGridSprite=this._gridSpriteArray[i];
+			tGridSprite.clearAll();
+		}
+		this._properties=null;
+		this._tempMapPos=null;
+		this.tarLayer=null;
+	}
+
+	return MapLayer;
+})(Sprite)
+
+
+/**
+*TildMap的动画显示对象（一个动画（TileTexSet），可以绑定多个动画显示对象（TileAniSprite））
+*@author ...
+*/
+//class laya.map.TileAniSprite extends laya.display.Sprite
+var TileAniSprite=(function(_super){
+	function TileAniSprite(){
+		this._tileTextureSet=null;
+		//动画的引用
+		this._aniName=null;
+		TileAniSprite.__super.call(this);
+	}
+
+	__class(TileAniSprite,'laya.map.TileAniSprite',_super);
+	var __proto=TileAniSprite.prototype;
+	/**
+	*确定当前显示对象的名称以及属于哪个动画
+	*@param aniName 当前动画显示对象的名字，名字唯一
+	*@param tileTextureSet 当前显示对象属于哪个动画（一个动画，可以绑定多个同类显示对象）
+	*/
+	__proto.setTileTextureSet=function(aniName,tileTextureSet){
+		this._aniName=aniName;
+		this._tileTextureSet=tileTextureSet;
+		tileTextureSet.addAniSprite(this._aniName,this);
+	}
+
+	/**
+	*把当前动画加入到对应的动画刷新列表中
+	*/
+	__proto.show=function(){
+		this._tileTextureSet.addAniSprite(this._aniName,this);
+	}
+
+	/**
+	*把当前动画从对应的动画刷新列表中移除
+	*/
+	__proto.hide=function(){
+		this._tileTextureSet.removeAniSprite(this._aniName);
+	}
+
+	/**
+	*清理
+	*/
+	__proto.clearAll=function(){
+		this._tileTextureSet.removeAniSprite(this._aniName);
+		this.destroy();
+		this._tileTextureSet=null;
+		this._aniName=null;
+	}
+
+	return TileAniSprite;
+})(Sprite)
+
+
+	Laya.__init([TiledMap]);
+})(window,document,Laya);
+
+if (typeof define === 'function' && define.amd){
+	define('laya.core', ['require', "exports"], function(require, exports) {
+        'use strict';
+        Object.defineProperty(exports, '__esModule', { value: true });
+        for (var i in Laya) {
+			var o = Laya[i];
+            o && o.__isclass && (exports[i] = o);
+        }
+    });
+}

@@ -1,1 +1,353 @@
-!function(t,e,i){i.un,i.uns,i.static;var a=i.class,r=i.getset,n=(i.__newvec,laya.utils.Browser,laya.utils.Color),s=laya.filters.ColorFilterAction,l=laya.filters.webgl.ColorFilterActionGL,o=laya.filters.Filter,u=laya.filters.webgl.FilterActionGL,c=laya.maths.Matrix,h=(laya.maths.Rectangle,laya.renders.Render),f=(laya.renders.RenderContext,laya.webgl.resource.RenderTarget2D),_=laya.utils.RunDriver,d=(laya.webgl.shader.d2.ShaderDefines2D,laya.display.Sprite,laya.resource.Texture,laya.webgl.shader.d2.value.Value2D),g=function(){function t(){this.data=null}a(t,"laya.filters.FilterAction");var e=t.prototype;return i.imps(e,{"laya.filters.IFilterAction":!0}),e.apply=function(t){return null},t}(),y=function(){function t(){}return a(t,"laya.filters.WebGLFilter"),t.enable=function(){t.isInit||(t.isInit=!0,h.isWebGL&&(_.createFilterAction=function(t){var e;switch(t){case 32:e=new l;break;case 16:e=new p;break;case 8:e=new w}return e}))},t.isInit=!1,t.__init$=function(){_.createFilterAction=function(t){var e;switch(t){case 16:case 8:e=new g;break;case 32:e=new s}return e}},t}(),p=(function(t){function e(t){this.strength=NaN,this.strength_sig2_2sig2_gauss1=[],e.__super.call(this),void 0===t&&(t=4),h.isWebGL&&y.enable(),this.strength=t,this._action=_.createFilterAction(16),this._action.data=this}a(e,"laya.filters.BlurFilter",o);var i=e.prototype;i.callNative=function(t){t.conchModel&&t.conchModel.blurFilter&&t.conchModel.blurFilter(this.strength)},r(0,i,"action",function(){return this._action}),r(0,i,"type",function(){return 16})}(),function(t){function e(t,i,a,r){this._color=null,e.__super.call(this),this._elements=new Float32Array(9),void 0===i&&(i=4),void 0===a&&(a=6),void 0===r&&(r=6),h.isWebGL&&y.enable(),this._color=new n(t),this.blur=Math.min(i,20),this.offX=a,this.offY=r,this._action=_.createFilterAction(8),this._action.data=this}a(e,"laya.filters.GlowFilter",o);var i=e.prototype;i.getColor=function(){return this._color._color},i.callNative=function(t){t.conchModel&&t.conchModel.glowFilter&&t.conchModel.glowFilter(this._color.strColor,this._elements[4],this._elements[5],this._elements[6])},r(0,i,"type",function(){return 8}),r(0,i,"action",function(){return this._action}),r(0,i,"offY",function(){return this._elements[6]},function(t){this._elements[6]=t}),r(0,i,"offX",function(){return this._elements[5]},function(t){this._elements[5]=t}),r(0,i,"blur",function(){return this._elements[4]},function(t){this._elements[4]=t})}(),function(t){function e(){this.data=null,e.__super.call(this)}a(e,"laya.filters.webgl.BlurFilterActionGL",u);var i=e.prototype;return i.setValueMix=function(t){t.defines.add(this.data.type)},i.apply3d=function(t,e,i,a,r){var n=t.getValue("bounds"),s=d.create(1,0);s.setFilters([this.data]);c.EMPTY.identity(),i.ctx.drawTarget(t,0,0,n.width,n.height,c.EMPTY,"src",s),s.setFilters(null)},i.setValue=function(t){t.strength=this.data.strength;var e=this.data.strength/3,i=e*e;this.data.strength_sig2_2sig2_gauss1[0]=this.data.strength,this.data.strength_sig2_2sig2_gauss1[1]=i,this.data.strength_sig2_2sig2_gauss1[2]=2*i,this.data.strength_sig2_2sig2_gauss1[3]=1/(2*Math.PI*i),t.strength_sig2_2sig2_gauss1=this.data.strength_sig2_2sig2_gauss1},r(0,i,"typeMix",function(){return 16}),e}()),w=function(t){function e(){this.data=null,this._initKey=!1,this._textureWidth=0,this._textureHeight=0,e.__super.call(this)}a(e,"laya.filters.webgl.GlowFilterActionGL",u);var n=e.prototype;return i.imps(n,{"laya.filters.IFilterActionGL":!0}),n.setValueMix=function(t){},n.apply3d=function(t,e,i,a,r){var n=t.getValue("bounds");t.addValue("color",this.data.getColor());var s=n.width,l=n.height;this._textureWidth=s,this._textureHeight=l;var o,u=c.TEMP;return u.identity(),(o=d.create(1,0)).setFilters([this.data]),i.ctx.drawTarget(t,0,0,this._textureWidth,this._textureHeight,u,"src",o,null),o=d.create(1,0),i.ctx.drawTarget(t,0,0,this._textureWidth,this._textureHeight,u,"src",o),null},n.setSpriteWH=function(t){this._textureWidth=t.width,this._textureHeight=t.height},n.setValue=function(t){t.u_offsetX=this.data.offX,t.u_offsetY=-this.data.offY,t.u_strength=1,t.u_blurX=this.data.blur,t.u_blurY=this.data.blur,t.u_textW=this._textureWidth,t.u_textH=this._textureHeight,t.u_color=this.data.getColor()},r(0,n,"typeMix",function(){return 8}),e.tmpTarget=function(t,e,i,a,r){var n=t.getValue("bounds");t.getValue("out").end();var s=f.create(n.width,n.height);s.start();var l=t.getValue("color");l&&s.clear(l[0],l[1],l[2],0),t.addValue("tmpTarget",s)},e.startOut=function(t,e,i,a,r){t.getValue("tmpTarget").end();var n=t.getValue("out");n.start();var s=t.getValue("color");s&&n.clear(s[0],s[1],s[2],0)},e.recycleTarget=function(t,e,i,a,r){t.getValue("src");t.getValue("tmpTarget").recycle()},e}();i.__init([y])}(window,document,Laya),"function"==typeof define&&define.amd&&define("laya.core",["require","exports"],function(t,e){"use strict";Object.defineProperty(e,"__esModule",{value:!0});for(var i in Laya){var a=Laya[i];a&&a.__isclass&&(e[i]=a)}});
+
+(function(window,document,Laya){
+	var __un=Laya.un,__uns=Laya.uns,__static=Laya.static,__class=Laya.class,__getset=Laya.getset,__newvec=Laya.__newvec;
+
+	var Browser=laya.utils.Browser,Color=laya.utils.Color,ColorFilterAction=laya.filters.ColorFilterAction;
+	var ColorFilterActionGL=laya.filters.webgl.ColorFilterActionGL,Filter=laya.filters.Filter,FilterActionGL=laya.filters.webgl.FilterActionGL;
+	var Matrix=laya.maths.Matrix,Rectangle=laya.maths.Rectangle,Render=laya.renders.Render,RenderContext=laya.renders.RenderContext;
+	var RenderTarget2D=laya.webgl.resource.RenderTarget2D,RunDriver=laya.utils.RunDriver,ShaderDefines2D=laya.webgl.shader.d2.ShaderDefines2D;
+	var Sprite=laya.display.Sprite,Texture=laya.resource.Texture,Value2D=laya.webgl.shader.d2.value.Value2D;
+/**
+*默认的FILTER,什么都不做
+*@private
+*/
+//class laya.filters.FilterAction
+var FilterAction=(function(){
+	function FilterAction(){
+		this.data=null;
+	}
+
+	__class(FilterAction,'laya.filters.FilterAction');
+	var __proto=FilterAction.prototype;
+	Laya.imps(__proto,{"laya.filters.IFilterAction":true})
+	__proto.apply=function(data){
+		return null;
+	}
+
+	return FilterAction;
+})()
+
+
+/**
+*@private
+*/
+//class laya.filters.WebGLFilter
+var WebGLFilter=(function(){
+	function WebGLFilter(){}
+	__class(WebGLFilter,'laya.filters.WebGLFilter');
+	WebGLFilter.enable=function(){
+		if (WebGLFilter.isInit)return;
+		WebGLFilter.isInit=true;
+		if (!Render.isWebGL)return;
+		RunDriver.createFilterAction=function (type){
+			var action;
+			switch (type){
+				case /*laya.filters.Filter.COLOR*/0x20:
+					action=new ColorFilterActionGL();
+					break ;
+				case /*laya.filters.Filter.BLUR*/0x10:
+					action=new BlurFilterActionGL();
+					break ;
+				case /*laya.filters.Filter.GLOW*/0x08:
+					action=new GlowFilterActionGL();
+					break ;
+				}
+			return action;
+		}
+	}
+
+	WebGLFilter.isInit=false;
+	WebGLFilter.__init$=function(){
+		BlurFilterActionGL;
+		ColorFilterActionGL;
+		GlowFilterActionGL;
+		Render;
+		RunDriver;{
+			RunDriver.createFilterAction=function (type){
+				var action;
+				switch (type){
+					case /*laya.filters.Filter.BLUR*/0x10:
+						action=new FilterAction();
+						break ;
+					case /*laya.filters.Filter.GLOW*/0x08:
+						action=new FilterAction();
+						break ;
+					case /*laya.filters.Filter.COLOR*/0x20:
+						action=new ColorFilterAction();
+						break ;
+					}
+				return action;
+			}
+		}
+	}
+
+	return WebGLFilter;
+})()
+
+
+/**
+*模糊滤镜
+*/
+//class laya.filters.BlurFilter extends laya.filters.Filter
+var BlurFilter=(function(_super){
+	function BlurFilter(strength){
+		/**模糊滤镜的强度(值越大，越不清晰 */
+		this.strength=NaN;
+		this.strength_sig2_2sig2_gauss1=[];
+		BlurFilter.__super.call(this);
+		(strength===void 0)&& (strength=4);
+		if (Render.isWebGL)WebGLFilter.enable();
+		this.strength=strength;
+		this._action=RunDriver.createFilterAction(0x10);
+		this._action.data=this;
+	}
+
+	__class(BlurFilter,'laya.filters.BlurFilter',_super);
+	var __proto=BlurFilter.prototype;
+	/**
+	*@private 通知微端
+	*/
+	__proto.callNative=function(sp){
+		sp.conchModel &&sp.conchModel.blurFilter&&sp.conchModel.blurFilter(this.strength);
+	}
+
+	/**
+	*@private
+	*当前滤镜对应的操作器
+	*/
+	__getset(0,__proto,'action',function(){
+		return this._action;
+	});
+
+	/**
+	*@private
+	*当前滤镜的类型
+	*/
+	__getset(0,__proto,'type',function(){
+		return 0x10;
+	});
+
+	return BlurFilter;
+})(Filter)
+
+
+/**
+*发光滤镜(也可以当成阴影滤使用）
+*/
+//class laya.filters.GlowFilter extends laya.filters.Filter
+var GlowFilter=(function(_super){
+	function GlowFilter(color,blur,offX,offY){
+		/**滤镜的颜色*/
+		this._color=null;
+		GlowFilter.__super.call(this);
+		this._elements=new Float32Array(9);
+		(blur===void 0)&& (blur=4);
+		(offX===void 0)&& (offX=6);
+		(offY===void 0)&& (offY=6);
+		if (Render.isWebGL){
+			WebGLFilter.enable();
+		}
+		this._color=new Color(color);
+		this.blur=Math.min(blur,20);
+		this.offX=offX;
+		this.offY=offY;
+		this._action=RunDriver.createFilterAction(0x08);
+		this._action.data=this;
+	}
+
+	__class(GlowFilter,'laya.filters.GlowFilter',_super);
+	var __proto=GlowFilter.prototype;
+	/**@private */
+	__proto.getColor=function(){
+		return this._color._color;
+	}
+
+	/**
+	*@private 通知微端
+	*/
+	__proto.callNative=function(sp){
+		sp.conchModel &&sp.conchModel.glowFilter&&sp.conchModel.glowFilter(this._color.strColor,this._elements[4],this._elements[5],this._elements[6]);
+	}
+
+	/**
+	*@private
+	*滤镜类型
+	*/
+	__getset(0,__proto,'type',function(){
+		return 0x08;
+	});
+
+	/**@private */
+	__getset(0,__proto,'action',function(){
+		return this._action;
+	});
+
+	/**@private */
+	/**@private */
+	__getset(0,__proto,'offY',function(){
+		return this._elements[6];
+		},function(value){
+		this._elements[6]=value;
+	});
+
+	/**@private */
+	/**@private */
+	__getset(0,__proto,'offX',function(){
+		return this._elements[5];
+		},function(value){
+		this._elements[5]=value;
+	});
+
+	/**@private */
+	/**@private */
+	__getset(0,__proto,'blur',function(){
+		return this._elements[4];
+		},function(value){
+		this._elements[4]=value;
+	});
+
+	return GlowFilter;
+})(Filter)
+
+
+/**
+*@private
+*/
+//class laya.filters.webgl.BlurFilterActionGL extends laya.filters.webgl.FilterActionGL
+var BlurFilterActionGL=(function(_super){
+	function BlurFilterActionGL(){
+		this.data=null;
+		BlurFilterActionGL.__super.call(this);
+	}
+
+	__class(BlurFilterActionGL,'laya.filters.webgl.BlurFilterActionGL',_super);
+	var __proto=BlurFilterActionGL.prototype;
+	__proto.setValueMix=function(shader){
+		shader.defines.add(this.data.type);
+		var o=shader;
+	}
+
+	__proto.apply3d=function(scope,sprite,context,x,y){
+		var b=scope.getValue("bounds");
+		var shaderValue=Value2D.create(/*laya.webgl.shader.d2.ShaderDefines2D.TEXTURE2D*/0x01,0);
+		shaderValue.setFilters([this.data]);
+		var tMatrix=Matrix.EMPTY;
+		tMatrix.identity();
+		context.ctx.drawTarget(scope,0,0,b.width,b.height,Matrix.EMPTY,"src",shaderValue);
+		shaderValue.setFilters(null);
+	}
+
+	__proto.setValue=function(shader){
+		shader.strength=this.data.strength;
+		var sigma=this.data.strength/3.0;
+		var sigma2=sigma*sigma;
+		this.data.strength_sig2_2sig2_gauss1[0]=this.data.strength;
+		this.data.strength_sig2_2sig2_gauss1[1]=sigma2;
+		this.data.strength_sig2_2sig2_gauss1[2]=2.0*sigma2;
+		this.data.strength_sig2_2sig2_gauss1[3]=1.0/(2.0*Math.PI*sigma2);
+		shader.strength_sig2_2sig2_gauss1=this.data.strength_sig2_2sig2_gauss1;
+	}
+
+	__getset(0,__proto,'typeMix',function(){return /*laya.filters.Filter.BLUR*/0x10;});
+	return BlurFilterActionGL;
+})(FilterActionGL)
+
+
+/**
+*@private
+*/
+//class laya.filters.webgl.GlowFilterActionGL extends laya.filters.webgl.FilterActionGL
+var GlowFilterActionGL=(function(_super){
+	function GlowFilterActionGL(){
+		this.data=null;
+		this._initKey=false;
+		this._textureWidth=0;
+		this._textureHeight=0;
+		GlowFilterActionGL.__super.call(this);
+	}
+
+	__class(GlowFilterActionGL,'laya.filters.webgl.GlowFilterActionGL',_super);
+	var __proto=GlowFilterActionGL.prototype;
+	Laya.imps(__proto,{"laya.filters.IFilterActionGL":true})
+	__proto.setValueMix=function(shader){}
+	__proto.apply3d=function(scope,sprite,context,x,y){
+		var b=scope.getValue("bounds");
+		scope.addValue("color",this.data.getColor());
+		var w=b.width,h=b.height;
+		this._textureWidth=w;
+		this._textureHeight=h;
+		var shaderValue;
+		var mat=Matrix.TEMP;
+		mat.identity();
+		shaderValue=Value2D.create(/*laya.webgl.shader.d2.ShaderDefines2D.TEXTURE2D*/0x01,0);
+		shaderValue.setFilters([this.data]);
+		context.ctx.drawTarget(scope,0,0,this._textureWidth,this._textureHeight,mat,"src",shaderValue,null);
+		shaderValue=Value2D.create(/*laya.webgl.shader.d2.ShaderDefines2D.TEXTURE2D*/0x01,0);
+		context.ctx.drawTarget(scope,0,0,this._textureWidth,this._textureHeight,mat,"src",shaderValue);
+		return null;
+	}
+
+	__proto.setSpriteWH=function(sprite){
+		this._textureWidth=sprite.width;
+		this._textureHeight=sprite.height;
+	}
+
+	__proto.setValue=function(shader){
+		shader.u_offsetX=this.data.offX;
+		shader.u_offsetY=-this.data.offY;
+		shader.u_strength=1.0;
+		shader.u_blurX=this.data.blur;
+		shader.u_blurY=this.data.blur;
+		shader.u_textW=this._textureWidth;
+		shader.u_textH=this._textureHeight;
+		shader.u_color=this.data.getColor();
+	}
+
+	__getset(0,__proto,'typeMix',function(){return /*laya.filters.Filter.GLOW*/0x08;});
+	GlowFilterActionGL.tmpTarget=function(scope,sprite,context,x,y){
+		var b=scope.getValue("bounds");
+		var out=scope.getValue("out");
+		out.end();
+		var tmpTarget=RenderTarget2D.create(b.width,b.height);
+		tmpTarget.start();
+		var color=scope.getValue("color");
+		if (color){
+			tmpTarget.clear(color[0],color[1],color[2],0);
+		}
+		scope.addValue("tmpTarget",tmpTarget);
+	}
+
+	GlowFilterActionGL.startOut=function(scope,sprite,context,x,y){
+		var tmpTarget=scope.getValue("tmpTarget");
+		tmpTarget.end();
+		var out=scope.getValue("out");
+		out.start();
+		var color=scope.getValue("color");
+		if (color){
+			out.clear(color[0],color[1],color[2],0);
+		}
+	}
+
+	GlowFilterActionGL.recycleTarget=function(scope,sprite,context,x,y){
+		var src=scope.getValue("src");
+		var tmpTarget=scope.getValue("tmpTarget");
+		tmpTarget.recycle();
+	}
+
+	return GlowFilterActionGL;
+})(FilterActionGL)
+
+
+	Laya.__init([WebGLFilter]);
+})(window,document,Laya);
+
+if (typeof define === 'function' && define.amd){
+	define('laya.core', ['require', "exports"], function(require, exports) {
+        'use strict';
+        Object.defineProperty(exports, '__esModule', { value: true });
+        for (var i in Laya) {
+			var o = Laya[i];
+            o && o.__isclass && (exports[i] = o);
+        }
+    });
+}

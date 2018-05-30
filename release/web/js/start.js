@@ -1,1 +1,160 @@
-!function(){function a(){this.startInit()}var s,e,t=Laya.Sprite,r=(Laya.Stage,Laya.Texture,Laya.Browser),g=(Laya.Handler,Laya.WebGL,Laya.Event),l=r.clientWidth,_=r.clientHeight,n=!0;Laya.class(a,"startPage",t);var d=a.prototype;d.startInit=function(){console.log("加载完成，游戏开始"),start_title=new t,start_title.loadImage(ossUrl+"res/images/title.png",.09*l,.015*_,.82*l,.82*l*(121/619)),Laya.stage.addChild(start_title),start_hua_1=new t,start_hua_1.loadImage(ossUrl+"res/images/hua_1.png",.007*l,.07*_,.13*l,.13*l*(151/98)),Laya.stage.addChild(start_hua_1),start_hua_2=new t,start_hua_2.loadImage(ossUrl+"res/images/hua_2.png",.89*l,.072*_,.1*l,.1*l*(121/72)),Laya.stage.addChild(start_hua_2),start_hua_3=new t,start_hua_3.loadImage(ossUrl+"res/images/hua_3.png",.007*l,.74*_,.16*l,.16*l*(134/120)),Laya.stage.addChild(start_hua_3),start_hua_4=new t,start_hua_4.loadImage(ossUrl+"res/images/hua_4.png",.07*l,.87*_,.096*l,.096*l*(113/72)),Laya.stage.addChild(start_hua_4),start_hua_5=new t,start_hua_5.loadImage(ossUrl+"res/images/hua_5.png",.15*l,.9*_,.61*l,.61*l*(122/461)),Laya.stage.addChild(start_hua_5),start_hua_6=new t,start_hua_6.loadImage(ossUrl+"res/images/hua_6.png",.25*l,.77*_,.5*l,.5*l*(37/375)),Laya.stage.addChild(start_hua_6),start_Qrcode=new t,start_Qrcode.loadImage(ossUrl+"res/images/qrcode.png",.79*l,.815*_,.2*l,.2*l*1.44),Laya.stage.addChild(start_Qrcode),start_kuang=new t,start_kuang.loadImage(ossUrl+"res/images/kuang.png",.05*l,.13*_,.9*l,.9*l*(770/670)),Laya.stage.addChild(start_kuang),(s=new t).loadImage(ossUrl+"res/images/menu.png"),s.scaleX=.42*l/318,s.scaleY=.42*l/318,s.x=.29*l,s.y=.82*_,Laya.stage.addChild(s),(e=new t).loadImage(ossUrl+"res/images/z_1.jpg"),e.scaleX=.81333*l/610,e.scaleY=.81333*l/610,e.x=.09333*l,e.y=.157*_,Laya.stage.addChild(e),s.on(g.CLICK,this,function(){s.graphics.clear(),n?(n=!1,s.graphics.loadImage(ossUrl+"res/images/menu_2_"+a+".png"),a--):a>0?(n=!0,s.graphics.loadImage(ossUrl+"res/images/menu.png")):(n=!1,s.graphics.loadImage(ossUrl+"res/images/menu_2_0.png"))});var a=3;d.gameRun()},d.gameRun=function(){var a=["z_1.jpg","z_2.jpg","z_3.jpg"];Laya.timer.loop(1,this,function(r){if(!n)return!1;s%5==0&&(e.graphics.clear(),e.graphics.loadImage(ossUrl+"res/images/"+a[t]),++t>=a.length&&(t=0)),++s>=1e5&&(s=0)});var s=0,t=0}}();
+//开始页面
+(function(){
+    var Sprite  = Laya.Sprite;
+    //var ColorFilter = Laya.ColorFilter;
+	var Stage   = Laya.Stage;
+	var Texture = Laya.Texture;
+	var Browser = Laya.Browser;
+	var Handler = Laya.Handler;
+	var WebGL   = Laya.WebGL;
+    var Event   = Laya.Event;
+
+    var pageWidth  = Browser.clientWidth;
+    var pageHeight = Browser.clientHeight;
+
+    var start_menu;//按钮
+    var show_img;//图片切换Sprite
+    var switch_OnOff = true;//是否切换
+    var imgI;//当前选中图片
+
+    function startPage() {
+        var _this = this;
+        _this.startInit();
+    }
+
+    Laya.class(startPage, "startPage", Sprite);
+
+    var _proto = startPage.prototype;
+
+    //开始画面
+    _proto.startInit = function(){
+        var _this = this;
+        console.log('加载完成，游戏开始');
+
+        //加载标题
+        start_title = new Sprite();
+        start_title.loadImage(ossUrl+"res/images/title.png", pageWidth*0.09, pageHeight*0.015, pageWidth*0.82, (pageWidth*0.82)*(121/619));
+        Laya.stage.addChild(start_title);
+
+        //加载装饰1
+        start_hua_1 = new Sprite();
+        start_hua_1.loadImage(ossUrl+"res/images/hua_1.png", pageWidth*0.007, pageHeight*0.07, pageWidth*0.13, (pageWidth*0.13)*(151/98));
+        Laya.stage.addChild(start_hua_1);
+
+        //加载装饰2
+        start_hua_2 = new Sprite();
+        start_hua_2.loadImage(ossUrl+"res/images/hua_2.png", pageWidth*0.89, pageHeight*0.072, pageWidth*0.1, (pageWidth*0.1)*(121/72));
+        Laya.stage.addChild(start_hua_2);
+
+        //加载装饰3
+        start_hua_3 = new Sprite();
+        start_hua_3.loadImage(ossUrl+"res/images/hua_3.png", pageWidth*0.007, pageHeight*0.74, pageWidth*0.16, (pageWidth*0.16)*(134/120));
+        Laya.stage.addChild(start_hua_3);
+
+        //加载装饰4
+        start_hua_4 = new Sprite();
+        start_hua_4.loadImage(ossUrl+"res/images/hua_4.png", pageWidth*0.07, pageHeight*0.87, pageWidth*0.096, (pageWidth*0.096)*(113/72));
+        Laya.stage.addChild(start_hua_4);
+
+        //加载装饰5
+        start_hua_5 = new Sprite();
+        start_hua_5.loadImage(ossUrl+"res/images/hua_5.png", pageWidth*0.15, pageHeight*0.9, pageWidth*0.61, (pageWidth*0.61)*(122/461));
+        Laya.stage.addChild(start_hua_5);
+
+        //加载装饰6
+        start_hua_6 = new Sprite();
+        start_hua_6.loadImage(ossUrl+"res/images/hua_6.png", pageWidth*0.25, pageHeight*0.77, pageWidth*0.5, (pageWidth*0.5)*(37/375));
+        Laya.stage.addChild(start_hua_6);
+
+        //加载QRCode
+        start_Qrcode = new Sprite();
+        start_Qrcode.loadImage(ossUrl+"res/images/qrcode.png", pageWidth*0.79, pageHeight*0.815, pageWidth*0.2, (pageWidth*0.2)*(216/150));
+        Laya.stage.addChild(start_Qrcode);
+
+        //加载内容框
+        start_kuang = new Sprite();
+        start_kuang.loadImage(ossUrl+"res/images/kuang.png", pageWidth*0.05, pageHeight*0.13, pageWidth*0.9, (pageWidth*0.9)*(770/670));
+        Laya.stage.addChild(start_kuang);
+
+        //加载按钮
+        start_menu = new Sprite();
+        start_menu.loadImage(ossUrl+"res/images/menu.png");
+        start_menu.scaleX = (pageWidth*0.42)/318;
+        start_menu.scaleY = (pageWidth*0.42)/318;
+        start_menu.x = pageWidth*0.29;
+        start_menu.y = pageHeight*0.82;
+        Laya.stage.addChild(start_menu);
+
+        //加载切换图片
+        show_img = new Sprite();
+        show_img.loadImage(ossUrl+"res/images/z_1.jpg");
+        show_img.scaleX = (pageWidth*0.81333)/610;
+        show_img.scaleY = (pageWidth*0.81333)/610;
+        show_img.x = pageWidth*0.09333;
+        show_img.y = pageHeight*0.157;
+        Laya.stage.addChild(show_img);
+
+        //监听事件(开始游戏)
+        start_menu.on(Event.CLICK, this, gameMenuClick);
+
+        //图片切换按钮点击
+        var changeNum = 4;//3次机会
+        function gameMenuClick(){
+            start_menu.graphics.clear();
+            if(switch_OnOff){
+                switch_OnOff = false;
+                start_menu.graphics.loadImage(ossUrl+"res/images/menu_2_"+(changeNum-1)+".png");
+                changeNum--;
+
+                $('#imgPrint').html('<img src="./res/images/pic/z_'+imgI+'.jpg" />');
+                $('#imgPrint').show();
+            }else{
+                if(changeNum > 0){
+                    switch_OnOff = true;
+                    start_menu.graphics.loadImage(ossUrl+"res/images/menu.png");
+                    $('#imgPrint').hide();
+                }else{
+                    switch_OnOff = false;
+                    start_menu.graphics.loadImage(ossUrl+"res/images/menu_2_0.png");
+                }
+            }
+        }
+
+        //开始游戏
+        _proto.gameRun();
+
+    }
+
+    //游戏运行主功能
+    _proto.gameRun = function (){
+        var _this = this;
+        //切换用的图片
+        var picArray = ['z_1.jpg','z_2.jpg','z_3.jpg','z_4.jpg','z_5.jpg','z_6.jpg','z_7.jpg','z_8.jpg','z_9.jpg','z_10.jpg','z_11.jpg','z_12.jpg','z_13.jpg','z_14.jpg','z_15.jpg','z_16.jpg','z_17.jpg','z_18.jpg','z_19.jpg','z_20.jpg','z_21.jpg','z_22.jpg','z_23.jpg','z_24.jpg','z_25.jpg','z_26.jpg','z_27.jpg','z_28.jpg','z_29.jpg'];
+
+        //开始主时间循环
+        Laya.timer.loop(1, _this, gameRunPlay);
+        //主时间循环
+        var num = 0;//用于控制循环中的切换间隔
+        var i = 0;//图片切换数量
+        function gameRunPlay(e){
+            if(!switch_OnOff){
+                return false;
+            }
+            if(num % 3 == 0){
+                //console.log(num);
+                show_img.graphics.clear();
+                show_img.graphics.loadImage(ossUrl+"res/images/"+picArray[i]);
+                i++;
+                if(i >= picArray.length){
+                    i = 0;
+                }
+                imgI = i;
+            }
+            num++;
+            if(num >= 100000){
+                num = 0;
+            }
+        }
+    }
+
+})();

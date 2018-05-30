@@ -1,1 +1,7723 @@
-!function(global,undefined){"use strict";!function(e,t,r){function n(r){var i=t[r];return i||e[r][0].call(i=t[r]={exports:{}},n,i,i.exports),i.exports}var i=global.protobuf=n(r[0]);"function"==typeof define&&define.amd&&define(["long"],function(e){return i.util.Long=e,i.configure(),i}),"object"==typeof module&&module&&module.exports&&(module.exports=i)}({1:[function(e,t,r){t.exports=function(e,t){for(var r=[],n=2;n<arguments.length;)r.push(arguments[n++]);var i=!0;return new Promise(function(n,o){r.push(function(e){if(i)if(i=!1,e)o(e);else{for(var t=[],r=1;r<arguments.length;)t.push(arguments[r++]);n.apply(null,t)}});try{e.apply(t||this,r)}catch(e){i&&(i=!1,o(e))}})}},{}],2:[function(e,t,r){var n=r;n.length=function(e){var t=e.length;if(!t)return 0;for(var r=0;--t%4>1&&"="===e.charAt(t);)++r;return Math.ceil(3*e.length)/4-r};for(var i=new Array(64),o=new Array(123),s=0;s<64;)o[i[s]=s<26?s+65:s<52?s+71:s<62?s-4:s-59|43]=s++;n.encode=function(e,t,r){for(var n,o=[],s=0,f=0;t<r;){var a=e[t++];switch(f){case 0:o[s++]=i[a>>2],n=(3&a)<<4,f=1;break;case 1:o[s++]=i[n|a>>4],n=(15&a)<<2,f=2;break;case 2:o[s++]=i[n|a>>6],o[s++]=i[63&a],f=0}}return f&&(o[s++]=i[n],o[s]=61,1===f&&(o[s+1]=61)),String.fromCharCode.apply(String,o)};var f="invalid encoding";n.decode=function(e,t,r){for(var n,i=r,s=0,a=0;a<e.length;){var u=e.charCodeAt(a++);if(61===u&&s>1)break;if((u=o[u])===undefined)throw Error(f);switch(s){case 0:n=u,s=1;break;case 1:t[r++]=n<<2|(48&u)>>4,n=u,s=2;break;case 2:t[r++]=(15&n)<<4|(60&u)>>2,n=u,s=3;break;case 3:t[r++]=(3&n)<<6|u,s=0}}if(1===s)throw Error(f);return r-i},n.test=function(e){return/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(e)}},{}],3:[function(e,t,r){function n(){function e(){for(var t=[],n=0;n<arguments.length;)t.push(arguments[n++]);var h=i.apply(null,t),c=l;if(r.length){var d=r[r.length-1];o.test(d)?c=++l:a.test(d)&&++c,f.test(d)&&!f.test(h)?(c=++l,p=!0):p&&u.test(d)&&(c=--l,p=!1),s.test(h)&&(c=--l)}for(n=0;n<c;++n)h="\t"+h;return r.push(h),e}for(var t=[],r=[],l=1,p=!1,h=0;h<arguments.length;)t.push(arguments[h++]);return e.str=function(e){return"function"+(e?" "+e.replace(/[^\w_$]/g,"_"):"")+"("+t.join(",")+") {\n"+r.join("\n")+"\n}"},e.eof=function(t,r){"object"==typeof t&&(r=t,t=undefined);var i=e.str(t);n.verbose&&console.log("--- codegen ---\n"+i.replace(/^/gm,"> ").replace(/\t/g,"  "));var o=Object.keys(r||(r={}));return Function.apply(null,o.concat("return "+i)).apply(null,o.map(function(e){return r[e]}))},e}function i(e){for(var t=[],r=1;r<arguments.length;)t.push(arguments[r++]);if(r=0,e=e.replace(/%([dfjs])/g,function(e,n){switch(n){case"d":return Math.floor(t[r++]);case"f":return Number(t[r++]);case"j":return JSON.stringify(t[r++]);default:return t[r++]}}),r!==t.length)throw Error("argument count mismatch");return e}t.exports=n;var o=/[{[]$/,s=/^[}\]]/,f=/:$/,a=/^\s*(?:if|}?else if|while|for)\b|\b(?:else)\s*$/,u=/\b(?:break|continue)(?: \w+)?;?$|^\s*return\b/;n.sprintf=i,n.supported=!1;try{n.supported=1===n("a","b")("return a-b").eof()(2,1)}catch(e){}n.verbose=!1},{}],4:[function(e,t,r){function n(){this._listeners={}}t.exports=n,n.prototype.on=function(e,t,r){return(this._listeners[e]||(this._listeners[e]=[])).push({fn:t,ctx:r||this}),this},n.prototype.off=function(e,t){if(e===undefined)this._listeners={};else if(t===undefined)this._listeners[e]=[];else for(var r=this._listeners[e],n=0;n<r.length;)r[n].fn===t?r.splice(n,1):++n;return this},n.prototype.emit=function(e){var t=this._listeners[e];if(t){for(var r=[],n=1;n<arguments.length;)r.push(arguments[n++]);for(n=0;n<t.length;)t[n].fn.apply(t[n++].ctx,r)}return this}},{}],5:[function(e,t,r){function n(e,t,r){return"function"==typeof t?(r=t,t={}):t||(t={}),r?!t.xhr&&o&&o.readFile?o.readFile(e,function(i,o){return i&&"undefined"!=typeof XMLHttpRequest?n.xhr(e,t,r):i?r(i):r(null,t.binary?o:o.toString("utf8"))}):n.xhr(e,t,r):i(n,this,e,t)}t.exports=n;var i=e(1),o=e(6)("fs");n.xhr=function(e,t,r){var n=new XMLHttpRequest;n.onreadystatechange=function(){if(4!==n.readyState)return undefined;if(0!==n.status&&200!==n.status)return r(Error("status "+n.status));if(t.binary){var e=n.response;if(!e){e=[];for(var i=0;i<n.responseText.length;++i)e.push(255&n.responseText.charCodeAt(i))}return r(null,"undefined"!=typeof Uint8Array?new Uint8Array(e):e)}return r(null,n.responseText)},t.binary&&("overrideMimeType"in n&&n.overrideMimeType("text/plain; charset=x-user-defined"),n.responseType="arraybuffer"),n.open("GET",e),n.send()}},{1:1,6:6}],6:[function(require,module,exports){function inquire(moduleName){try{var mod=eval("quire".replace(/^/,"re"))(moduleName);if(mod&&(mod.length||Object.keys(mod).length))return mod}catch(e){}return null}module.exports=inquire},{}],7:[function(e,t,r){var n=r,i=n.isAbsolute=function(e){return/^(?:\/|\w+:)/.test(e)},o=n.normalize=function(e){var t=(e=e.replace(/\\/g,"/").replace(/\/{2,}/g,"/")).split("/"),r=i(e),n="";r&&(n=t.shift()+"/");for(var o=0;o<t.length;)".."===t[o]?o>0&&".."!==t[o-1]?t.splice(--o,2):r?t.splice(o,1):++o:"."===t[o]?t.splice(o,1):++o;return n+t.join("/")};n.resolve=function(e,t,r){return r||(t=o(t)),i(t)?t:(r||(e=o(e)),(e=e.replace(/(?:\/|^)[^/]+$/,"")).length?o(e+"/"+t):t)}},{}],8:[function(e,t,r){t.exports=function(e,t,r){var n=r||8192,i=n>>>1,o=null,s=n;return function(r){if(r<1||r>i)return e(r);s+r>n&&(o=e(n),s=0);var f=t.call(o,s,s+=r);return 7&s&&(s=1+(7|s)),f}}},{}],9:[function(e,t,r){var n=r;n.length=function(e){for(var t=0,r=0,n=0;n<e.length;++n)(r=e.charCodeAt(n))<128?t+=1:r<2048?t+=2:55296==(64512&r)&&56320==(64512&e.charCodeAt(n+1))?(++n,t+=4):t+=3;return t},n.read=function(e,t,r){if(r-t<1)return"";for(var n,i=null,o=[],s=0;t<r;)(n=e[t++])<128?o[s++]=n:n>191&&n<224?o[s++]=(31&n)<<6|63&e[t++]:n>239&&n<365?(n=((7&n)<<18|(63&e[t++])<<12|(63&e[t++])<<6|63&e[t++])-65536,o[s++]=55296+(n>>10),o[s++]=56320+(1023&n)):o[s++]=(15&n)<<12|(63&e[t++])<<6|63&e[t++],s>8191&&((i||(i=[])).push(String.fromCharCode.apply(String,o)),s=0);return i?(s&&i.push(String.fromCharCode.apply(String,o.slice(0,s))),i.join("")):String.fromCharCode.apply(String,o.slice(0,s))},n.write=function(e,t,r){for(var n,i,o=r,s=0;s<e.length;++s)(n=e.charCodeAt(s))<128?t[r++]=n:n<2048?(t[r++]=n>>6|192,t[r++]=63&n|128):55296==(64512&n)&&56320==(64512&(i=e.charCodeAt(s+1)))?(n=65536+((1023&n)<<10)+(1023&i),++s,t[r++]=n>>18|240,t[r++]=n>>12&63|128,t[r++]=n>>6&63|128,t[r++]=63&n|128):(t[r++]=n>>12|224,t[r++]=n>>6&63|128,t[r++]=63&n|128);return r-o}},{}],10:[function(e,t,r){function n(t,r){if(i||(i=e(34)),!(t instanceof i))throw TypeError("type must be a Type");if(r){if("function"!=typeof r)throw TypeError("ctor must be a function")}else r=n.generate(t).eof(t.name);r.constructor=n,(r.prototype=new o).constructor=r,s.merge(r,o,!0),r.$type=t,r.prototype.$type=t;for(var f=0;f<t.fieldsArray.length;++f)r.prototype[t._fieldsArray[f].name]=Array.isArray(t._fieldsArray[f].resolve().defaultValue)?s.emptyArray:s.isObject(t._fieldsArray[f].defaultValue)&&!t._fieldsArray[f].long?s.emptyObject:t._fieldsArray[f].defaultValue;var a={};for(f=0;f<t.oneofsArray.length;++f)a[t._oneofsArray[f].resolve().name]={get:s.oneOfGetter(t._oneofsArray[f].oneof),set:s.oneOfSetter(t._oneofsArray[f].oneof)};return f&&Object.defineProperties(r.prototype,a),t.ctor=r,r.prototype}t.exports=n;var i,o=e(21),s=e(36);n.generate=function(e){return s.codegen("p")("if(p){")("for(var ks=Object.keys(p),i=0;i<ks.length;++i)")("this[ks[i]]=p[ks[i]];")("}")},n.create=n,n.prototype=o},{21:21,34:34,36:36}],11:[function(e,t,r){function n(e,t){i.test(e)||(e="google/protobuf/"+e+".proto",t={nested:{google:{nested:{protobuf:{nested:t}}}}}),n[e]=t}t.exports=n;var i=/\/|\./;n("any",{Any:{fields:{type_url:{type:"string",id:1},value:{type:"bytes",id:2}}}});var o;n("duration",{Duration:o={fields:{seconds:{type:"int64",id:1},nanos:{type:"int32",id:2}}}}),n("timestamp",{Timestamp:o}),n("empty",{Empty:{fields:{}}}),n("struct",{Struct:{fields:{fields:{keyType:"string",type:"Value",id:1}}},Value:{oneofs:{kind:{oneof:["nullValue","numberValue","stringValue","boolValue","structValue","listValue"]}},fields:{nullValue:{type:"NullValue",id:1},numberValue:{type:"double",id:2},stringValue:{type:"string",id:3},boolValue:{type:"bool",id:4},structValue:{type:"Struct",id:5},listValue:{type:"ListValue",id:6}}},NullValue:{values:{NULL_VALUE:0}},ListValue:{fields:{values:{rule:"repeated",type:"Value",id:1}}}}),n("wrappers",{DoubleValue:{fields:{value:{type:"double",id:1}}},FloatValue:{fields:{value:{type:"float",id:1}}},Int64Value:{fields:{value:{type:"int64",id:1}}},UInt64Value:{fields:{value:{type:"uint64",id:1}}},Int32Value:{fields:{value:{type:"int32",id:1}}},UInt32Value:{fields:{value:{type:"uint32",id:1}}},BoolValue:{fields:{value:{type:"bool",id:1}}},StringValue:{fields:{value:{type:"string",id:1}}},BytesValue:{fields:{value:{type:"bytes",id:1}}}})},{}],12:[function(e,t,r){function n(e,t,r,n){if(t.resolvedType)if(t.resolvedType instanceof s){e("switch(d%s){",n);for(var i=t.resolvedType.values,o=Object.keys(i),f=0;f<o.length;++f)t.repeated&&i[o[f]]===t.typeDefault&&e("default:"),e("case%j:",o[f])("case %j:",i[o[f]])("m%s=%j",n,i[o[f]])("break");e("}")}else e('if(typeof d%s!=="object")',n)("throw TypeError(%j)",t.fullName+": object expected")("m%s=types[%d].fromObject(d%s)",n,r,n);else{var a=!1;switch(t.type){case"double":case"float":e("m%s=Number(d%s)",n,n);break;case"uint32":case"fixed32":e("m%s=d%s>>>0",n,n);break;case"int32":case"sint32":case"sfixed32":e("m%s=d%s|0",n,n);break;case"uint64":a=!0;case"int64":case"sint64":case"fixed64":case"sfixed64":e("if(util.Long)")("(m%s=util.Long.fromValue(d%s)).unsigned=%j",n,n,a)('else if(typeof d%s==="string")',n)("m%s=parseInt(d%s,10)",n,n)('else if(typeof d%s==="number")',n)("m%s=d%s",n,n)('else if(typeof d%s==="object")',n)("m%s=new util.LongBits(d%s.low>>>0,d%s.high>>>0).toNumber(%s)",n,n,n,a?"true":"");break;case"bytes":e('if(typeof d%s==="string")',n)("util.base64.decode(d%s,m%s=util.newBuffer(util.base64.length(d%s)),0)",n,n,n)("else if(d%s.length)",n)("m%s=d%s",n,n);break;case"string":e("m%s=String(d%s)",n,n);break;case"bool":e("m%s=Boolean(d%s)",n,n)}}return e}function i(e,t,r,n){if(t.resolvedType)t.resolvedType instanceof s?e("d%s=o.enums===String?types[%d].values[m%s]:m%s",n,r,n,n):e("d%s=types[%d].toObject(m%s,o)",n,r,n);else{var i=!1;switch(t.type){case"uint64":i=!0;case"int64":case"sint64":case"fixed64":case"sfixed64":e('if(typeof m%s==="number")',n)("d%s=o.longs===String?String(m%s):m%s",n,n,n)("else")("d%s=o.longs===String?util.Long.prototype.toString.call(m%s):o.longs===Number?new util.LongBits(m%s.low>>>0,m%s.high>>>0).toNumber(%s):m%s",n,n,n,n,i?"true":"",n);break;case"bytes":e("d%s=o.bytes===String?util.base64.encode(m%s,0,m%s.length):o.bytes===Array?Array.prototype.slice.call(m%s):m%s",n,n,n,n,n);break;default:e("d%s=m%s",n,n)}}return e}var o=r,s=e(15),f=e(36);o.fromObject=function(e){var t=e.fieldsArray,r=f.codegen("d")("if(d instanceof this.ctor)")("return d");if(!t.length)return r("return new this.ctor");r("var m=new this.ctor");for(var i=0;i<t.length;++i){var o=t[i].resolve(),a=f.safeProp(o.name);o.map?(r("if(d%s){",a)('if(typeof d%s!=="object")',a)("throw TypeError(%j)",o.fullName+": object expected")("m%s={}",a)("for(var ks=Object.keys(d%s),i=0;i<ks.length;++i){",a),n(r,o,i,a+"[ks[i]]")("}")("}")):o.repeated?(r("if(d%s){",a)("if(!Array.isArray(d%s))",a)("throw TypeError(%j)",o.fullName+": array expected")("m%s=[]",a)("for(var i=0;i<d%s.length;++i){",a),n(r,o,i,a+"[i]")("}")("}")):(o.resolvedType instanceof s||r("if(d%s!==undefined&&d%s!==null){",a,a),n(r,o,i,a),o.resolvedType instanceof s||r("}"))}return r("return m")},o.toObject=function(e){var t=e.fieldsArray;if(!t.length)return f.codegen()("return {}");for(var r=f.codegen("m","o")("if(!o)")("o={}")("var d={}"),n=[],o=[],a=[],u=0;u<t.length;++u)t[u].resolve().repeated?n.push(t[u]):t[u].map?o.push(t[u]):a.push(t[u]);if(n.length){for(r("if(o.arrays||o.defaults){"),u=0;u<n.length;++u)r("d%s=[]",f.safeProp(n[u].name));r("}")}if(o.length){for(r("if(o.objects||o.defaults){"),u=0;u<o.length;++u)r("d%s={}",f.safeProp(o[u].name));r("}")}if(a.length){for(r("if(o.defaults){"),u=0,l;u<a.length;++u){var l=a[u],p=f.safeProp(l.name);l.resolvedType instanceof s?r("d%s=o.enums===String?%j:%j",p,l.resolvedType.valuesById[l.typeDefault],l.typeDefault):l.long?r("if(util.Long){")("var n=new util.Long(%d,%d,%j)",l.typeDefault.low,l.typeDefault.high,l.typeDefault.unsigned)("d%s=o.longs===String?n.toString():o.longs===Number?n.toNumber():n",p)("}else")("d%s=o.longs===String?%j:%d",p,l.typeDefault.toString(),l.typeDefault.toNumber()):l.bytes?r("d%s=o.bytes===String?%j:%s",p,String.fromCharCode.apply(String,l.typeDefault),"["+Array.prototype.slice.call(l.typeDefault).join(",")+"]"):r("d%s=%j",p,l.typeDefault)}r("}")}for(u=0,l;u<t.length;++u){l=t[u];r("if(m%s!==undefined&&m%s!==null&&m.hasOwnProperty(%j)){",p=f.safeProp(l.name),p,l.name),l.map?(r("d%s={}",p)("for(var ks2=Object.keys(m%s),j=0;j<ks2.length;++j){",p),i(r,l,u,p+"[ks2[j]]")("}")):l.repeated?(r("d%s=[]",p)("for(var j=0;j<m%s.length;++j){",p),i(r,l,u,p+"[j]")("}")):i(r,l,u,p),r("}")}return r("return d")}},{15:15,36:36}],13:[function(e,t,r){function n(e){return"missing required '"+e.name+"'"}function i(e){var t=f.codegen("r","l")("if(!(r instanceof Reader))")("r=Reader.create(r)")("var c=l===undefined?r.len:r.pos+l,m=new this.ctor")("while(r.pos<c){")("var t=r.uint32()");e.group&&t("if((t&7)===4)")("break"),t("switch(t>>>3){");for(var r=0;r<e.fieldsArray.length;++r){var a=e._fieldsArray[r].resolve(),u=a.resolvedType instanceof o?"uint32":a.type,l="m"+f.safeProp(a.name);t("case %d:",a.id),a.map?(t("r.skip().pos++")("if(%s===util.emptyObject)",l)("%s={}",l)("var k=r.%s()",a.keyType)("r.pos++"),s.basic[u]===undefined?t('%s[typeof k==="object"?util.longToHash(k):k]=types[%d].decode(r,r.uint32())',l,r):t('%s[typeof k==="object"?util.longToHash(k):k]=r.%s()',l,u)):a.repeated?(t("if(!(%s&&%s.length))",l,l)("%s=[]",l),(i.compat||a.packed)&&s.packed[u]!==undefined&&t("if((t&7)===2){")("var c2=r.uint32()+r.pos")("while(r.pos<c2)")("%s.push(r.%s())",l,u)("}else"),s.basic[u]===undefined?t(a.resolvedType.group?"%s.push(types[%d].decode(r))":"%s.push(types[%d].decode(r,r.uint32()))",l,r):t("%s.push(r.%s())",l,u)):s.basic[u]===undefined?t(a.resolvedType.group?"%s=types[%d].decode(r)":"%s=types[%d].decode(r,r.uint32())",l,r):t("%s=r.%s()",l,u),t("break")}for(t("default:")("r.skipType(t&7)")("break")("}")("}"),r=0;r<e._fieldsArray.length;++r){var p=e._fieldsArray[r];p.required&&t("if(!m.hasOwnProperty(%j))",p.name)("throw util.ProtocolError(%j,{instance:m})",n(p))}return t("return m")}t.exports=i,i.compat=!0;var o=e(15),s=e(35),f=e(36)},{15:15,35:35,36:36}],14:[function(e,t,r){function n(e,t,r,n){return t.resolvedType.group?e("types[%d].encode(%s,w.uint32(%d)).uint32(%d)",r,n,(t.id<<3|3)>>>0,(t.id<<3|4)>>>0):e("types[%d].encode(%s,w.uint32(%d).fork()).ldelim()",r,n,(t.id<<3|2)>>>0)}function i(e,t){return e.id-t.id}function o(e){var t,r=a.codegen("m","w")("if(!w)")("w=Writer.create()"),u=e.fieldsArray;o.compat&&(u=u.slice().sort(i));for(d=0;d<u.length;++d){var l=u[d].resolve(),p=o.compat?e._fieldsArray.indexOf(l):d;if(!l.partOf){var h=l.resolvedType instanceof s?"uint32":l.type,c=f.basic[h];t="m"+a.safeProp(l.name),l.map?(r("if(%s&&m.hasOwnProperty(%j)){",t,l.name)("for(var ks=Object.keys(%s),i=0;i<ks.length;++i){",t)("w.uint32(%d).fork().uint32(%d).%s(ks[i])",(l.id<<3|2)>>>0,8|f.mapKey[l.keyType],l.keyType),c===undefined?r("types[%d].encode(%s[ks[i]],w.uint32(18).fork()).ldelim().ldelim()",p,t):r(".uint32(%d).%s(%s[ks[i]]).ldelim()",16|c,h,t),r("}")("}")):l.repeated?l.packed&&f.packed[h]!==undefined?r("if(%s&&%s.length&&m.hasOwnProperty(%j)){",t,t,l.name)("w.uint32(%d).fork()",(l.id<<3|2)>>>0)("for(var i=0;i<%s.length;++i)",t)("w.%s(%s[i])",h,t)("w.ldelim()")("}"):(r("if(%s!==undefined&&m.hasOwnProperty(%j)){",t,l.name)("for(var i=0;i<%s.length;++i)",t),c===undefined?n(r,l,p,t+"[i]"):r("w.uint32(%d).%s(%s[i])",(l.id<<3|c)>>>0,h,t),r("}")):(l.required||(l.long?r("if(%s!==undefined&&%s!==null&&m.hasOwnProperty(%j))",t,t,l.name):l.bytes||l.resolvedType&&!(l.resolvedType instanceof s)?r("if(%s&&m.hasOwnProperty(%j))",t,l.name):r("if(%s!==undefined&&m.hasOwnProperty(%j))",t,l.name)),c===undefined?n(r,l,p,t):r("w.uint32(%d).%s(%s)",(l.id<<3|c)>>>0,h,t))}}for(var d=0;d<e.oneofsArray.length;++d){var y=e._oneofsArray[d];r("switch(%s){","m"+a.safeProp(y.name));for(var m=0;m<y.fieldsArray.length;++m){var h=(l=y.fieldsArray[m]).resolvedType instanceof s?"uint32":l.type,c=f.basic[h];t="m"+a.safeProp(l.name),r("case%j:",l.name),c===undefined?n(r,l,e._fieldsArray.indexOf(l),t):r("w.uint32(%d).%s(%s)",(l.id<<3|c)>>>0,h,t),r("break")}r("}")}return r("return w")}t.exports=o,o.compat=!0;var s=e(15),f=e(35),a=e(36)},{15:15,35:35,36:36}],15:[function(e,t,r){function n(e,t,r){if(i.call(this,e,r),t&&"object"!=typeof t)throw TypeError("values must be an object");if(this.valuesById={},this.values=Object.create(this.valuesById),this.comments={},t)for(var n=Object.keys(t),o=0;o<n.length;++o)this.valuesById[this.values[n[o]]=t[n[o]]]=n[o]}t.exports=n;var i=e(24);((n.prototype=Object.create(i.prototype)).constructor=n).className="Enum";var o=e(36);n.fromJSON=function(e,t){return new n(e,t.values,t.options)},n.prototype.toJSON=function(){return{options:this.options,values:this.values}},n.prototype.add=function(e,t,r){if(!o.isString(e))throw TypeError("name must be a string");if(!o.isInteger(t))throw TypeError("id must be an integer");if(this.values[e]!==undefined)throw Error("duplicate name");if(this.valuesById[t]!==undefined){if(!this.options||!this.options.allow_alias)throw Error("duplicate id");this.values[e]=t}else this.valuesById[this.values[e]=t]=e;return this.comments[e]=r||null,this},n.prototype.remove=function(e){if(!o.isString(e))throw TypeError("name must be a string");var t=this.values[e];if(t===undefined)throw Error("name does not exist");return delete this.valuesById[t],delete this.values[e],delete this.comments[e],this}},{24:24,36:36}],16:[function(e,t,r){function n(e,t,r,n,o,s){if(a.isObject(n)?(s=n,n=o=undefined):a.isObject(o)&&(s=o,o=undefined),i.call(this,e,s),!a.isInteger(t)||t<0)throw TypeError("id must be a non-negative integer");if(!a.isString(r))throw TypeError("type must be a string");if(n!==undefined&&!u.test(n=n.toString().toLowerCase()))throw TypeError("rule must be a string rule");if(o!==undefined&&!a.isString(o))throw TypeError("extend must be a string");this.rule=n&&"optional"!==n?n:undefined,this.type=r,this.id=t,this.extend=o||undefined,this.required="required"===n,this.optional=!this.required,this.repeated="repeated"===n,this.map=!1,this.message=null,this.partOf=null,this.typeDefault=null,this.defaultValue=null,this.long=!!a.Long&&f.long[r]!==undefined,this.bytes="bytes"===r,this.resolvedType=null,this.extensionField=null,this.declaringField=null,this._packed=null}t.exports=n;var i=e(24);((n.prototype=Object.create(i.prototype)).constructor=n).className="Field";var o,s=e(15),f=e(35),a=e(36),u=/^required|optional|repeated$/;Object.defineProperty(n.prototype,"packed",{get:function(){return null===this._packed&&(this._packed=!1!==this.getOption("packed")),this._packed}}),n.prototype.setOption=function(e,t,r){return"packed"===e&&(this._packed=null),i.prototype.setOption.call(this,e,t,r)},n.fromJSON=function(e,t){return new n(e,t.id,t.type,t.rule,t.extend,t.options)},n.prototype.toJSON=function(){return{rule:"optional"!==this.rule&&this.rule||undefined,type:this.type,id:this.id,extend:this.extend,options:this.options}},n.prototype.resolve=function(){if(this.resolved)return this;if((this.typeDefault=f.defaults[this.type])===undefined){o||(o=e(34));var t=this.declaringField?this.declaringField.parent:this.parent;if(this.resolvedType=t.lookup(this.type,o))this.typeDefault=null;else{if(!(this.resolvedType=t.lookup(this.type,s)))throw Error("unresolvable field type: "+this.type+" in "+t);this.typeDefault=this.resolvedType.values[Object.keys(this.resolvedType.values)[0]]}}if(this.options&&this.options.default!==undefined&&(this.typeDefault=this.options.default,this.resolvedType instanceof s&&"string"==typeof this.typeDefault&&(this.typeDefault=this.resolvedType.values[this.typeDefault])),!this.options||this.options.packed===undefined||!this.resolvedType||this.resolvedType instanceof s||delete this.options.packed,this.long)this.typeDefault=a.Long.fromNumber(this.typeDefault,"u"===this.type.charAt(0)),Object.freeze&&Object.freeze(this.typeDefault);else if(this.bytes&&"string"==typeof this.typeDefault){var r;a.base64.test(this.typeDefault)?a.base64.decode(this.typeDefault,r=a.newBuffer(a.base64.length(this.typeDefault)),0):a.utf8.write(this.typeDefault,r=a.newBuffer(a.utf8.length(this.typeDefault)),0),this.typeDefault=r}return this.map?this.defaultValue=a.emptyObject:this.repeated?this.defaultValue=a.emptyArray:this.defaultValue=this.typeDefault,i.prototype.resolve.call(this)}},{15:15,24:24,34:34,35:35,36:36}],17:[function(e,t,r){var n=t.exports=e(18);n.build="light",n.load=function(e,t,r){return"function"==typeof t?(r=t,t=new n.Root):t||(t=new n.Root),t.load(e,r)},n.loadSync=function(e,t){return t||(t=new n.Root),t.loadSync(e)},n.encoder=e(14),n.decoder=e(13),n.verifier=e(39),n.converter=e(12),n.ReflectionObject=e(24),n.Namespace=e(23),n.Root=e(29),n.Enum=e(15),n.Type=e(34),n.Field=e(16),n.OneOf=e(25),n.MapField=e(20),n.Service=e(32),n.Method=e(22),n.Class=e(10),n.Message=e(21),n.types=e(35),n.util=e(36),n.ReflectionObject._configure(n.Root),n.Namespace._configure(n.Type,n.Service),n.Root._configure(n.Type)},{10:10,12:12,13:13,14:14,15:15,16:16,18:18,20:20,21:21,22:22,23:23,24:24,25:25,29:29,32:32,34:34,35:35,36:36,39:39}],18:[function(e,t,r){function n(){i.Reader._configure(i.BufferReader),i.util._configure()}var i=r;i.build="minimal",i.roots={},i.Writer=e(40),i.BufferWriter=e(41),i.Reader=e(27),i.BufferReader=e(28),i.util=e(38),i.rpc=e(30),i.configure=n,i.Writer._configure(i.BufferWriter),n()},{27:27,28:28,30:30,38:38,40:40,41:41}],19:[function(e,t,r){var n=t.exports=e(17);n.build="full",n.tokenize=e(33),n.parse=e(26),n.common=e(11),n.Root._configure(n.Type,n.parse,n.common)},{11:11,17:17,26:26,33:33}],20:[function(e,t,r){function n(e,t,r,n,o){if(i.call(this,e,t,n,o),!s.isString(r))throw TypeError("keyType must be a string");this.keyType=r,this.resolvedKeyType=null,this.map=!0}t.exports=n;var i=e(16);((n.prototype=Object.create(i.prototype)).constructor=n).className="MapField";var o=e(35),s=e(36);n.fromJSON=function(e,t){return new n(e,t.id,t.keyType,t.type,t.options)},n.prototype.toJSON=function(){return{keyType:this.keyType,type:this.type,id:this.id,extend:this.extend,options:this.options}},n.prototype.resolve=function(){if(this.resolved)return this;if(o.mapKey[this.keyType]===undefined)throw Error("invalid key type: "+this.keyType);return i.prototype.resolve.call(this)}},{16:16,35:35,36:36}],21:[function(e,t,r){function n(e){if(e)for(var t=Object.keys(e),r=0;r<t.length;++r)this[t[r]]=e[t[r]]}t.exports=n;var i=e(36);n.encode=function(e,t){return this.$type.encode(e,t)},n.encodeDelimited=function(e,t){return this.$type.encodeDelimited(e,t)},n.decode=function(e){return this.$type.decode(e)},n.decodeDelimited=function(e){return this.$type.decodeDelimited(e)},n.verify=function(e){return this.$type.verify(e)},n.from=n.fromObject=function(e){return this.$type.fromObject(e)},n.toObject=function(e,t){return this.$type.toObject(e,t)},n.prototype.toObject=function(e){return this.$type.toObject(this,e)},n.prototype.toJSON=function(){return this.$type.toObject(this,i.toJSONOptions)}},{36:36}],22:[function(e,t,r){function n(e,t,r,n,s,f,a){if(o.isObject(s)?(a=s,s=f=undefined):o.isObject(f)&&(a=f,f=undefined),t!==undefined&&!o.isString(t))throw TypeError("type must be a string");if(!o.isString(r))throw TypeError("requestType must be a string");if(!o.isString(n))throw TypeError("responseType must be a string");i.call(this,e,a),this.type=t||"rpc",this.requestType=r,this.requestStream=!!s||undefined,this.responseType=n,this.responseStream=!!f||undefined,this.resolvedRequestType=null,this.resolvedResponseType=null}t.exports=n;var i=e(24);((n.prototype=Object.create(i.prototype)).constructor=n).className="Method";var o=e(36);n.fromJSON=function(e,t){return new n(e,t.type,t.requestType,t.responseType,t.requestStream,t.responseStream,t.options)},n.prototype.toJSON=function(){return{type:"rpc"!==this.type&&this.type||undefined,requestType:this.requestType,requestStream:this.requestStream,responseType:this.responseType,responseStream:this.responseStream,options:this.options}},n.prototype.resolve=function(){return this.resolved?this:(this.resolvedRequestType=this.parent.lookupType(this.requestType),this.resolvedResponseType=this.parent.lookupType(this.responseType),i.prototype.resolve.call(this))}},{24:24,36:36}],23:[function(e,t,r){function n(e){if(!e||!e.length)return undefined;for(var t={},r=0;r<e.length;++r)t[e[r].name]=e[r].toJSON();return t}function i(e,t){s.call(this,e,t),this.nested=undefined,this._nestedArray=null}function o(e){return e._nestedArray=null,e}t.exports=i;var s=e(24);((i.prototype=Object.create(s.prototype)).constructor=i).className="Namespace";var f,a,u=e(15),l=e(16),p=e(36);i.fromJSON=function(e,t){return new i(e,t.options).addJSON(t.nested)},i.arrayToJSON=n,Object.defineProperty(i.prototype,"nestedArray",{get:function(){return this._nestedArray||(this._nestedArray=p.toArray(this.nested))}}),i.prototype.toJSON=function(){return{options:this.options,nested:n(this.nestedArray)}},i.prototype.addJSON=function(e){if(e)for(var t,r=Object.keys(e),n=0;n<r.length;++n)t=e[r[n]],this.add((t.fields!==undefined?f.fromJSON:t.values!==undefined?u.fromJSON:t.methods!==undefined?a.fromJSON:t.id!==undefined?l.fromJSON:i.fromJSON)(r[n],t));return this},i.prototype.get=function(e){return this.nested&&this.nested[e]||null},i.prototype.getEnum=function(e){if(this.nested&&this.nested[e]instanceof u)return this.nested[e].values;throw Error("no such enum")},i.prototype.add=function(e){if(!(e instanceof l&&e.extend!==undefined||e instanceof f||e instanceof u||e instanceof a||e instanceof i))throw TypeError("object must be a valid nested object");if(this.nested){var t=this.get(e.name);if(t){if(!(t instanceof i&&e instanceof i)||t instanceof f||t instanceof a)throw Error("duplicate name '"+e.name+"' in "+this);for(var r=t.nestedArray,n=0;n<r.length;++n)e.add(r[n]);this.remove(t),this.nested||(this.nested={}),e.setOptions(t.options,!0)}}else this.nested={};return this.nested[e.name]=e,e.onAdd(this),o(this)},i.prototype.remove=function(e){if(!(e instanceof s))throw TypeError("object must be a ReflectionObject");if(e.parent!==this)throw Error(e+" is not a member of "+this);return delete this.nested[e.name],Object.keys(this.nested).length||(this.nested=undefined),e.onRemove(this),o(this)},i.prototype.define=function(e,t){if(p.isString(e))e=e.split(".");else if(!Array.isArray(e))throw TypeError("illegal path");if(e&&e.length&&""===e[0])throw Error("path must be relative");for(var r=this;e.length>0;){var n=e.shift();if(r.nested&&r.nested[n]){if(!((r=r.nested[n])instanceof i))throw Error("path conflicts with non-namespace objects")}else r.add(r=new i(n))}return t&&r.addJSON(t),r},i.prototype.resolveAll=function(){for(var e=this.nestedArray,t=0;t<e.length;)e[t]instanceof i?e[t++].resolveAll():e[t++].resolve();return this.resolve()},i.prototype.lookup=function(e,t,r){if("boolean"==typeof t&&(r=t,t=undefined),p.isString(e)&&e.length){if("."===e)return this.root;e=e.split(".")}else if(!e.length)return this;if(""===e[0])return this.root.lookup(e.slice(1),t);var n=this.get(e[0]);if(n)if(1===e.length){if(!t||n instanceof t)return n}else if(n instanceof i&&(n=n.lookup(e.slice(1),t,!0)))return n;return null===this.parent||r?null:this.parent.lookup(e,t)},i.prototype.lookupType=function(e){var t=this.lookup(e,f);if(!t)throw Error("no such type");return t},i.prototype.lookupService=function(e){var t=this.lookup(e,a);if(!t)throw Error("no such service");return t},i.prototype.lookupEnum=function(e){var t=this.lookup(e,u);if(!t)throw Error("no such enum");return t.values},i._configure=function(e,t){f=e,a=t}},{15:15,16:16,24:24,36:36}],24:[function(e,t,r){function n(e,t){if(!o.isString(e))throw TypeError("name must be a string");if(t&&!o.isObject(t))throw TypeError("options must be an object");this.options=t,this.name=e,this.parent=null,this.resolved=!1,this.comment=null,this.filename=null}t.exports=n,n.className="ReflectionObject";var i,o=e(36);Object.defineProperties(n.prototype,{root:{get:function(){for(var e=this;null!==e.parent;)e=e.parent;return e}},fullName:{get:function(){for(var e=[this.name],t=this.parent;t;)e.unshift(t.name),t=t.parent;return e.join(".")}}}),n.prototype.toJSON=function(){throw Error()},n.prototype.onAdd=function(e){this.parent&&this.parent!==e&&this.parent.remove(this),this.parent=e,this.resolved=!1;var t=e.root;t instanceof i&&t._handleAdd(this)},n.prototype.onRemove=function(e){var t=e.root;t instanceof i&&t._handleRemove(this),this.parent=null,this.resolved=!1},n.prototype.resolve=function(){return this.resolved?this:(this.root instanceof i&&(this.resolved=!0),this)},n.prototype.getOption=function(e){return this.options?this.options[e]:undefined},n.prototype.setOption=function(e,t,r){return r&&this.options&&this.options[e]!==undefined||((this.options||(this.options={}))[e]=t),this},n.prototype.setOptions=function(e,t){if(e)for(var r=Object.keys(e),n=0;n<r.length;++n)this.setOption(r[n],e[r[n]],t);return this},n.prototype.toString=function(){var e=this.constructor.className,t=this.fullName;return t.length?e+" "+t:e},n._configure=function(e){i=e}},{36:36}],25:[function(e,t,r){function n(e,t,r){if(Array.isArray(t)||(r=t,t=undefined),o.call(this,e,r),t!==undefined&&!Array.isArray(t))throw TypeError("fieldNames must be an Array");this.oneof=t||[],this.fieldsArray=[]}function i(e){if(e.parent)for(var t=0;t<e.fieldsArray.length;++t)e.fieldsArray[t].parent||e.parent.add(e.fieldsArray[t])}t.exports=n;var o=e(24);((n.prototype=Object.create(o.prototype)).constructor=n).className="OneOf";var s=e(16);n.fromJSON=function(e,t){return new n(e,t.oneof,t.options)},n.prototype.toJSON=function(){return{oneof:this.oneof,options:this.options}},n.prototype.add=function(e){if(!(e instanceof s))throw TypeError("field must be a Field");return e.parent&&e.parent!==this.parent&&e.parent.remove(e),this.oneof.push(e.name),this.fieldsArray.push(e),e.partOf=this,i(this),this},n.prototype.remove=function(e){if(!(e instanceof s))throw TypeError("field must be a Field");var t=this.fieldsArray.indexOf(e);if(t<0)throw Error(e+" is not a member of "+this);return this.fieldsArray.splice(t,1),(t=this.oneof.indexOf(e.name))>-1&&this.oneof.splice(t,1),e.partOf=null,this},n.prototype.onAdd=function(e){o.prototype.onAdd.call(this,e);for(var t=0;t<this.oneof.length;++t){var r=e.get(this.oneof[t]);r&&!r.partOf&&(r.partOf=this,this.fieldsArray.push(r))}i(this)},n.prototype.onRemove=function(e){for(var t,r=0;r<this.fieldsArray.length;++r)(t=this.fieldsArray[r]).parent&&t.parent.remove(t);o.prototype.onRemove.call(this,e)}},{16:16,24:24}],26:[function(e,t,r){function n(e){return null===e?null:e.toLowerCase()}function i(e,t,r){function T(e,t,r){var n=i.filename;return r||(i.filename=null),Error("illegal "+(t||"token")+" '"+e+"' ("+(n?n+", ":"")+"line "+H.line()+")")}function _(){var e,t=[];do{if('"'!==(e=Z())&&"'"!==e)throw T(e);t.push(Z()),G(e),e=K()}while('"'===e||"'"===e);return t.join("")}function N(e){var t=Z();switch(n(t)){case"'":case'"':return W(t),_();case"true":return!0;case"false":return!1}try{return function(e,t){var r=1;"-"===e.charAt(0)&&(r=-1,e=e.substring(1));var i=n(e);switch(i){case"inf":return r*(1/0);case"nan":return NaN;case"0":return 0}if(m.test(e))return r*parseInt(e,10);if(g.test(i))return r*parseInt(e,16);if(w.test(e))return r*parseInt(e,8);if(O.test(i))return r*parseFloat(e);throw T(e,"number",t)}(t,!0)}catch(r){if(e&&j.test(t))return t;throw T(t,"value")}}function E(e,t){var r,n;do{!t||'"'!==(r=K())&&"'"!==r?e.push([n=B(Z()),G("to",!0)?B(Z()):n]):e.push(_())}while(G(",",!0));G(";")}function B(e,t){var r=n(e);switch(r){case"max":return 536870911;case"0":return 0}if("-"===e.charAt(0)&&!t)throw T(e,"id");if(v.test(e))return parseInt(e,10);if(b.test(r))return parseInt(e,16);if(k.test(e))return parseInt(e,8);throw T(e,"id")}function I(){if(V!==undefined)throw T("package");if(V=Z(),!j.test(V))throw T(V,"name");ee=ee.define(V),G(";")}function J(){var e,t=K();switch(t){case"weak":e=C||(C=[]),Z();break;case"public":Z();default:e=z||(z=[])}t=_(),G(";"),e.push(t)}function R(){if(G("="),M=n(_()),!(Y="proto3"===M)&&"proto2"!==M)throw T(M,"syntax");G(";")}function D(e,t){switch(t){case"option":return q(e,t),G(";"),!0;case"message":return function(e,t){var r=Z();if(!A.test(r))throw T(r,"type name");var o=new f(r);if(o.comment=X(),o.filename=i.filename,G("{",!0)){for(;"}"!==(t=Z());){var s=n(t);if(!D(o,t))switch(s){case"map":!function(e){G("<");var t=Z();if(d.mapKey[t]===undefined)throw T(t,"type");G(",");var r=Z();if(!j.test(r))throw T(r,"type");G(">");var n=Z();if(!A.test(n))throw T(n,"name");n=te(n),G("=");var o=new u(n,B(Z()),t,r),s=H.line();o.comment=X(),o.filename=i.filename,$(o),o.comment||(o.comment=X(s));e.add(o)}(o);break;case"required":case"optional":case"repeated":L(o,s);break;case"oneof":!function(e,t){var r=Z();if(!A.test(r))throw T(r,"name");r=te(r);var n=new l(r),o=H.line();if(n.comment=X(),n.filename=i.filename,G("{",!0)){for(;"}"!==(t=Z());)"option"===t?(q(n,t),G(";")):(W(t),L(n,"optional"));G(";",!0)}else G(";"),n.comment||(n.comment=X(o));e.add(n)}(o,s);break;case"extensions":E(o.extensions||(o.extensions=[]));break;case"reserved":E(o.reserved||(o.reserved=[]),!0);break;default:if(!Y||!j.test(t))throw T(t);W(t),L(o,"optional")}}G(";",!0)}else G(";");e.add(o)}(e,t),!0;case"enum":return function(e,t){var r=Z();if(!A.test(r))throw T(r,"name");var o=new p(r);if(o.comment=X(),o.filename=i.filename,G("{",!0)){for(;"}"!==(t=Z());)"option"===n(t)?(q(o,t),G(";")):function(e,t){if(!A.test(t))throw T(t,"name");var r=t;G("=");var n=B(Z(),!0),i=H.line();e.add(r,n,X()),$({}),e.comments[r]||(e.comments[r]=X(i))}(o,t);G(";",!0)}else G(";");e.add(o)}(e,t),!0;case"service":return function(e,t){if(t=Z(),!A.test(t))throw T(t,"service name");var r=new h(t);if(r.comment=X(),r.filename=i.filename,G("{",!0)){for(;"}"!==(t=Z());){var o=n(t);switch(o){case"option":q(r,o),G(";");break;case"rpc":!function(e,t){var r=t,o=Z();if(!A.test(o))throw T(o,"name");var s,f,a,u;G("("),G("stream",!0)&&(f=!0);if(!j.test(t=Z()))throw T(t);s=t,G(")"),G("returns"),G("("),G("stream",!0)&&(u=!0);if(!j.test(t=Z()))throw T(t);a=t,G(")");var l=new c(o,r,s,a,f,u),p=H.line();if(l.comment=X(),l.filename=i.filename,G("{",!0)){for(;"}"!==(t=Z());){var h=n(t);switch(h){case"option":q(l,h),G(";");break;default:throw T(t)}}G(";",!0)}else G(";"),l.comment||(l.comment=X(p));e.add(l)}(r,o);break;default:throw T(t)}}G(";",!0)}else G(";");e.add(r)}(e,t),!0;case"extend":return function(e,t){var r=Z();if(!j.test(r))throw T(r,"reference");if(G("{",!0)){for(;"}"!==(t=Z());){var i=n(t);switch(i){case"required":case"repeated":case"optional":L(e,i,r);break;default:if(!Y||!j.test(t))throw T(t);W(t),L(e,"optional",r)}}G(";",!0)}else G(";")}(e,t),!0}return!1}function L(e,t,r){var o=Z();if("group"!==o){if(!j.test(o))throw T(o,"type");var s=Z();if(!A.test(s))throw T(s,"name");s=te(s),G("=");var u=new a(s,B(Z()),o,t,r),l=H.line();u.comment=X(),u.filename=i.filename,$(u),u.comment||(u.comment=X(l)),!Y&&u.repeated&&u.setOption("packed",!1,!0),e.add(u)}else!function(e,t){var r=Z();if(!A.test(r))throw T(r,"name");var o=y.lcFirst(r);r===o&&(r=y.ucFirst(r));G("=");var s=B(Z()),u=new f(r);u.group=!0,u.comment=X();var l=new a(o,s,r,t);u.filename=l.filename=i.filename,G("{");for(;"}"!==(U=Z());)switch(U=n(U)){case"option":q(u,U),G(";");break;case"required":case"optional":case"repeated":L(u,U);break;default:throw T(U)}G(";",!0),e.add(u).add(l)}(e,t)}function q(e,t){var r=G("(",!0),n=Z();if(!j.test(n))throw T(n,"name");r&&(G(")"),n="("+n+")",t=K(),x.test(t)&&(n+=t,Z())),G("="),F(e,n)}function F(e,t){if(G("{",!0))do{if(!A.test(U=Z()))throw T(U,"name");"{"===K()?F(e,t+"."+U):(G(":"),P(e,t+"."+U,N(!0)))}while(!G("}",!0));else P(e,t,N(!0))}function P(e,t,r){e.setOption&&e.setOption(t,r)}function $(e){if(G("[",!0)){do{q(e,"option")}while(G(",",!0));G("]")}return G(";"),e}t instanceof s||(r=t,t=new s),r||(r=i.defaults);for(var V,z,C,M,U,H=o(e),Z=H.next,W=H.push,K=H.peek,G=H.skip,X=H.cmnt,Q=!0,Y=!1,ee=t,te=r.keepCase?function(e){return e}:function(e){return e.substring(0,1)+e.substring(1).replace(S,function(e,t){return t.toUpperCase()})};null!==(U=Z());){switch(n(U)){case"package":if(!Q)throw T(U);I();break;case"import":if(!Q)throw T(U);J();break;case"syntax":if(!Q)throw T(U);R();break;case"option":if(!Q)throw T(U);q(ee,U),G(";");break;default:if(D(ee,U)){Q=!1;continue}throw T(U)}}return i.filename=null,{package:V,imports:z,weakImports:C,syntax:M,root:t}}t.exports=i,i.filename=null,i.defaults={keepCase:!1};var o=e(33),s=e(29),f=e(34),a=e(16),u=e(20),l=e(25),p=e(15),h=e(32),c=e(22),d=e(35),y=e(36),m=/^[1-9][0-9]*$/,v=/^-?[1-9][0-9]*$/,g=/^0[x][0-9a-f]+$/,b=/^-?0[x][0-9a-f]+$/,w=/^0[0-7]+$/,k=/^-?0[0-7]+$/,O=/^(?!e)[0-9]*(?:\.[0-9]*)?(?:[e][+-]?[0-9]+)?$/,A=/^[a-zA-Z_][a-zA-Z_0-9]*$/,j=/^(?:\.?[a-zA-Z_][a-zA-Z_0-9]*)+$/,x=/^(?:\.[a-zA-Z][a-zA-Z_0-9]*)+$/,S=/_([a-z])(?=[a-z]|$)/g},{15:15,16:16,20:20,22:22,25:25,29:29,32:32,33:33,34:34,35:35,36:36}],27:[function(e,t,r){function n(e,t){return RangeError("index out of range: "+e.pos+" + "+(t||1)+" > "+e.len)}function i(e){this.buf=e,this.pos=0,this.len=e.length}function o(){var e=new l(0,0),t=0;if(!(this.len-this.pos>4)){for(;t<3;++t){if(this.pos>=this.len)throw n(this);if(e.lo=(e.lo|(127&this.buf[this.pos])<<7*t)>>>0,this.buf[this.pos++]<128)return e}return e.lo=(e.lo|(127&this.buf[this.pos++])<<7*t)>>>0,e}for(;t<4;++t)if(e.lo=(e.lo|(127&this.buf[this.pos])<<7*t)>>>0,this.buf[this.pos++]<128)return e;if(e.lo=(e.lo|(127&this.buf[this.pos])<<28)>>>0,e.hi=(e.hi|(127&this.buf[this.pos])>>4)>>>0,this.buf[this.pos++]<128)return e;if(t=0,this.len-this.pos>4){for(;t<5;++t)if(e.hi=(e.hi|(127&this.buf[this.pos])<<7*t+3)>>>0,this.buf[this.pos++]<128)return e}else for(;t<5;++t){if(this.pos>=this.len)throw n(this);if(e.hi=(e.hi|(127&this.buf[this.pos])<<7*t+3)>>>0,this.buf[this.pos++]<128)return e}throw Error("invalid varint encoding")}function s(e,t){return(e[t-4]|e[t-3]<<8|e[t-2]<<16|e[t-1]<<24)>>>0}function f(){if(this.pos+8>this.len)throw n(this,8);return new l(s(this.buf,this.pos+=4),s(this.buf,this.pos+=4))}t.exports=i;var a,u=e(38),l=u.LongBits,p=u.utf8,h="undefined"!=typeof Uint8Array?function(e){if(e instanceof Uint8Array||Array.isArray(e))return new i(e);throw Error("illegal buffer")}:function(e){if(Array.isArray(e))return new i(e);throw Error("illegal buffer")};i.create=u.Buffer?function(e){return(i.create=function(e){return u.Buffer.isBuffer(e)?new a(e):h(e)})(e)}:h,i.prototype._slice=u.Array.prototype.subarray||u.Array.prototype.slice,i.prototype.uint32=function(){var e=4294967295;return function(){if(e=(127&this.buf[this.pos])>>>0,this.buf[this.pos++]<128)return e;if(e=(e|(127&this.buf[this.pos])<<7)>>>0,this.buf[this.pos++]<128)return e;if(e=(e|(127&this.buf[this.pos])<<14)>>>0,this.buf[this.pos++]<128)return e;if(e=(e|(127&this.buf[this.pos])<<21)>>>0,this.buf[this.pos++]<128)return e;if(e=(e|(15&this.buf[this.pos])<<28)>>>0,this.buf[this.pos++]<128)return e;if((this.pos+=5)>this.len)throw this.pos=this.len,n(this,10);return e}}(),i.prototype.int32=function(){return 0|this.uint32()},i.prototype.sint32=function(){var e=this.uint32();return e>>>1^-(1&e)|0},i.prototype.bool=function(){return 0!==this.uint32()},i.prototype.fixed32=function(){if(this.pos+4>this.len)throw n(this,4);return s(this.buf,this.pos+=4)},i.prototype.sfixed32=function(){if(this.pos+4>this.len)throw n(this,4);return 0|s(this.buf,this.pos+=4)};var c="undefined"!=typeof Float32Array?function(){var e=new Float32Array(1),t=new Uint8Array(e.buffer);return e[0]=-0,t[3]?function(r,n){return t[0]=r[n],t[1]=r[n+1],t[2]=r[n+2],t[3]=r[n+3],e[0]}:function(r,n){return t[0]=r[n+3],t[1]=r[n+2],t[2]=r[n+1],t[3]=r[n],e[0]}}():function(e,t){var r=s(e,t+4),n=2*(r>>31)+1,i=r>>>23&255,o=8388607&r;return 255===i?o?NaN:n*(1/0):0===i?1.401298464324817e-45*n*o:n*Math.pow(2,i-150)*(o+8388608)};i.prototype.float=function(){if(this.pos+4>this.len)throw n(this,4);var e=c(this.buf,this.pos);return this.pos+=4,e};var d="undefined"!=typeof Float64Array?function(){var e=new Float64Array(1),t=new Uint8Array(e.buffer);return e[0]=-0,t[7]?function(r,n){return t[0]=r[n],t[1]=r[n+1],t[2]=r[n+2],t[3]=r[n+3],t[4]=r[n+4],t[5]=r[n+5],t[6]=r[n+6],t[7]=r[n+7],e[0]}:function(r,n){return t[0]=r[n+7],t[1]=r[n+6],t[2]=r[n+5],t[3]=r[n+4],t[4]=r[n+3],t[5]=r[n+2],t[6]=r[n+1],t[7]=r[n],e[0]}}():function(e,t){var r=s(e,t+4),n=s(e,t+8),i=2*(n>>31)+1,o=n>>>20&2047,f=4294967296*(1048575&n)+r;return 2047===o?f?NaN:i*(1/0):0===o?5e-324*i*f:i*Math.pow(2,o-1075)*(f+4503599627370496)};i.prototype.double=function(){if(this.pos+8>this.len)throw n(this,4);var e=d(this.buf,this.pos);return this.pos+=8,e},i.prototype.bytes=function(){var e=this.uint32(),t=this.pos,r=this.pos+e;if(r>this.len)throw n(this,e);return this.pos+=e,t===r?new this.buf.constructor(0):this._slice.call(this.buf,t,r)},i.prototype.string=function(){var e=this.bytes();return p.read(e,0,e.length)},i.prototype.skip=function(e){if("number"==typeof e){if(this.pos+e>this.len)throw n(this,e);this.pos+=e}else do{if(this.pos>=this.len)throw n(this)}while(128&this.buf[this.pos++]);return this},i.prototype.skipType=function(e){switch(e){case 0:this.skip();break;case 1:this.skip(8);break;case 2:this.skip(this.uint32());break;case 3:for(;;){if(4==(e=7&this.uint32()))break;this.skipType(e)}break;case 5:this.skip(4);break;default:throw Error("invalid wire type "+e+" at offset "+this.pos)}return this},i._configure=function(e){a=e;var t=u.Long?"toLong":"toNumber";u.merge(i.prototype,{int64:function(){return o.call(this)[t](!1)},uint64:function(){return o.call(this)[t](!0)},sint64:function(){return o.call(this).zzDecode()[t](!1)},fixed64:function(){return f.call(this)[t](!0)},sfixed64:function(){return f.call(this)[t](!1)}})}},{38:38}],28:[function(e,t,r){function n(e){i.call(this,e)}t.exports=n;var i=e(27);(n.prototype=Object.create(i.prototype)).constructor=n;var o=e(38);o.Buffer&&(n.prototype._slice=o.Buffer.prototype.slice),n.prototype.string=function(){var e=this.uint32();return this.buf.utf8Slice(this.pos,this.pos=Math.min(this.pos+e,this.len))}},{27:27,38:38}],29:[function(e,t,r){function n(e){s.call(this,"",e),this.deferred=[],this.files=[]}function i(){}function o(e,t){var r=t.parent.lookup(t.extend);if(r){var n=new l(t.fullName,t.id,t.type,t.rule,undefined,t.options);return n.declaringField=t,t.extensionField=n,r.add(n),!0}return!1}t.exports=n;var s=e(23);((n.prototype=Object.create(s.prototype)).constructor=n).className="Root";var f,a,u,l=e(16),p=e(15),h=e(36);n.fromJSON=function(e,t){return t||(t=new n),e.options&&t.setOptions(e.options),t.addJSON(e.nested)},n.prototype.resolvePath=h.path.resolve,n.prototype.load=function e(t,r,n){function o(e,t){if(n){var r=n;if(n=null,p)throw e;r(e,t)}}function s(e,t){try{if(h.isString(t)&&"{"===t.charAt(0)&&(t=JSON.parse(t)),h.isString(t)){a.filename=e;var n,i=a(t,l,r),s=0;if(i.imports)for(;s<i.imports.length;++s)(n=l.resolvePath(e,i.imports[s]))&&f(n);if(i.weakImports)for(s=0;s<i.weakImports.length;++s)(n=l.resolvePath(e,i.weakImports[s]))&&f(n,!0)}else l.setOptions(t.options).addJSON(t.nested)}catch(e){o(e)}p||c||o(null,l)}function f(e,t){var r=e.lastIndexOf("google/protobuf/");if(r>-1){var i=e.substring(r);i in u&&(e=i)}if(!(l.files.indexOf(e)>-1))if(l.files.push(e),e in u)p?s(e,u[e]):(++c,setTimeout(function(){--c,s(e,u[e])}));else if(p){var f;try{f=h.fs.readFileSync(e).toString("utf8")}catch(e){return void(t||o(e))}s(e,f)}else++c,h.fetch(e,function(r,i){--c,n&&(r?t?c||o(null,l):o(r):s(e,i))})}"function"==typeof r&&(n=r,r=undefined);var l=this;if(!n)return h.asPromise(e,l,t,r);var p=n===i,c=0;h.isString(t)&&(t=[t]);for(var d,y=0;y<t.length;++y)(d=l.resolvePath("",t[y]))&&f(d);return p?l:(c||o(null,l),undefined)},n.prototype.loadSync=function(e,t){if(!h.isNode)throw Error("not supported");return this.load(e,t,i)},n.prototype.resolveAll=function(){if(this.deferred.length)throw Error("unresolvable extensions: "+this.deferred.map(function(e){return"'extend "+e.extend+"' in "+e.parent.fullName}).join(", "));return s.prototype.resolveAll.call(this)};var c=/^[A-Z]/;n.prototype._handleAdd=function(e){if(e instanceof l)e.extend===undefined||e.extensionField||o(0,e)||this.deferred.push(e);else if(e instanceof p)c.test(e.name)&&(e.parent[e.name]=e.values);else{if(e instanceof f)for(var t=0;t<this.deferred.length;)o(0,this.deferred[t])?this.deferred.splice(t,1):++t;for(var r=0;r<e.nestedArray.length;++r)this._handleAdd(e._nestedArray[r]);c.test(e.name)&&(e.parent[e.name]=e)}},n.prototype._handleRemove=function(e){if(e instanceof l){if(e.extend!==undefined)if(e.extensionField)e.extensionField.parent.remove(e.extensionField),e.extensionField=null;else{var t=this.deferred.indexOf(e);t>-1&&this.deferred.splice(t,1)}}else if(e instanceof p)c.test(e.name)&&delete e.parent[e.name];else if(e instanceof s){for(var r=0;r<e.nestedArray.length;++r)this._handleRemove(e._nestedArray[r]);c.test(e.name)&&delete e.parent[e.name]}},n._configure=function(e,t,r){f=e,a=t,u=r}},{15:15,16:16,23:23,36:36}],30:[function(e,t,r){r.Service=e(31)},{31:31}],31:[function(e,t,r){function n(e,t,r){if("function"!=typeof e)throw TypeError("rpcImpl must be a function");i.EventEmitter.call(this),this.rpcImpl=e,this.requestDelimited=Boolean(t),this.responseDelimited=Boolean(r)}t.exports=n;var i=e(38);(n.prototype=Object.create(i.EventEmitter.prototype)).constructor=n,n.prototype.rpcCall=function e(t,r,n,o,s){if(!o)throw TypeError("request must be specified");var f=this;if(!s)return i.asPromise(e,f,t,r,n,o);if(!f.rpcImpl)return setTimeout(function(){s(Error("already ended"))},0),undefined;try{return f.rpcImpl(t,r[f.requestDelimited?"encodeDelimited":"encode"](o).finish(),function(e,r){if(e)return f.emit("error",e,t),s(e);if(null===r)return f.end(!0),undefined;if(!(r instanceof n))try{r=n[f.responseDelimited?"decodeDelimited":"decode"](r)}catch(e){return f.emit("error",e,t),s(e)}return f.emit("data",r,t),s(null,r)})}catch(e){return f.emit("error",e,t),setTimeout(function(){s(e)},0),undefined}},n.prototype.end=function(e){return this.rpcImpl&&(e||this.rpcImpl(null,null,null),this.rpcImpl=null,this.emit("end").off()),this}},{38:38}],32:[function(e,t,r){function n(e,t){o.call(this,e,t),this.methods={},this._methodsArray=null}function i(e){return e._methodsArray=null,e}t.exports=n;var o=e(23);((n.prototype=Object.create(o.prototype)).constructor=n).className="Service";var s=e(22),f=e(36),a=e(30);n.fromJSON=function(e,t){var r=new n(e,t.options);if(t.methods)for(var i=Object.keys(t.methods),o=0;o<i.length;++o)r.add(s.fromJSON(i[o],t.methods[i[o]]));return r},Object.defineProperty(n.prototype,"methodsArray",{get:function(){return this._methodsArray||(this._methodsArray=f.toArray(this.methods))}}),n.prototype.toJSON=function(){var e=o.prototype.toJSON.call(this);return{options:e&&e.options||undefined,methods:o.arrayToJSON(this.methodsArray)||{},nested:e&&e.nested||undefined}},n.prototype.get=function(e){return this.methods[e]||o.prototype.get.call(this,e)},n.prototype.resolveAll=function(){for(var e=this.methodsArray,t=0;t<e.length;++t)e[t].resolve();return o.prototype.resolve.call(this)},n.prototype.add=function(e){if(this.get(e.name))throw Error("duplicate name '"+e.name+"' in "+this);return e instanceof s?(this.methods[e.name]=e,e.parent=this,i(this)):o.prototype.add.call(this,e)},n.prototype.remove=function(e){if(e instanceof s){if(this.methods[e.name]!==e)throw Error(e+" is not a member of "+this);return delete this.methods[e.name],e.parent=null,i(this)}return o.prototype.remove.call(this,e)},n.prototype.create=function(e,t,r){for(var n=new a.Service(e,t,r),i=0;i<this.methodsArray.length;++i)n[f.lcFirst(this._methodsArray[i].resolve().name)]=f.codegen("r","c")("return this.rpcCall(m,q,s,r,c)").eof(f.lcFirst(this._methodsArray[i].name),{m:this._methodsArray[i],q:this._methodsArray[i].resolvedRequestType.ctor,s:this._methodsArray[i].resolvedResponseType.ctor});return n}},{22:22,23:23,30:30,36:36}],33:[function(e,t,r){function n(e){return e.replace(p,function(e,t){switch(t){case"\\":case"":return t;default:return h[t]||""}})}function i(e){function t(e){return Error("illegal "+e+" (line "+m+")")}function r(t){return e.charAt(t)}function i(t,r){v=e.charAt(t++),b=m;for(var n=e.substring(t,r).split(u),i=0;i<n.length;++i)n[i]=n[i].replace(a,"").trim();g=n.join("\n").trim()}function p(){if(w.length>0)return w.shift();if(k)return function(){var r="'"===k?f:s;r.lastIndex=d-1;var i=r.exec(e);if(!i)throw t("string");return d=r.lastIndex,h(k),k=null,n(i[1])}();var a,u,p,c,v;do{if(d===y)return null;for(a=!1;l.test(p=r(d));)if("\n"===p&&++m,++d===y)return null;if("/"===r(d)){if(++d===y)throw t("comment");if("/"===r(d)){for(v="/"===r(c=d+1);"\n"!==r(++d);)if(d===y)return null;++d,v&&i(c,d-1),++m,a=!0}else{if("*"!==(p=r(d)))return"/";v="*"===r(c=d+1);do{if("\n"===p&&++m,++d===y)throw t("comment");u=p,p=r(d)}while("*"!==u||"/"!==p);++d,v&&i(c,d-2),a=!0}}}while(a);var g=d;o.lastIndex=0;if(!o.test(r(g++)))for(;g<y&&!o.test(r(g));)++g;var b=e.substring(d,d=g);return'"'!==b&&"'"!==b||(k=b),b}function h(e){w.push(e)}function c(){if(!w.length){var e=p();if(null===e)return null;h(e)}return w[0]}var d=0,y=(e=e.toString()).length,m=1,v=null,g=null,b=0,w=[],k=null;return{next:p,peek:c,push:h,skip:function(e,r){var n=c();if(n===e)return p(),!0;if(!r)throw t("token '"+n+"', '"+e+"' expected");return!1},line:function(){return m},cmnt:function(e){var t;return e===undefined?t=b===m-1&&g||null:(g||c(),t=b===e&&"/"===v&&g||null),t&&(v=g=null,b=0),t}}}t.exports=i;var o=/[\s{}=;:[\],'"()<>]/g,s=/(?:"([^"\\]*(?:\\.[^"\\]*)*)")/g,f=/(?:'([^'\\]*(?:\\.[^'\\]*)*)')/g,a=/^ *[*/]+ */,u=/\n/g,l=/\s/,p=/\\(.?)/g,h={0:"\0",r:"\r",n:"\n",t:"\t"};i.unescape=n},{}],34:[function(e,t,r){function n(e,t){o.call(this,e,t),this.fields={},this.oneofs=undefined,this.extensions=undefined,this.reserved=undefined,this.group=undefined,this._fieldsById=null,this._fieldsArray=null,this._oneofsArray=null,this._ctor=null}function i(e){return e._fieldsById=e._fieldsArray=e._oneofsArray=e._ctor=null,delete e.encode,delete e.decode,delete e.verify,e}t.exports=n;var o=e(23);((n.prototype=Object.create(o.prototype)).constructor=n).className="Type";var s=e(15),f=e(25),a=e(16),u=e(20),l=e(32),p=e(10),h=e(21),c=e(27),d=e(40),y=e(36),m=e(14),v=e(13),g=e(39),b=e(12);n.fromJSON=function(e,t){var r=new n(e,t.options);r.extensions=t.extensions,r.reserved=t.reserved;for(var i=Object.keys(t.fields),p=0;p<i.length;++p)r.add((void 0!==t.fields[i[p]].keyType?u.fromJSON:a.fromJSON)(i[p],t.fields[i[p]]));if(t.oneofs)for(i=Object.keys(t.oneofs),p=0;p<i.length;++p)r.add(f.fromJSON(i[p],t.oneofs[i[p]]));if(t.nested)for(i=Object.keys(t.nested),p=0;p<i.length;++p){var h=t.nested[i[p]];r.add((h.id!==undefined?a.fromJSON:h.fields!==undefined?n.fromJSON:h.values!==undefined?s.fromJSON:h.methods!==undefined?l.fromJSON:o.fromJSON)(i[p],h))}return t.extensions&&t.extensions.length&&(r.extensions=t.extensions),t.reserved&&t.reserved.length&&(r.reserved=t.reserved),t.group&&(r.group=!0),r},Object.defineProperties(n.prototype,{fieldsById:{get:function(){if(this._fieldsById)return this._fieldsById;this._fieldsById={};for(var e=Object.keys(this.fields),t=0;t<e.length;++t){var r=this.fields[e[t]],n=r.id;if(this._fieldsById[n])throw Error("duplicate id "+n+" in "+this);this._fieldsById[n]=r}return this._fieldsById}},fieldsArray:{get:function(){return this._fieldsArray||(this._fieldsArray=y.toArray(this.fields))}},oneofsArray:{get:function(){return this._oneofsArray||(this._oneofsArray=y.toArray(this.oneofs))}},ctor:{get:function(){return this._ctor||(this._ctor=p(this).constructor)},set:function(e){if(e&&!(e.prototype instanceof h))throw TypeError("ctor must be a Message constructor");e.from||(e.from=h.from),this._ctor=e}}}),n.prototype.toJSON=function(){var e=o.prototype.toJSON.call(this);return{options:e&&e.options||undefined,oneofs:o.arrayToJSON(this.oneofsArray),fields:o.arrayToJSON(this.fieldsArray.filter(function(e){return!e.declaringField}))||{},extensions:this.extensions&&this.extensions.length?this.extensions:undefined,reserved:this.reserved&&this.reserved.length?this.reserved:undefined,group:this.group||undefined,nested:e&&e.nested||undefined}},n.prototype.resolveAll=function(){for(var e=this.fieldsArray,t=0;t<e.length;)e[t++].resolve();var r=this.oneofsArray;for(t=0;t<r.length;)r[t++].resolve();return o.prototype.resolve.call(this)},n.prototype.get=function(e){return this.fields[e]||this.oneofs&&this.oneofs[e]||this.nested&&this.nested[e]||null},n.prototype.add=function(e){if(this.get(e.name))throw Error("duplicate name '"+e.name+"' in "+this);if(e instanceof a&&e.extend===undefined){if(this._fieldsById?this._fieldsById[e.id]:this.fieldsById[e.id])throw Error("duplicate id "+e.id+" in "+this);if(this.isReservedId(e.id))throw Error("id "+e.id+" is reserved in "+this);if(this.isReservedName(e.name))throw Error("name '"+e.name+"' is reserved in "+this);return e.parent&&e.parent.remove(e),this.fields[e.name]=e,e.message=this,e.onAdd(this),i(this)}return e instanceof f?(this.oneofs||(this.oneofs={}),this.oneofs[e.name]=e,e.onAdd(this),i(this)):o.prototype.add.call(this,e)},n.prototype.remove=function(e){if(e instanceof a&&e.extend===undefined){if(!this.fields||this.fields[e.name]!==e)throw Error(e+" is not a member of "+this);return delete this.fields[e.name],e.parent=null,e.onRemove(this),i(this)}if(e instanceof f){if(!this.oneofs||this.oneofs[e.name]!==e)throw Error(e+" is not a member of "+this);return delete this.oneofs[e.name],e.parent=null,e.onRemove(this),i(this)}return o.prototype.remove.call(this,e)},n.prototype.isReservedId=function(e){if(this.reserved)for(var t=0;t<this.reserved.length;++t)if("string"!=typeof this.reserved[t]&&this.reserved[t][0]<=e&&this.reserved[t][1]>=e)return!0;return!1},n.prototype.isReservedName=function(e){if(this.reserved)for(var t=0;t<this.reserved.length;++t)if(this.reserved[t]===e)return!0;return!1},n.prototype.create=function(e){return new this.ctor(e)},n.prototype.setup=function(){for(var e=this.fullName,t=[],r=0;r<this.fieldsArray.length;++r)t.push(this._fieldsArray[r].resolve().resolvedType);return this.encode=m(this).eof(e+"$encode",{Writer:d,types:t,util:y}),this.decode=v(this).eof(e+"$decode",{Reader:c,types:t,util:y}),this.verify=g(this).eof(e+"$verify",{types:t,util:y}),this.fromObject=this.from=b.fromObject(this).eof(e+"$fromObject",{types:t,util:y}),this.toObject=b.toObject(this).eof(e+"$toObject",{types:t,util:y}),this},n.prototype.encode=function(e,t){return this.setup().encode(e,t)},n.prototype.encodeDelimited=function(e,t){return this.encode(e,t&&t.len?t.fork():t).ldelim()},n.prototype.decode=function(e,t){return this.setup().decode(e,t)},n.prototype.decodeDelimited=function(e){return e instanceof c||(e=c.create(e)),this.decode(e,e.uint32())},n.prototype.verify=function(e){return this.setup().verify(e)},n.prototype.fromObject=function(e){return this.setup().fromObject(e)},n.prototype.from=n.prototype.fromObject,n.prototype.toObject=function(e,t){return this.setup().toObject(e,t)}},{10:10,12:12,13:13,14:14,15:15,16:16,20:20,21:21,23:23,25:25,27:27,32:32,36:36,39:39,40:40}],35:[function(e,t,r){function n(e,t){var r=0,n={};for(t|=0;r<e.length;)n[s[r+t]]=e[r++];return n}var i=r,o=e(36),s=["double","float","int32","uint32","sint32","fixed32","sfixed32","int64","uint64","sint64","fixed64","sfixed64","bool","string","bytes"];i.basic=n([1,5,0,0,0,5,5,0,0,0,1,1,0,2,2]),i.defaults=n([0,0,0,0,0,0,0,0,0,0,0,0,!1,"",o.emptyArray,null]),i.long=n([0,0,0,1,1],7),i.mapKey=n([0,0,0,5,5,0,0,0,1,1,0,2],2),i.packed=n([1,5,0,0,0,5,5,0,0,0,1,1,0])},{36:36}],36:[function(e,t,r){var n=t.exports=e(38);n.codegen=e(3),n.fetch=e(5),n.path=e(7),n.fs=n.inquire("fs"),n.toArray=function(e){var t=[];if(e)for(var r=Object.keys(e),n=0;n<r.length;++n)t.push(e[r[n]]);return t};var i=/\\/g,o=/"/g;n.safeProp=function(e){return'["'+e.replace(i,"\\\\").replace(o,'\\"')+'"]'},n.ucFirst=function(e){return e.charAt(0).toUpperCase()+e.substring(1)}},{3:3,38:38,5:5,7:7}],37:[function(e,t,r){function n(e,t){this.lo=e>>>0,this.hi=t>>>0}t.exports=n;var i=e(38),o=n.zero=new n(0,0);o.toNumber=function(){return 0},o.zzEncode=o.zzDecode=function(){return this},o.length=function(){return 1};var s=n.zeroHash="\0\0\0\0\0\0\0\0";n.fromNumber=function(e){if(0===e)return o;var t=e<0;t&&(e=-e);var r=e>>>0,i=(e-r)/4294967296>>>0;return t&&(i=~i>>>0,r=~r>>>0,++r>4294967295&&(r=0,++i>4294967295&&(i=0))),new n(r,i)},n.from=function(e){if("number"==typeof e)return n.fromNumber(e);if(i.isString(e)){if(!i.Long)return n.fromNumber(parseInt(e,10));e=i.Long.fromString(e)}return e.low||e.high?new n(e.low>>>0,e.high>>>0):o},n.prototype.toNumber=function(e){if(!e&&this.hi>>>31){var t=1+~this.lo>>>0,r=~this.hi>>>0;return t||(r=r+1>>>0),-(t+4294967296*r)}return this.lo+4294967296*this.hi},n.prototype.toLong=function(e){return i.Long?new i.Long(0|this.lo,0|this.hi,Boolean(e)):{low:0|this.lo,high:0|this.hi,unsigned:Boolean(e)}};var f=String.prototype.charCodeAt;n.fromHash=function(e){return e===s?o:new n((f.call(e,0)|f.call(e,1)<<8|f.call(e,2)<<16|f.call(e,3)<<24)>>>0,(f.call(e,4)|f.call(e,5)<<8|f.call(e,6)<<16|f.call(e,7)<<24)>>>0)},n.prototype.toHash=function(){return String.fromCharCode(255&this.lo,this.lo>>>8&255,this.lo>>>16&255,this.lo>>>24,255&this.hi,this.hi>>>8&255,this.hi>>>16&255,this.hi>>>24)},n.prototype.zzEncode=function(){var e=this.hi>>31;return this.hi=((this.hi<<1|this.lo>>>31)^e)>>>0,this.lo=(this.lo<<1^e)>>>0,this},n.prototype.zzDecode=function(){var e=-(1&this.lo);return this.lo=((this.lo>>>1|this.hi<<31)^e)>>>0,this.hi=(this.hi>>>1^e)>>>0,this},n.prototype.length=function(){var e=this.lo,t=(this.lo>>>28|this.hi<<4)>>>0,r=this.hi>>>24;return 0===r?0===t?e<16384?e<128?1:2:e<2097152?3:4:t<16384?t<128?5:6:t<2097152?7:8:r<128?9:10}},{38:38}],38:[function(e,t,r){function n(e,t,r){for(var n=Object.keys(t),i=0;i<n.length;++i)e[n[i]]!==undefined&&r||(e[n[i]]=t[n[i]]);return e}function i(e){function t(e,r){if(!(this instanceof t))return new t(e,r);Object.defineProperty(this,"message",{get:function(){return e}}),Error.captureStackTrace?Error.captureStackTrace(this,t):Object.defineProperty(this,"stack",{value:(new Error).stack||""}),r&&n(this,r)}return(t.prototype=Object.create(Error.prototype)).constructor=t,Object.defineProperty(t.prototype,"name",{get:function(){return e}}),t.prototype.toString=function(){return this.name+": "+this.message},t}var o=r;o.asPromise=e(1),o.base64=e(2),o.EventEmitter=e(4),o.inquire=e(6),o.utf8=e(9),o.pool=e(8),o.LongBits=e(37),o.emptyArray=Object.freeze?Object.freeze([]):[],o.emptyObject=Object.freeze?Object.freeze({}):{},o.isNode=Boolean(global.process&&global.process.versions&&global.process.versions.node),o.isInteger=Number.isInteger||function(e){return"number"==typeof e&&isFinite(e)&&Math.floor(e)===e},o.isString=function(e){return"string"==typeof e||e instanceof String},o.isObject=function(e){return e&&"object"==typeof e},o.Buffer=function(){try{var e=o.inquire("buffer").Buffer;return e.prototype.utf8Write?e:null}catch(e){return null}}(),o._Buffer_from=null,o._Buffer_allocUnsafe=null,o.newBuffer=function(e){return"number"==typeof e?o.Buffer?o._Buffer_allocUnsafe(e):new o.Array(e):o.Buffer?o._Buffer_from(e):"undefined"==typeof Uint8Array?e:new Uint8Array(e)},o.Array="undefined"!=typeof Uint8Array?Uint8Array:Array,o.Long=global.dcodeIO&&global.dcodeIO.Long||o.inquire("long"),o.key2Re=/^true|false|0|1$/,o.key32Re=/^-?(?:0|[1-9][0-9]*)$/,o.key64Re=/^(?:[\\x00-\\xff]{8}|-?(?:0|[1-9][0-9]*))$/,o.longToHash=function(e){return e?o.LongBits.from(e).toHash():o.LongBits.zeroHash},o.longFromHash=function(e,t){var r=o.LongBits.fromHash(e);return o.Long?o.Long.fromBits(r.lo,r.hi,t):r.toNumber(Boolean(t))},o.merge=n,o.lcFirst=function(e){return e.charAt(0).toLowerCase()+e.substring(1)},o.newError=i,o.ProtocolError=i("ProtocolError"),o.oneOfGetter=function(e){for(var t={},r=0;r<e.length;++r)t[e[r]]=1;return function(){for(var e=Object.keys(this),r=e.length-1;r>-1;--r)if(1===t[e[r]]&&this[e[r]]!==undefined&&null!==this[e[r]])return e[r]}},o.oneOfSetter=function(e){return function(t){for(var r=0;r<e.length;++r)e[r]!==t&&delete this[e[r]]}},o.lazyResolve=function(e,t){for(var r=0;r<t.length;++r)for(var n=Object.keys(t[r]),i=0;i<n.length;++i){for(var o=t[r][n[i]].split("."),s=e;o.length;)s=s[o.shift()];t[r][n[i]]=s}},o.toJSONOptions={longs:String,enums:String,bytes:String},o._configure=function(){var e=o.Buffer;e?(o._Buffer_from=e.from!==Uint8Array.from&&e.from||function(t,r){return new e(t,r)},o._Buffer_allocUnsafe=e.allocUnsafe||function(t){return new e(t)}):o._Buffer_from=o._Buffer_allocUnsafe=null}},{1:1,2:2,37:37,4:4,6:6,8:8,9:9}],39:[function(e,t,r){function n(e,t){return e.name+": "+t+(e.repeated&&"array"!==t?"[]":e.map&&"object"!==t?"{k:"+e.keyType+"}":"")+" expected"}function i(e,t,r,i){if(t.resolvedType)if(t.resolvedType instanceof s){e("switch(%s){",i)("default:")("return%j",n(t,"enum value"));for(var o=Object.keys(t.resolvedType.values),f=0;f<o.length;++f)e("case %d:",t.resolvedType.values[o[f]]);e("break")("}")}else e("var e=types[%d].verify(%s);",r,i)("if(e)")("return%j+e",t.name+".");else switch(t.type){case"int32":case"uint32":case"sint32":case"fixed32":case"sfixed32":e("if(!util.isInteger(%s))",i)("return%j",n(t,"integer"));break;case"int64":case"uint64":case"sint64":case"fixed64":case"sfixed64":e("if(!util.isInteger(%s)&&!(%s&&util.isInteger(%s.low)&&util.isInteger(%s.high)))",i,i,i,i)("return%j",n(t,"integer|Long"));break;case"float":case"double":e('if(typeof %s!=="number")',i)("return%j",n(t,"number"));break;case"bool":e('if(typeof %s!=="boolean")',i)("return%j",n(t,"boolean"));break;case"string":e("if(!util.isString(%s))",i)("return%j",n(t,"string"));break;case"bytes":e('if(!(%s&&typeof %s.length==="number"||util.isString(%s)))',i,i,i)("return%j",n(t,"buffer"))}return e}function o(e,t,r){switch(t.keyType){case"int32":case"uint32":case"sint32":case"fixed32":case"sfixed32":e("if(!util.key32Re.test(%s))",r)("return%j",n(t,"integer key"));break;case"int64":case"uint64":case"sint64":case"fixed64":case"sfixed64":e("if(!util.key64Re.test(%s))",r)("return%j",n(t,"integer|Long key"));break;case"bool":e("if(!util.key2Re.test(%s))",r)("return%j",n(t,"boolean key"))}return e}t.exports=function(e){for(var t=f.codegen("m")('if(typeof m!=="object"||m===null)')("return%j","object expected"),r=0;r<e.fieldsArray.length;++r){var a=e._fieldsArray[r].resolve(),u="m"+f.safeProp(a.name);a.map?(t("if(%s!==undefined){",u)("if(!util.isObject(%s))",u)("return%j",n(a,"object"))("var k=Object.keys(%s)",u)("for(var i=0;i<k.length;++i){"),o(t,a,"k[i]"),i(t,a,r,u+"[k[i]]")("}")("}")):a.repeated?(t("if(%s!==undefined){",u)("if(!Array.isArray(%s))",u)("return%j",n(a,"array"))("for(var i=0;i<%s.length;++i){",u),i(t,a,r,u+"[i]")("}")("}")):(a.required||(!a.resolvedType||a.resolvedType instanceof s?t("if(%s!==undefined){",u):t("if(%s!==undefined&&%s!==null){",u,u)),i(t,a,r,u),a.required||t("}"))}return t("return null")};var s=e(15),f=e(36)},{15:15,36:36}],40:[function(e,t,r){function n(e,t,r){this.fn=e,this.len=t,this.next=undefined,this.val=r}function i(){}function o(){this.len=0,this.head=new n(i,0,0),this.tail=this.head,this.states=null}function s(e,t,r){t[r]=255&e}function f(e,t){this.len=e,this.next=undefined,this.val=t}function a(e,t,r){for(;e.hi;)t[r++]=127&e.lo|128,e.lo=(e.lo>>>7|e.hi<<25)>>>0,e.hi>>>=7;for(;e.lo>127;)t[r++]=127&e.lo|128,e.lo=e.lo>>>7;t[r++]=e.lo}function u(e,t,r){t[r++]=255&e,t[r++]=e>>>8&255,t[r++]=e>>>16&255,t[r]=e>>>24}t.exports=o;var l,p=e(38),h=p.LongBits,c=p.base64,d=p.utf8;o.create=p.Buffer?function(){return(o.create=function(){return new l})()}:function(){return new o},o.alloc=function(e){return new p.Array(e)},p.Array!==Array&&(o.alloc=p.pool(o.alloc,p.Array.prototype.subarray)),o.prototype.push=function(e,t,r){return this.tail=this.tail.next=new n(e,t,r),this.len+=t,this},(f.prototype=Object.create(n.prototype)).fn=function(e,t,r){for(;e>127;)t[r++]=127&e|128,e>>>=7;t[r]=e},o.prototype.uint32=function(e){return this.len+=(this.tail=this.tail.next=new f((e>>>=0)<128?1:e<16384?2:e<2097152?3:e<268435456?4:5,e)).len,this},o.prototype.int32=function(e){return e<0?this.push(a,10,h.fromNumber(e)):this.uint32(e)},o.prototype.sint32=function(e){return this.uint32((e<<1^e>>31)>>>0)},o.prototype.uint64=function(e){var t=h.from(e);return this.push(a,t.length(),t)},o.prototype.int64=o.prototype.uint64,o.prototype.sint64=function(e){var t=h.from(e).zzEncode();return this.push(a,t.length(),t)},o.prototype.bool=function(e){return this.push(s,1,e?1:0)},o.prototype.fixed32=function(e){return this.push(u,4,e>>>0)},o.prototype.sfixed32=o.prototype.fixed32,o.prototype.fixed64=function(e){var t=h.from(e);return this.push(u,4,t.lo).push(u,4,t.hi)},o.prototype.sfixed64=o.prototype.fixed64;var y="undefined"!=typeof Float32Array?function(){var e=new Float32Array(1),t=new Uint8Array(e.buffer);return e[0]=-0,t[3]?function(r,n,i){e[0]=r,n[i++]=t[0],n[i++]=t[1],n[i++]=t[2],n[i]=t[3]}:function(r,n,i){e[0]=r,n[i++]=t[3],n[i++]=t[2],n[i++]=t[1],n[i]=t[0]}}():function(e,t,r){var n=e<0?1:0;if(n&&(e=-e),0===e)u(1/e>0?0:2147483648,t,r);else if(isNaN(e))u(2147483647,t,r);else if(e>3.4028234663852886e38)u((n<<31|2139095040)>>>0,t,r);else if(e<1.1754943508222875e-38)u((n<<31|Math.round(e/1.401298464324817e-45))>>>0,t,r);else{var i=Math.floor(Math.log(e)/Math.LN2);u((n<<31|i+127<<23|8388607&Math.round(e*Math.pow(2,-i)*8388608))>>>0,t,r)}};o.prototype.float=function(e){return this.push(y,4,e)};var m="undefined"!=typeof Float64Array?function(){var e=new Float64Array(1),t=new Uint8Array(e.buffer);return e[0]=-0,t[7]?function(r,n,i){e[0]=r,n[i++]=t[0],n[i++]=t[1],n[i++]=t[2],n[i++]=t[3],n[i++]=t[4],n[i++]=t[5],n[i++]=t[6],n[i]=t[7]}:function(r,n,i){e[0]=r,n[i++]=t[7],n[i++]=t[6],n[i++]=t[5],n[i++]=t[4],n[i++]=t[3],n[i++]=t[2],n[i++]=t[1],n[i]=t[0]}}():function(e,t,r){var n=e<0?1:0;if(n&&(e=-e),0===e)u(0,t,r),u(1/e>0?0:2147483648,t,r+4);else if(isNaN(e))u(4294967295,t,r),u(2147483647,t,r+4);else if(e>1.7976931348623157e308)u(0,t,r),u((n<<31|2146435072)>>>0,t,r+4);else{var i;if(e<2.2250738585072014e-308)u((i=e/5e-324)>>>0,t,r),u((n<<31|i/4294967296)>>>0,t,r+4);else{var o=Math.floor(Math.log(e)/Math.LN2);1024===o&&(o=1023),u(4503599627370496*(i=e*Math.pow(2,-o))>>>0,t,r),u((n<<31|o+1023<<20|1048576*i&1048575)>>>0,t,r+4)}}};o.prototype.double=function(e){return this.push(m,8,e)};var v=p.Array.prototype.set?function(e,t,r){t.set(e,r)}:function(e,t,r){for(var n=0;n<e.length;++n)t[r+n]=e[n]};o.prototype.bytes=function(e){var t=e.length>>>0;if(!t)return this.push(s,1,0);if(p.isString(e)){var r=o.alloc(t=c.length(e));c.decode(e,r,0),e=r}return this.uint32(t).push(v,t,e)},o.prototype.string=function(e){var t=d.length(e);return t?this.uint32(t).push(d.write,t,e):this.push(s,1,0)},o.prototype.fork=function(){return this.states=new function(e){this.head=e.head,this.tail=e.tail,this.len=e.len,this.next=e.states}(this),this.head=this.tail=new n(i,0,0),this.len=0,this},o.prototype.reset=function(){return this.states?(this.head=this.states.head,this.tail=this.states.tail,this.len=this.states.len,this.states=this.states.next):(this.head=this.tail=new n(i,0,0),this.len=0),this},o.prototype.ldelim=function(){var e=this.head,t=this.tail,r=this.len;return this.reset().uint32(r),r&&(this.tail.next=e.next,this.tail=t,this.len+=r),this},o.prototype.finish=function(){for(var e=this.head.next,t=this.constructor.alloc(this.len),r=0;e;)e.fn(e.val,t,r),r+=e.len,e=e.next;return t},o._configure=function(e){l=e}},{38:38}],41:[function(e,t,r){function n(){o.call(this)}function i(e,t,r){e.length<40?s.utf8.write(e,t,r):t.utf8Write(e,r)}t.exports=n;var o=e(40);(n.prototype=Object.create(o.prototype)).constructor=n;var s=e(38),f=s.Buffer;n.alloc=function(e){return(n.alloc=s._Buffer_allocUnsafe)(e)};var a=f&&f.prototype instanceof Uint8Array&&"set"===f.prototype.set.name?function(e,t,r){t.set(e,r)}:function(e,t,r){if(e.copy)e.copy(t,r,0,e.length);else for(var n=0;n<e.length;)t[r++]=e[n++]};n.prototype.bytes=function(e){s.isString(e)&&(e=s._Buffer_from(e,"base64"));var t=e.length>>>0;return this.uint32(t),t&&this.push(a,t,e),this},n.prototype.string=function(e){var t=f.byteLength(e);return this.uint32(t),t&&this.push(i,t,e),this}},{38:38,40:40}]},{},[19])}("object"==typeof window&&window||"object"==typeof self&&self||this);
+/*!
+ * protobuf.js v6.7.0 (c) 2016, Daniel Wirtz
+ * Compiled Sun, 12 Mar 2017 21:09:56 UTC
+ * Licensed under the BSD-3-Clause License
+ * see: https://github.com/dcodeIO/protobuf.js for details
+ */
+(function(global,undefined){"use strict";(function prelude(modules, cache, entries) {
+
+    // This is the prelude used to bundle protobuf.js for the browser. Wraps up the CommonJS
+    // sources through a conflict-free require shim and is again wrapped within an iife that
+    // provides a unified `global` and a minification-friendly `undefined` var plus a global
+    // "use strict" directive so that minification can remove the directives of each module.
+
+    function $require(name) {
+        var $module = cache[name];
+        if (!$module)
+            modules[name][0].call($module = cache[name] = { exports: {} }, $require, $module, $module.exports);
+        return $module.exports;
+    }
+
+    // Expose globally
+    var protobuf = global.protobuf = $require(entries[0]);
+
+    // Be nice to AMD
+    if (typeof define === "function" && define.amd)
+        define(["long"], function(Long) {
+            protobuf.util.Long = Long;
+            protobuf.configure();
+            return protobuf;
+        });
+
+    // Be nice to CommonJS
+    if (typeof module === "object" && module && module.exports)
+        module.exports = protobuf;
+
+})/* end of prelude */({1:[function(require,module,exports){
+"use strict";
+module.exports = asPromise;
+
+/**
+ * Returns a promise from a node-style callback function.
+ * @memberof util
+ * @param {function(?Error, ...*)} fn Function to call
+ * @param {*} ctx Function context
+ * @param {...*} params Function arguments
+ * @returns {Promise<*>} Promisified function
+ */
+function asPromise(fn, ctx/*, varargs */) {
+    var params = [];
+    for (var i = 2; i < arguments.length;)
+        params.push(arguments[i++]);
+    var pending = true;
+    return new Promise(function asPromiseExecutor(resolve, reject) {
+        params.push(function asPromiseCallback(err/*, varargs */) {
+            if (pending) {
+                pending = false;
+                if (err)
+                    reject(err);
+                else {
+                    var args = [];
+                    for (var i = 1; i < arguments.length;)
+                        args.push(arguments[i++]);
+                    resolve.apply(null, args);
+                }
+            }
+        });
+        try {
+            fn.apply(ctx || this, params); // eslint-disable-line no-invalid-this
+        } catch (err) {
+            if (pending) {
+                pending = false;
+                reject(err);
+            }
+        }
+    });
+}
+
+},{}],2:[function(require,module,exports){
+"use strict";
+
+/**
+ * A minimal base64 implementation for number arrays.
+ * @memberof util
+ * @namespace
+ */
+var base64 = exports;
+
+/**
+ * Calculates the byte length of a base64 encoded string.
+ * @param {string} string Base64 encoded string
+ * @returns {number} Byte length
+ */
+base64.length = function length(string) {
+    var p = string.length;
+    if (!p)
+        return 0;
+    var n = 0;
+    while (--p % 4 > 1 && string.charAt(p) === "=")
+        ++n;
+    return Math.ceil(string.length * 3) / 4 - n;
+};
+
+// Base64 encoding table
+var b64 = new Array(64);
+
+// Base64 decoding table
+var s64 = new Array(123);
+
+// 65..90, 97..122, 48..57, 43, 47
+for (var i = 0; i < 64;)
+    s64[b64[i] = i < 26 ? i + 65 : i < 52 ? i + 71 : i < 62 ? i - 4 : i - 59 | 43] = i++;
+
+/**
+ * Encodes a buffer to a base64 encoded string.
+ * @param {Uint8Array} buffer Source buffer
+ * @param {number} start Source start
+ * @param {number} end Source end
+ * @returns {string} Base64 encoded string
+ */
+base64.encode = function encode(buffer, start, end) {
+    var string = []; // alt: new Array(Math.ceil((end - start) / 3) * 4);
+    var i = 0, // output index
+        j = 0, // goto index
+        t;     // temporary
+    while (start < end) {
+        var b = buffer[start++];
+        switch (j) {
+            case 0:
+                string[i++] = b64[b >> 2];
+                t = (b & 3) << 4;
+                j = 1;
+                break;
+            case 1:
+                string[i++] = b64[t | b >> 4];
+                t = (b & 15) << 2;
+                j = 2;
+                break;
+            case 2:
+                string[i++] = b64[t | b >> 6];
+                string[i++] = b64[b & 63];
+                j = 0;
+                break;
+        }
+    }
+    if (j) {
+        string[i++] = b64[t];
+        string[i  ] = 61;
+        if (j === 1)
+            string[i + 1] = 61;
+    }
+    return String.fromCharCode.apply(String, string);
+};
+
+var invalidEncoding = "invalid encoding";
+
+/**
+ * Decodes a base64 encoded string to a buffer.
+ * @param {string} string Source string
+ * @param {Uint8Array} buffer Destination buffer
+ * @param {number} offset Destination offset
+ * @returns {number} Number of bytes written
+ * @throws {Error} If encoding is invalid
+ */
+base64.decode = function decode(string, buffer, offset) {
+    var start = offset;
+    var j = 0, // goto index
+        t;     // temporary
+    for (var i = 0; i < string.length;) {
+        var c = string.charCodeAt(i++);
+        if (c === 61 && j > 1)
+            break;
+        if ((c = s64[c]) === undefined)
+            throw Error(invalidEncoding);
+        switch (j) {
+            case 0:
+                t = c;
+                j = 1;
+                break;
+            case 1:
+                buffer[offset++] = t << 2 | (c & 48) >> 4;
+                t = c;
+                j = 2;
+                break;
+            case 2:
+                buffer[offset++] = (t & 15) << 4 | (c & 60) >> 2;
+                t = c;
+                j = 3;
+                break;
+            case 3:
+                buffer[offset++] = (t & 3) << 6 | c;
+                j = 0;
+                break;
+        }
+    }
+    if (j === 1)
+        throw Error(invalidEncoding);
+    return offset - start;
+};
+
+/**
+ * Tests if the specified string appears to be base64 encoded.
+ * @param {string} string String to test
+ * @returns {boolean} `true` if probably base64 encoded, otherwise false
+ */
+base64.test = function test(string) {
+    return /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(string);
+};
+
+},{}],3:[function(require,module,exports){
+"use strict";
+module.exports = codegen;
+
+var blockOpenRe  = /[{[]$/,
+    blockCloseRe = /^[}\]]/,
+    casingRe     = /:$/,
+    branchRe     = /^\s*(?:if|}?else if|while|for)\b|\b(?:else)\s*$/,
+    breakRe      = /\b(?:break|continue)(?: \w+)?;?$|^\s*return\b/;
+
+/**
+ * A closure for generating functions programmatically.
+ * @memberof util
+ * @namespace
+ * @function
+ * @param {...string} params Function parameter names
+ * @returns {Codegen} Codegen instance
+ * @property {boolean} supported Whether code generation is supported by the environment.
+ * @property {boolean} verbose=false When set to true, codegen will log generated code to console. Useful for debugging.
+ * @property {function(string, ...*):string} sprintf Underlying sprintf implementation
+ */
+function codegen() {
+    var params = [],
+        src    = [],
+        indent = 1,
+        inCase = false;
+    for (var i = 0; i < arguments.length;)
+        params.push(arguments[i++]);
+
+    /**
+     * A codegen instance as returned by {@link codegen}, that also is a sprintf-like appender function.
+     * @typedef Codegen
+     * @type {function}
+     * @param {string} format Format string
+     * @param {...*} args Replacements
+     * @returns {Codegen} Itself
+     * @property {function(string=):string} str Stringifies the so far generated function source.
+     * @property {function(string=, Object=):function} eof Ends generation and builds the function whilst applying a scope.
+     */
+    /**/
+    function gen() {
+        var args = [],
+            i = 0;
+        for (; i < arguments.length;)
+            args.push(arguments[i++]);
+        var line = sprintf.apply(null, args);
+        var level = indent;
+        if (src.length) {
+            var prev = src[src.length - 1];
+
+            // block open or one time branch
+            if (blockOpenRe.test(prev))
+                level = ++indent; // keep
+            else if (branchRe.test(prev))
+                ++level; // once
+
+            // casing
+            if (casingRe.test(prev) && !casingRe.test(line)) {
+                level = ++indent;
+                inCase = true;
+            } else if (inCase && breakRe.test(prev)) {
+                level = --indent;
+                inCase = false;
+            }
+
+            // block close
+            if (blockCloseRe.test(line))
+                level = --indent;
+        }
+        for (i = 0; i < level; ++i)
+            line = "\t" + line;
+        src.push(line);
+        return gen;
+    }
+
+    /**
+     * Stringifies the so far generated function source.
+     * @param {string} [name] Function name, defaults to generate an anonymous function
+     * @returns {string} Function source using tabs for indentation
+     * @inner
+     */
+    function str(name) {
+        return "function" + (name ? " " + name.replace(/[^\w_$]/g, "_") : "") + "(" + params.join(",") + ") {\n" + src.join("\n") + "\n}";
+    }
+
+    gen.str = str;
+
+    /**
+     * Ends generation and builds the function whilst applying a scope.
+     * @param {string} [name] Function name, defaults to generate an anonymous function
+     * @param {Object.<string,*>} [scope] Function scope
+     * @returns {function} The generated function, with scope applied if specified
+     * @inner
+     */
+    function eof(name, scope) {
+        if (typeof name === "object") {
+            scope = name;
+            name = undefined;
+        }
+        var source = gen.str(name);
+        if (codegen.verbose)
+            console.log("--- codegen ---\n" + source.replace(/^/mg, "> ").replace(/\t/g, "  ")); // eslint-disable-line no-console
+        var keys = Object.keys(scope || (scope = {}));
+        return Function.apply(null, keys.concat("return " + source)).apply(null, keys.map(function(key) { return scope[key]; })); // eslint-disable-line no-new-func
+        //     ^ Creates a wrapper function with the scoped variable names as its parameters,
+        //       calls it with the respective scoped variable values ^
+        //       and returns our brand-new properly scoped function.
+        //
+        // This works because "Invoking the Function constructor as a function (without using the
+        // new operator) has the same effect as invoking it as a constructor."
+        // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Function
+    }
+
+    gen.eof = eof;
+
+    return gen;
+}
+
+function sprintf(format) {
+    var args = [],
+        i = 1;
+    for (; i < arguments.length;)
+        args.push(arguments[i++]);
+    i = 0;
+    format = format.replace(/%([dfjs])/g, function($0, $1) {
+        switch ($1) {
+            case "d":
+                return Math.floor(args[i++]);
+            case "f":
+                return Number(args[i++]);
+            case "j":
+                return JSON.stringify(args[i++]);
+            default:
+                return args[i++];
+        }
+    });
+    if (i !== args.length)
+        throw Error("argument count mismatch");
+    return format;
+}
+
+codegen.sprintf   = sprintf;
+codegen.supported = false; try { codegen.supported = codegen("a","b")("return a-b").eof()(2,1) === 1; } catch (e) {} // eslint-disable-line no-empty
+codegen.verbose   = false;
+
+},{}],4:[function(require,module,exports){
+"use strict";
+module.exports = EventEmitter;
+
+/**
+ * Constructs a new event emitter instance.
+ * @classdesc A minimal event emitter.
+ * @memberof util
+ * @constructor
+ */
+function EventEmitter() {
+
+    /**
+     * Registered listeners.
+     * @type {Object.<string,*>}
+     * @private
+     */
+    this._listeners = {};
+}
+
+/**
+ * Registers an event listener.
+ * @param {string} evt Event name
+ * @param {function} fn Listener
+ * @param {*} [ctx] Listener context
+ * @returns {util.EventEmitter} `this`
+ */
+EventEmitter.prototype.on = function on(evt, fn, ctx) {
+    (this._listeners[evt] || (this._listeners[evt] = [])).push({
+        fn  : fn,
+        ctx : ctx || this
+    });
+    return this;
+};
+
+/**
+ * Removes an event listener or any matching listeners if arguments are omitted.
+ * @param {string} [evt] Event name. Removes all listeners if omitted.
+ * @param {function} [fn] Listener to remove. Removes all listeners of `evt` if omitted.
+ * @returns {util.EventEmitter} `this`
+ */
+EventEmitter.prototype.off = function off(evt, fn) {
+    if (evt === undefined)
+        this._listeners = {};
+    else {
+        if (fn === undefined)
+            this._listeners[evt] = [];
+        else {
+            var listeners = this._listeners[evt];
+            for (var i = 0; i < listeners.length;)
+                if (listeners[i].fn === fn)
+                    listeners.splice(i, 1);
+                else
+                    ++i;
+        }
+    }
+    return this;
+};
+
+/**
+ * Emits an event by calling its listeners with the specified arguments.
+ * @param {string} evt Event name
+ * @param {...*} args Arguments
+ * @returns {util.EventEmitter} `this`
+ */
+EventEmitter.prototype.emit = function emit(evt) {
+    var listeners = this._listeners[evt];
+    if (listeners) {
+        var args = [],
+            i = 1;
+        for (; i < arguments.length;)
+            args.push(arguments[i++]);
+        for (i = 0; i < listeners.length;)
+            listeners[i].fn.apply(listeners[i++].ctx, args);
+    }
+    return this;
+};
+
+},{}],5:[function(require,module,exports){
+"use strict";
+module.exports = fetch;
+
+var asPromise = require(1),
+    inquire   = require(6);
+
+var fs = inquire("fs");
+
+/**
+ * Node-style callback as used by {@link util.fetch}.
+ * @typedef FetchCallback
+ * @type {function}
+ * @param {?Error} error Error, if any, otherwise `null`
+ * @param {string} [contents] File contents, if there hasn't been an error
+ * @returns {undefined}
+ */
+
+/**
+ * Options as used by {@link util.fetch}.
+ * @typedef FetchOptions
+ * @type {Object}
+ * @property {boolean} [binary=false] Whether expecting a binary response
+ * @property {boolean} [xhr=false] If `true`, forces the use of XMLHttpRequest
+ */
+
+/**
+ * Fetches the contents of a file.
+ * @memberof util
+ * @param {string} filename File path or url
+ * @param {FetchOptions} options Fetch options
+ * @param {FetchCallback} callback Callback function
+ * @returns {undefined}
+ */
+function fetch(filename, options, callback) {
+    if (typeof options === "function") {
+        callback = options;
+        options = {};
+    } else if (!options)
+        options = {};
+
+    if (!callback)
+        return asPromise(fetch, this, filename, options); // eslint-disable-line no-invalid-this
+
+    // if a node-like filesystem is present, try it first but fall back to XHR if nothing is found.
+    if (!options.xhr && fs && fs.readFile)
+        return fs.readFile(filename, function fetchReadFileCallback(err, contents) {
+            return err && typeof XMLHttpRequest !== "undefined"
+                ? fetch.xhr(filename, options, callback)
+                : err
+                ? callback(err)
+                : callback(null, options.binary ? contents : contents.toString("utf8"));
+        });
+
+    // use the XHR version otherwise.
+    return fetch.xhr(filename, options, callback);
+}
+
+/**
+ * Fetches the contents of a file.
+ * @name util.fetch
+ * @function
+ * @param {string} path File path or url
+ * @param {FetchCallback} callback Callback function
+ * @returns {undefined}
+ * @variation 2
+ */
+
+/**
+ * Fetches the contents of a file.
+ * @name util.fetch
+ * @function
+ * @param {string} path File path or url
+ * @param {FetchOptions} [options] Fetch options
+ * @returns {Promise<string|Uint8Array>} Promise
+ * @variation 3
+ */
+
+/**/
+fetch.xhr = function fetch_xhr(filename, options, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange /* works everywhere */ = function fetchOnReadyStateChange() {
+
+        if (xhr.readyState !== 4)
+            return undefined;
+
+        // local cors security errors return status 0 / empty string, too. afaik this cannot be
+        // reliably distinguished from an actually empty file for security reasons. feel free
+        // to send a pull request if you are aware of a solution.
+        if (xhr.status !== 0 && xhr.status !== 200)
+            return callback(Error("status " + xhr.status));
+
+        // if binary data is expected, make sure that some sort of array is returned, even if
+        // ArrayBuffers are not supported. the binary string fallback, however, is unsafe.
+        if (options.binary) {
+            var buffer = xhr.response;
+            if (!buffer) {
+                buffer = [];
+                for (var i = 0; i < xhr.responseText.length; ++i)
+                    buffer.push(xhr.responseText.charCodeAt(i) & 255);
+            }
+            return callback(null, typeof Uint8Array !== "undefined" ? new Uint8Array(buffer) : buffer);
+        }
+        return callback(null, xhr.responseText);
+    };
+
+    if (options.binary) {
+        // ref: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Sending_and_Receiving_Binary_Data#Receiving_binary_data_in_older_browsers
+        if ("overrideMimeType" in xhr)
+            xhr.overrideMimeType("text/plain; charset=x-user-defined");
+        xhr.responseType = "arraybuffer";
+    }
+
+    xhr.open("GET", filename);
+    xhr.send();
+};
+
+},{"1":1,"6":6}],6:[function(require,module,exports){
+"use strict";
+module.exports = inquire;
+
+/**
+ * Requires a module only if available.
+ * @memberof util
+ * @param {string} moduleName Module to require
+ * @returns {?Object} Required module if available and not empty, otherwise `null`
+ */
+function inquire(moduleName) {
+    try {
+        var mod = eval("quire".replace(/^/,"re"))(moduleName); // eslint-disable-line no-eval
+        if (mod && (mod.length || Object.keys(mod).length))
+            return mod;
+    } catch (e) {} // eslint-disable-line no-empty
+    return null;
+}
+
+},{}],7:[function(require,module,exports){
+"use strict";
+
+/**
+ * A minimal path module to resolve Unix, Windows and URL paths alike.
+ * @memberof util
+ * @namespace
+ */
+var path = exports;
+
+var isAbsolute =
+/**
+ * Tests if the specified path is absolute.
+ * @param {string} path Path to test
+ * @returns {boolean} `true` if path is absolute
+ */
+path.isAbsolute = function isAbsolute(path) {
+    return /^(?:\/|\w+:)/.test(path);
+};
+
+var normalize =
+/**
+ * Normalizes the specified path.
+ * @param {string} path Path to normalize
+ * @returns {string} Normalized path
+ */
+path.normalize = function normalize(path) {
+    path = path.replace(/\\/g, "/")
+               .replace(/\/{2,}/g, "/");
+    var parts    = path.split("/"),
+        absolute = isAbsolute(path),
+        prefix   = "";
+    if (absolute)
+        prefix = parts.shift() + "/";
+    for (var i = 0; i < parts.length;) {
+        if (parts[i] === "..") {
+            if (i > 0 && parts[i - 1] !== "..")
+                parts.splice(--i, 2);
+            else if (absolute)
+                parts.splice(i, 1);
+            else
+                ++i;
+        } else if (parts[i] === ".")
+            parts.splice(i, 1);
+        else
+            ++i;
+    }
+    return prefix + parts.join("/");
+};
+
+/**
+ * Resolves the specified include path against the specified origin path.
+ * @param {string} originPath Path to the origin file
+ * @param {string} includePath Include path relative to origin path
+ * @param {boolean} [alreadyNormalized=false] `true` if both paths are already known to be normalized
+ * @returns {string} Path to the include file
+ */
+path.resolve = function resolve(originPath, includePath, alreadyNormalized) {
+    if (!alreadyNormalized)
+        includePath = normalize(includePath);
+    if (isAbsolute(includePath))
+        return includePath;
+    if (!alreadyNormalized)
+        originPath = normalize(originPath);
+    return (originPath = originPath.replace(/(?:\/|^)[^/]+$/, "")).length ? normalize(originPath + "/" + includePath) : includePath;
+};
+
+},{}],8:[function(require,module,exports){
+"use strict";
+module.exports = pool;
+
+/**
+ * An allocator as used by {@link util.pool}.
+ * @typedef PoolAllocator
+ * @type {function}
+ * @param {number} size Buffer size
+ * @returns {Uint8Array} Buffer
+ */
+
+/**
+ * A slicer as used by {@link util.pool}.
+ * @typedef PoolSlicer
+ * @type {function}
+ * @param {number} start Start offset
+ * @param {number} end End offset
+ * @returns {Uint8Array} Buffer slice
+ * @this {Uint8Array}
+ */
+
+/**
+ * A general purpose buffer pool.
+ * @memberof util
+ * @function
+ * @param {PoolAllocator} alloc Allocator
+ * @param {PoolSlicer} slice Slicer
+ * @param {number} [size=8192] Slab size
+ * @returns {PoolAllocator} Pooled allocator
+ */
+function pool(alloc, slice, size) {
+    var SIZE   = size || 8192;
+    var MAX    = SIZE >>> 1;
+    var slab   = null;
+    var offset = SIZE;
+    return function pool_alloc(size) {
+        if (size < 1 || size > MAX)
+            return alloc(size);
+        if (offset + size > SIZE) {
+            slab = alloc(SIZE);
+            offset = 0;
+        }
+        var buf = slice.call(slab, offset, offset += size);
+        if (offset & 7) // align to 32 bit
+            offset = (offset | 7) + 1;
+        return buf;
+    };
+}
+
+},{}],9:[function(require,module,exports){
+"use strict";
+
+/**
+ * A minimal UTF8 implementation for number arrays.
+ * @memberof util
+ * @namespace
+ */
+var utf8 = exports;
+
+/**
+ * Calculates the UTF8 byte length of a string.
+ * @param {string} string String
+ * @returns {number} Byte length
+ */
+utf8.length = function utf8_length(string) {
+    var len = 0,
+        c = 0;
+    for (var i = 0; i < string.length; ++i) {
+        c = string.charCodeAt(i);
+        if (c < 128)
+            len += 1;
+        else if (c < 2048)
+            len += 2;
+        else if ((c & 0xFC00) === 0xD800 && (string.charCodeAt(i + 1) & 0xFC00) === 0xDC00) {
+            ++i;
+            len += 4;
+        } else
+            len += 3;
+    }
+    return len;
+};
+
+/**
+ * Reads UTF8 bytes as a string.
+ * @param {Uint8Array} buffer Source buffer
+ * @param {number} start Source start
+ * @param {number} end Source end
+ * @returns {string} String read
+ */
+utf8.read = function utf8_read(buffer, start, end) {
+    var len = end - start;
+    if (len < 1)
+        return "";
+    var parts = null,
+        chunk = [],
+        i = 0, // char offset
+        t;     // temporary
+    while (start < end) {
+        t = buffer[start++];
+        if (t < 128)
+            chunk[i++] = t;
+        else if (t > 191 && t < 224)
+            chunk[i++] = (t & 31) << 6 | buffer[start++] & 63;
+        else if (t > 239 && t < 365) {
+            t = ((t & 7) << 18 | (buffer[start++] & 63) << 12 | (buffer[start++] & 63) << 6 | buffer[start++] & 63) - 0x10000;
+            chunk[i++] = 0xD800 + (t >> 10);
+            chunk[i++] = 0xDC00 + (t & 1023);
+        } else
+            chunk[i++] = (t & 15) << 12 | (buffer[start++] & 63) << 6 | buffer[start++] & 63;
+        if (i > 8191) {
+            (parts || (parts = [])).push(String.fromCharCode.apply(String, chunk));
+            i = 0;
+        }
+    }
+    if (parts) {
+        if (i)
+            parts.push(String.fromCharCode.apply(String, chunk.slice(0, i)));
+        return parts.join("");
+    }
+    return String.fromCharCode.apply(String, chunk.slice(0, i));
+};
+
+/**
+ * Writes a string as UTF8 bytes.
+ * @param {string} string Source string
+ * @param {Uint8Array} buffer Destination buffer
+ * @param {number} offset Destination offset
+ * @returns {number} Bytes written
+ */
+utf8.write = function utf8_write(string, buffer, offset) {
+    var start = offset,
+        c1, // character 1
+        c2; // character 2
+    for (var i = 0; i < string.length; ++i) {
+        c1 = string.charCodeAt(i);
+        if (c1 < 128) {
+            buffer[offset++] = c1;
+        } else if (c1 < 2048) {
+            buffer[offset++] = c1 >> 6       | 192;
+            buffer[offset++] = c1       & 63 | 128;
+        } else if ((c1 & 0xFC00) === 0xD800 && ((c2 = string.charCodeAt(i + 1)) & 0xFC00) === 0xDC00) {
+            c1 = 0x10000 + ((c1 & 0x03FF) << 10) + (c2 & 0x03FF);
+            ++i;
+            buffer[offset++] = c1 >> 18      | 240;
+            buffer[offset++] = c1 >> 12 & 63 | 128;
+            buffer[offset++] = c1 >> 6  & 63 | 128;
+            buffer[offset++] = c1       & 63 | 128;
+        } else {
+            buffer[offset++] = c1 >> 12      | 224;
+            buffer[offset++] = c1 >> 6  & 63 | 128;
+            buffer[offset++] = c1       & 63 | 128;
+        }
+    }
+    return offset - start;
+};
+
+},{}],10:[function(require,module,exports){
+"use strict";
+module.exports = Class;
+
+var Message = require(21),
+    util    = require(36);
+
+var Type; // cyclic
+
+/**
+ * Constructs a new message prototype for the specified reflected type and sets up its constructor.
+ * @classdesc Runtime class providing the tools to create your own custom classes.
+ * @constructor
+ * @param {Type} type Reflected message type
+ * @param {*} [ctor] Custom constructor to set up, defaults to create a generic one if omitted
+ * @returns {Message} Message prototype
+ */
+function Class(type, ctor) {
+    if (!Type)
+        Type = require(34);
+
+    if (!(type instanceof Type))
+        throw TypeError("type must be a Type");
+
+    if (ctor) {
+        if (typeof ctor !== "function")
+            throw TypeError("ctor must be a function");
+    } else
+        ctor = Class.generate(type).eof(type.name); // named constructor function (codegen is required anyway)
+
+    // Let's pretend...
+    ctor.constructor = Class;
+
+    // new Class() -> Message.prototype
+    (ctor.prototype = new Message()).constructor = ctor;
+
+    // Static methods on Message are instance methods on Class and vice versa
+    util.merge(ctor, Message, true);
+
+    // Classes and messages reference their reflected type
+    ctor.$type = type;
+    ctor.prototype.$type = type;
+
+    // Messages have non-enumerable default values on their prototype
+    var i = 0;
+    for (; i < /* initializes */ type.fieldsArray.length; ++i) {
+        // objects on the prototype must be immmutable. users must assign a new object instance and
+        // cannot use Array#push on empty arrays on the prototype for example, as this would modify
+        // the value on the prototype for ALL messages of this type. Hence, these objects are frozen.
+        ctor.prototype[type._fieldsArray[i].name] = Array.isArray(type._fieldsArray[i].resolve().defaultValue)
+            ? util.emptyArray
+            : util.isObject(type._fieldsArray[i].defaultValue) && !type._fieldsArray[i].long
+              ? util.emptyObject
+              : type._fieldsArray[i].defaultValue; // if a long, it is frozen when initialized
+    }
+
+    // Messages have non-enumerable getters and setters for each virtual oneof field
+    var ctorProperties = {};
+    for (i = 0; i < /* initializes */ type.oneofsArray.length; ++i)
+        ctorProperties[type._oneofsArray[i].resolve().name] = {
+            get: util.oneOfGetter(type._oneofsArray[i].oneof),
+            set: util.oneOfSetter(type._oneofsArray[i].oneof)
+        };
+    if (i)
+        Object.defineProperties(ctor.prototype, ctorProperties);
+
+    // Register
+    type.ctor = ctor;
+
+    return ctor.prototype;
+}
+
+/**
+ * Generates a constructor function for the specified type.
+ * @param {Type} type Type to use
+ * @returns {Codegen} Codegen instance
+ */
+Class.generate = function generate(type) { // eslint-disable-line no-unused-vars
+    /* eslint-disable no-unexpected-multiline */
+    var gen = util.codegen("p");
+    // see issue #700
+    /*
+    for (var i = 0, field; i < type.fieldsArray.length; ++i)
+        if ((field = type._fieldsArray[i]).map) gen
+            ("this%s={}", util.safeProp(field.name));
+        else if (field.repeated) gen
+            ("this%s=[]", util.safeProp(field.name));
+    */
+    return gen
+    ("if(p){")
+        ("for(var ks=Object.keys(p),i=0;i<ks.length;++i)")
+            ("this[ks[i]]=p[ks[i]];")
+    ("}");
+    /* eslint-enable no-unexpected-multiline */
+};
+
+/**
+ * Constructs a new message prototype for the specified reflected type and sets up its constructor.
+ * @function
+ * @param {Type} type Reflected message type
+ * @param {*} [ctor] Custom constructor to set up, defaults to create a generic one if omitted
+ * @returns {Message} Message prototype
+ */
+Class.create = Class;
+
+// Static methods on Message are instance methods on Class and vice versa
+Class.prototype = Message;
+
+/**
+ * Creates a new message of this type from a plain object. Also converts values to their respective internal types.
+ * @name Class#fromObject
+ * @function
+ * @param {Object.<string,*>} object Plain object
+ * @returns {Message} Message instance
+ */
+
+/**
+ * Creates a new message of this type from a plain object. Also converts values to their respective internal types.
+ * This is an alias of {@link Class#fromObject}.
+ * @name Class#from
+ * @function
+ * @param {Object.<string,*>} object Plain object
+ * @returns {Message} Message instance
+ */
+
+/**
+ * Creates a plain object from a message of this type. Also converts values to other types if specified.
+ * @name Class#toObject
+ * @function
+ * @param {Message} message Message instance
+ * @param {ConversionOptions} [options] Conversion options
+ * @returns {Object.<string,*>} Plain object
+ */
+
+/**
+ * Encodes a message of this type.
+ * @name Class#encode
+ * @function
+ * @param {Message|Object} message Message to encode
+ * @param {Writer} [writer] Writer to use
+ * @returns {Writer} Writer
+ */
+
+/**
+ * Encodes a message of this type preceeded by its length as a varint.
+ * @name Class#encodeDelimited
+ * @function
+ * @param {Message|Object} message Message to encode
+ * @param {Writer} [writer] Writer to use
+ * @returns {Writer} Writer
+ */
+
+/**
+ * Decodes a message of this type.
+ * @name Class#decode
+ * @function
+ * @param {Reader|Uint8Array} reader Reader or buffer to decode
+ * @returns {Message} Decoded message
+ */
+
+/**
+ * Decodes a message of this type preceeded by its length as a varint.
+ * @name Class#decodeDelimited
+ * @function
+ * @param {Reader|Uint8Array} reader Reader or buffer to decode
+ * @returns {Message} Decoded message
+ */
+
+/**
+ * Verifies a message of this type.
+ * @name Class#verify
+ * @function
+ * @param {Message|Object} message Message or plain object to verify
+ * @returns {?string} `null` if valid, otherwise the reason why it is not
+ */
+
+},{"21":21,"34":34,"36":36}],11:[function(require,module,exports){
+"use strict";
+module.exports = common;
+
+/**
+ * Provides common type definitions.
+ * Can also be used to provide additional google types or your own custom types.
+ * @param {string} name Short name as in `google/protobuf/[name].proto` or full file name
+ * @param {Object.<string,*>} json JSON definition within `google.protobuf` if a short name, otherwise the file's root definition
+ * @returns {undefined}
+ * @property {Object.<string,*>} google/protobuf/any.proto Any
+ * @property {Object.<string,*>} google/protobuf/duration.proto Duration
+ * @property {Object.<string,*>} google/protobuf/empty.proto Empty
+ * @property {Object.<string,*>} google/protobuf/struct.proto Struct, Value, NullValue and ListValue
+ * @property {Object.<string,*>} google/protobuf/timestamp.proto Timestamp
+ * @property {Object.<string,*>} google/protobuf/wrappers.proto Wrappers
+ * @example
+ * // manually provides descriptor.proto (assumes google/protobuf/ namespace and .proto extension)
+ * protobuf.common("descriptor", descriptorJson);
+ *
+ * // manually provides a custom definition (uses my.foo namespace)
+ * protobuf.common("my/foo/bar.proto", myFooBarJson);
+ */
+function common(name, json) {
+    if (!commonRe.test(name)) {
+        name = "google/protobuf/" + name + ".proto";
+        json = { nested: { google: { nested: { protobuf: { nested: json } } } } };
+    }
+    common[name] = json;
+}
+
+var commonRe = /\/|\./;
+
+// Not provided because of limited use (feel free to discuss or to provide yourself):
+//
+// google/protobuf/descriptor.proto
+// google/protobuf/field_mask.proto
+// google/protobuf/source_context.proto
+// google/protobuf/type.proto
+//
+// Stripped and pre-parsed versions of these non-bundled files are instead available as part of
+// the repository or package within the google/protobuf directory.
+
+common("any", {
+    Any: {
+        fields: {
+            type_url: {
+                type: "string",
+                id: 1
+            },
+            value: {
+                type: "bytes",
+                id: 2
+            }
+        }
+    }
+});
+
+var timeType;
+
+common("duration", {
+    Duration: timeType = {
+        fields: {
+            seconds: {
+                type: "int64",
+                id: 1
+            },
+            nanos: {
+                type: "int32",
+                id: 2
+            }
+        }
+    }
+});
+
+common("timestamp", {
+    Timestamp: timeType
+});
+
+common("empty", {
+    Empty: {
+        fields: {}
+    }
+});
+
+common("struct", {
+    Struct: {
+        fields: {
+            fields: {
+                keyType: "string",
+                type: "Value",
+                id: 1
+            }
+        }
+    },
+    Value: {
+        oneofs: {
+            kind: {
+                oneof: [
+                    "nullValue",
+                    "numberValue",
+                    "stringValue",
+                    "boolValue",
+                    "structValue",
+                    "listValue"
+                ]
+            }
+        },
+        fields: {
+            nullValue: {
+                type: "NullValue",
+                id: 1
+            },
+            numberValue: {
+                type: "double",
+                id: 2
+            },
+            stringValue: {
+                type: "string",
+                id: 3
+            },
+            boolValue: {
+                type: "bool",
+                id: 4
+            },
+            structValue: {
+                type: "Struct",
+                id: 5
+            },
+            listValue: {
+                type: "ListValue",
+                id: 6
+            }
+        }
+    },
+    NullValue: {
+        values: {
+            NULL_VALUE: 0
+        }
+    },
+    ListValue: {
+        fields: {
+            values: {
+                rule: "repeated",
+                type: "Value",
+                id: 1
+            }
+        }
+    }
+});
+
+common("wrappers", {
+    DoubleValue: {
+        fields: {
+            value: {
+                type: "double",
+                id: 1
+            }
+        }
+    },
+    FloatValue: {
+        fields: {
+            value: {
+                type: "float",
+                id: 1
+            }
+        }
+    },
+    Int64Value: {
+        fields: {
+            value: {
+                type: "int64",
+                id: 1
+            }
+        }
+    },
+    UInt64Value: {
+        fields: {
+            value: {
+                type: "uint64",
+                id: 1
+            }
+        }
+    },
+    Int32Value: {
+        fields: {
+            value: {
+                type: "int32",
+                id: 1
+            }
+        }
+    },
+    UInt32Value: {
+        fields: {
+            value: {
+                type: "uint32",
+                id: 1
+            }
+        }
+    },
+    BoolValue: {
+        fields: {
+            value: {
+                type: "bool",
+                id: 1
+            }
+        }
+    },
+    StringValue: {
+        fields: {
+            value: {
+                type: "string",
+                id: 1
+            }
+        }
+    },
+    BytesValue: {
+        fields: {
+            value: {
+                type: "bytes",
+                id: 1
+            }
+        }
+    }
+});
+
+},{}],12:[function(require,module,exports){
+"use strict";
+/**
+ * Runtime message from/to plain object converters.
+ * @namespace
+ */
+var converter = exports;
+
+var Enum = require(15),
+    util = require(36);
+
+/**
+ * Generates a partial value fromObject conveter.
+ * @param {Codegen} gen Codegen instance
+ * @param {Field} field Reflected field
+ * @param {number} fieldIndex Field index
+ * @param {string} prop Property reference
+ * @returns {Codegen} Codegen instance
+ * @ignore
+ */
+function genValuePartial_fromObject(gen, field, fieldIndex, prop) {
+    /* eslint-disable no-unexpected-multiline, block-scoped-var, no-redeclare */
+    if (field.resolvedType) {
+        if (field.resolvedType instanceof Enum) { gen
+            ("switch(d%s){", prop);
+            for (var values = field.resolvedType.values, keys = Object.keys(values), i = 0; i < keys.length; ++i) {
+                if (field.repeated && values[keys[i]] === field.typeDefault) gen
+                ("default:");
+                gen
+                ("case%j:", keys[i])
+                ("case %j:", values[keys[i]])
+                    ("m%s=%j", prop, values[keys[i]])
+                    ("break");
+            } gen
+            ("}");
+        } else gen
+            ("if(typeof d%s!==\"object\")", prop)
+                ("throw TypeError(%j)", field.fullName + ": object expected")
+            ("m%s=types[%d].fromObject(d%s)", prop, fieldIndex, prop);
+    } else {
+        var isUnsigned = false;
+        switch (field.type) {
+            case "double":
+            case "float":gen
+                ("m%s=Number(d%s)", prop, prop);
+                break;
+            case "uint32":
+            case "fixed32": gen
+                ("m%s=d%s>>>0", prop, prop);
+                break;
+            case "int32":
+            case "sint32":
+            case "sfixed32": gen
+                ("m%s=d%s|0", prop, prop);
+                break;
+            case "uint64":
+                isUnsigned = true;
+                // eslint-disable-line no-fallthrough
+            case "int64":
+            case "sint64":
+            case "fixed64":
+            case "sfixed64": gen
+                ("if(util.Long)")
+                    ("(m%s=util.Long.fromValue(d%s)).unsigned=%j", prop, prop, isUnsigned)
+                ("else if(typeof d%s===\"string\")", prop)
+                    ("m%s=parseInt(d%s,10)", prop, prop)
+                ("else if(typeof d%s===\"number\")", prop)
+                    ("m%s=d%s", prop, prop)
+                ("else if(typeof d%s===\"object\")", prop)
+                    ("m%s=new util.LongBits(d%s.low>>>0,d%s.high>>>0).toNumber(%s)", prop, prop, prop, isUnsigned ? "true" : "");
+                break;
+            case "bytes": gen
+                ("if(typeof d%s===\"string\")", prop)
+                    ("util.base64.decode(d%s,m%s=util.newBuffer(util.base64.length(d%s)),0)", prop, prop, prop)
+                ("else if(d%s.length)", prop)
+                    ("m%s=d%s", prop, prop);
+                break;
+            case "string": gen
+                ("m%s=String(d%s)", prop, prop);
+                break;
+            case "bool": gen
+                ("m%s=Boolean(d%s)", prop, prop);
+                break;
+            /* default: gen
+                ("m%s=d%s", prop, prop);
+                break; */
+        }
+    }
+    return gen;
+    /* eslint-enable no-unexpected-multiline, block-scoped-var, no-redeclare */
+}
+
+/**
+ * Generates a plain object to runtime message converter specific to the specified message type.
+ * @param {Type} mtype Message type
+ * @returns {Codegen} Codegen instance
+ */
+converter.fromObject = function fromObject(mtype) {
+    /* eslint-disable no-unexpected-multiline, block-scoped-var, no-redeclare */
+    var fields = mtype.fieldsArray;
+    var gen = util.codegen("d")
+    ("if(d instanceof this.ctor)")
+        ("return d");
+    if (!fields.length) return gen
+    ("return new this.ctor");
+    gen
+    ("var m=new this.ctor");
+    for (var i = 0; i < fields.length; ++i) {
+        var field  = fields[i].resolve(),
+            prop   = util.safeProp(field.name);
+
+        // Map fields
+        if (field.map) { gen
+    ("if(d%s){", prop)
+        ("if(typeof d%s!==\"object\")", prop)
+            ("throw TypeError(%j)", field.fullName + ": object expected")
+        ("m%s={}", prop)
+        ("for(var ks=Object.keys(d%s),i=0;i<ks.length;++i){", prop);
+            genValuePartial_fromObject(gen, field, i, prop + "[ks[i]]")
+        ("}")
+    ("}");
+
+        // Repeated fields
+        } else if (field.repeated) { gen
+    ("if(d%s){", prop)
+        ("if(!Array.isArray(d%s))", prop)
+            ("throw TypeError(%j)", field.fullName + ": array expected")
+        ("m%s=[]", prop)
+        ("for(var i=0;i<d%s.length;++i){", prop);
+            genValuePartial_fromObject(gen, field, i, prop + "[i]")
+        ("}")
+    ("}");
+
+        // Non-repeated fields
+        } else {
+            if (!(field.resolvedType instanceof Enum)) gen // no need to test for null/undefined if an enum (uses switch)
+    ("if(d%s!==undefined&&d%s!==null){", prop, prop);
+        genValuePartial_fromObject(gen, field, i, prop);
+            if (!(field.resolvedType instanceof Enum)) gen
+    ("}");
+        }
+    } return gen
+    ("return m");
+    /* eslint-enable no-unexpected-multiline, block-scoped-var, no-redeclare */
+};
+
+/**
+ * Generates a partial value toObject converter.
+ * @param {Codegen} gen Codegen instance
+ * @param {Field} field Reflected field
+ * @param {number} fieldIndex Field index
+ * @param {string} prop Property reference
+ * @returns {Codegen} Codegen instance
+ * @ignore
+ */
+function genValuePartial_toObject(gen, field, fieldIndex, prop) {
+    /* eslint-disable no-unexpected-multiline, block-scoped-var, no-redeclare */
+    if (field.resolvedType) {
+        if (field.resolvedType instanceof Enum) gen
+            ("d%s=o.enums===String?types[%d].values[m%s]:m%s", prop, fieldIndex, prop, prop);
+        else gen
+            ("d%s=types[%d].toObject(m%s,o)", prop, fieldIndex, prop);
+    } else {
+        var isUnsigned = false;
+        switch (field.type) {
+            case "uint64":
+                isUnsigned = true;
+                // eslint-disable-line no-fallthrough
+            case "int64":
+            case "sint64":
+            case "fixed64":
+            case "sfixed64": gen
+            ("if(typeof m%s===\"number\")", prop)
+                ("d%s=o.longs===String?String(m%s):m%s", prop, prop, prop)
+            ("else") // Long-like
+                ("d%s=o.longs===String?util.Long.prototype.toString.call(m%s):o.longs===Number?new util.LongBits(m%s.low>>>0,m%s.high>>>0).toNumber(%s):m%s", prop, prop, prop, prop, isUnsigned ? "true": "", prop);
+                break;
+            case "bytes": gen
+            ("d%s=o.bytes===String?util.base64.encode(m%s,0,m%s.length):o.bytes===Array?Array.prototype.slice.call(m%s):m%s", prop, prop, prop, prop, prop);
+                break;
+            default: gen
+            ("d%s=m%s", prop, prop);
+                break;
+        }
+    }
+    return gen;
+    /* eslint-enable no-unexpected-multiline, block-scoped-var, no-redeclare */
+}
+
+/**
+ * Generates a runtime message to plain object converter specific to the specified message type.
+ * @param {Type} mtype Message type
+ * @returns {Codegen} Codegen instance
+ */
+converter.toObject = function toObject(mtype) {
+    /* eslint-disable no-unexpected-multiline, block-scoped-var, no-redeclare */
+    var fields = mtype.fieldsArray;
+    if (!fields.length)
+        return util.codegen()("return {}");
+    var gen = util.codegen("m", "o")
+    ("if(!o)")
+        ("o={}")
+    ("var d={}");
+
+    var repeatedFields = [],
+        mapFields = [],
+        otherFields = [],
+        i = 0;
+    for (; i < fields.length; ++i)
+        if (fields[i].resolve().repeated)
+            repeatedFields.push(fields[i]);
+        else if (fields[i].map)
+            mapFields.push(fields[i]);
+        else
+            otherFields.push(fields[i]);
+
+    if (repeatedFields.length) { gen
+    ("if(o.arrays||o.defaults){");
+        for (i = 0; i < repeatedFields.length; ++i) gen
+        ("d%s=[]", util.safeProp(repeatedFields[i].name));
+        gen
+    ("}");
+    }
+
+    if (mapFields.length) { gen
+    ("if(o.objects||o.defaults){");
+        for (i = 0; i < mapFields.length; ++i) gen
+        ("d%s={}", util.safeProp(mapFields[i].name));
+        gen
+    ("}");
+    }
+
+    if (otherFields.length) { gen
+    ("if(o.defaults){");
+        for (i = 0, field; i < otherFields.length; ++i) {
+            var field = otherFields[i],
+                prop  = util.safeProp(field.name);
+            if (field.resolvedType instanceof Enum) gen
+        ("d%s=o.enums===String?%j:%j", prop, field.resolvedType.valuesById[field.typeDefault], field.typeDefault);
+            else if (field.long) gen
+        ("if(util.Long){")
+            ("var n=new util.Long(%d,%d,%j)", field.typeDefault.low, field.typeDefault.high, field.typeDefault.unsigned)
+            ("d%s=o.longs===String?n.toString():o.longs===Number?n.toNumber():n", prop)
+        ("}else")
+            ("d%s=o.longs===String?%j:%d", prop, field.typeDefault.toString(), field.typeDefault.toNumber());
+            else if (field.bytes) gen
+        ("d%s=o.bytes===String?%j:%s", prop, String.fromCharCode.apply(String, field.typeDefault), "[" + Array.prototype.slice.call(field.typeDefault).join(",") + "]");
+            else gen
+        ("d%s=%j", prop, field.typeDefault); // also messages (=null)
+        } gen
+    ("}");
+    }
+    for (i = 0, field; i < fields.length; ++i) {
+        var field = fields[i],
+            prop  = util.safeProp(field.name); gen
+    ("if(m%s!==undefined&&m%s!==null&&m.hasOwnProperty(%j)){", prop, prop, field.name);
+        if (field.map) { gen
+        ("d%s={}", prop)
+        ("for(var ks2=Object.keys(m%s),j=0;j<ks2.length;++j){", prop);
+            genValuePartial_toObject(gen, field, i, prop + "[ks2[j]]")
+        ("}");
+        } else if (field.repeated) { gen
+        ("d%s=[]", prop)
+        ("for(var j=0;j<m%s.length;++j){", prop);
+            genValuePartial_toObject(gen, field, i, prop + "[j]")
+        ("}");
+        } else
+        genValuePartial_toObject(gen, field, i, prop);
+        gen
+    ("}");
+    }
+    return gen
+    ("return d");
+    /* eslint-enable no-unexpected-multiline, block-scoped-var, no-redeclare */
+};
+
+},{"15":15,"36":36}],13:[function(require,module,exports){
+"use strict";
+module.exports = decoder;
+
+decoder.compat = true;
+
+var Enum    = require(15),
+    types   = require(35),
+    util    = require(36);
+
+function missing(field) {
+    return "missing required '" + field.name + "'";
+}
+
+/**
+ * Generates a decoder specific to the specified message type.
+ * @param {Type} mtype Message type
+ * @returns {Codegen} Codegen instance
+ * @property {boolean} compat=true Generates backward/forward compatible decoders (packed fields)
+ */
+function decoder(mtype) {
+    /* eslint-disable no-unexpected-multiline */
+    var gen = util.codegen("r", "l")
+    ("if(!(r instanceof Reader))")
+        ("r=Reader.create(r)")
+    ("var c=l===undefined?r.len:r.pos+l,m=new this.ctor")
+    ("while(r.pos<c){")
+        ("var t=r.uint32()");
+    if (mtype.group) gen
+        ("if((t&7)===4)")
+            ("break");
+    gen
+        ("switch(t>>>3){");
+
+    var i = 0;
+    for (; i < /* initializes */ mtype.fieldsArray.length; ++i) {
+        var field = mtype._fieldsArray[i].resolve(),
+            type  = field.resolvedType instanceof Enum ? "uint32" : field.type,
+            ref   = "m" + util.safeProp(field.name); gen
+            ("case %d:", field.id);
+
+        // Map fields
+        if (field.map) { gen
+
+                ("r.skip().pos++") // assumes id 1 + key wireType
+                ("if(%s===util.emptyObject)", ref)
+                    ("%s={}", ref)
+                ("var k=r.%s()", field.keyType)
+                ("r.pos++"); // assumes id 2 + value wireType
+            if (types.basic[type] === undefined) gen
+                ("%s[typeof k===\"object\"?util.longToHash(k):k]=types[%d].decode(r,r.uint32())", ref, i); // can't be groups
+            else gen
+                ("%s[typeof k===\"object\"?util.longToHash(k):k]=r.%s()", ref, type);
+
+        // Repeated fields
+        } else if (field.repeated) { gen
+
+                ("if(!(%s&&%s.length))", ref, ref)
+                    ("%s=[]", ref);
+
+            // Packable (always check for forward and backward compatiblity)
+            if ((decoder.compat || field.packed) && types.packed[type] !== undefined) gen
+                ("if((t&7)===2){")
+                    ("var c2=r.uint32()+r.pos")
+                    ("while(r.pos<c2)")
+                        ("%s.push(r.%s())", ref, type)
+                ("}else");
+
+            // Non-packed
+            if (types.basic[type] === undefined) gen(field.resolvedType.group
+                    ? "%s.push(types[%d].decode(r))"
+                    : "%s.push(types[%d].decode(r,r.uint32()))", ref, i);
+            else gen
+                    ("%s.push(r.%s())", ref, type);
+
+        // Non-repeated
+        } else if (types.basic[type] === undefined) gen(field.resolvedType.group
+                ? "%s=types[%d].decode(r)"
+                : "%s=types[%d].decode(r,r.uint32())", ref, i);
+        else gen
+                ("%s=r.%s()", ref, type);
+        gen
+                ("break");
+
+    // Unknown fields
+    } gen
+            ("default:")
+                ("r.skipType(t&7)")
+                ("break")
+
+        ("}")
+    ("}");
+
+    // Field presence
+    for (i = 0; i < mtype._fieldsArray.length; ++i) {
+        var rfield = mtype._fieldsArray[i];
+        if (rfield.required) gen
+    ("if(!m.hasOwnProperty(%j))", rfield.name)
+        ("throw util.ProtocolError(%j,{instance:m})", missing(rfield));
+    }
+
+    return gen
+    ("return m");
+    /* eslint-enable no-unexpected-multiline */
+}
+
+},{"15":15,"35":35,"36":36}],14:[function(require,module,exports){
+"use strict";
+module.exports = encoder;
+
+encoder.compat = true;
+
+var Enum     = require(15),
+    types    = require(35),
+    util     = require(36);
+
+/**
+ * Generates a partial message type encoder.
+ * @param {Codegen} gen Codegen instance
+ * @param {Field} field Reflected field
+ * @param {number} fieldIndex Field index
+ * @param {string} ref Variable reference
+ * @returns {Codegen} Codegen instance
+ * @ignore
+ */
+function genTypePartial(gen, field, fieldIndex, ref) {
+    return field.resolvedType.group
+        ? gen("types[%d].encode(%s,w.uint32(%d)).uint32(%d)", fieldIndex, ref, (field.id << 3 | 3) >>> 0, (field.id << 3 | 4) >>> 0)
+        : gen("types[%d].encode(%s,w.uint32(%d).fork()).ldelim()", fieldIndex, ref, (field.id << 3 | 2) >>> 0);
+}
+
+/**
+ * Compares reflected fields by id.
+ * @param {Field} a First field
+ * @param {Field} b Second field
+ * @returns {number} Comparison value
+ * @ignore
+ */
+function compareFieldsById(a, b) {
+    return a.id - b.id;
+}
+
+/**
+ * Generates an encoder specific to the specified message type.
+ * @param {Type} mtype Message type
+ * @returns {Codegen} Codegen instance
+ * @property {boolean} compat=true Generates encoders serializing in ascending field order
+ */
+function encoder(mtype) {
+    /* eslint-disable no-unexpected-multiline, block-scoped-var, no-redeclare */
+    var gen = util.codegen("m", "w")
+    ("if(!w)")
+        ("w=Writer.create()");
+
+    var i, ref;
+
+    // "when a message is serialized its known fields should be written sequentially by field number"
+    var fields = /* initializes */ mtype.fieldsArray;
+    /* istanbul ignore else */
+    if (encoder.compat)
+        fields = fields.slice().sort(compareFieldsById);
+
+    for (var i = 0; i < fields.length; ++i) {
+        var field    = fields[i].resolve(),
+            index    = encoder.compat ? mtype._fieldsArray.indexOf(field) : /* istanbul ignore next */ i;
+        if (field.partOf) // see below for oneofs
+            continue;
+        var type     = field.resolvedType instanceof Enum ? "uint32" : field.type,
+            wireType = types.basic[type];
+            ref      = "m" + util.safeProp(field.name);
+
+        // Map fields
+        if (field.map) {
+            gen
+    ("if(%s&&m.hasOwnProperty(%j)){", ref, field.name)
+        ("for(var ks=Object.keys(%s),i=0;i<ks.length;++i){", ref)
+            ("w.uint32(%d).fork().uint32(%d).%s(ks[i])", (field.id << 3 | 2) >>> 0, 8 | types.mapKey[field.keyType], field.keyType);
+            if (wireType === undefined) gen
+            ("types[%d].encode(%s[ks[i]],w.uint32(18).fork()).ldelim().ldelim()", index, ref); // can't be groups
+            else gen
+            (".uint32(%d).%s(%s[ks[i]]).ldelim()", 16 | wireType, type, ref);
+            gen
+        ("}")
+    ("}");
+
+        // Repeated fields
+        } else if (field.repeated) {
+
+            // Packed repeated
+            if (field.packed && types.packed[type] !== undefined) { gen
+
+    ("if(%s&&%s.length&&m.hasOwnProperty(%j)){", ref, ref, field.name)
+        ("w.uint32(%d).fork()", (field.id << 3 | 2) >>> 0)
+        ("for(var i=0;i<%s.length;++i)", ref)
+            ("w.%s(%s[i])", type, ref)
+        ("w.ldelim()")
+    ("}");
+
+            // Non-packed
+            } else { gen
+
+    ("if(%s!==undefined&&m.hasOwnProperty(%j)){", ref, field.name)
+        ("for(var i=0;i<%s.length;++i)", ref);
+                if (wireType === undefined)
+            genTypePartial(gen, field, index, ref + "[i]");
+                else gen
+            ("w.uint32(%d).%s(%s[i])", (field.id << 3 | wireType) >>> 0, type, ref);
+                gen
+    ("}");
+
+            }
+
+        // Non-repeated
+        } else {
+            if (!field.required) {
+
+                if (field.long) gen
+    ("if(%s!==undefined&&%s!==null&&m.hasOwnProperty(%j))", ref, ref, field.name);
+                else if (field.bytes || field.resolvedType && !(field.resolvedType instanceof Enum)) gen
+    ("if(%s&&m.hasOwnProperty(%j))", ref, field.name);
+                else gen
+    ("if(%s!==undefined&&m.hasOwnProperty(%j))", ref, field.name);
+
+            }
+
+            if (wireType === undefined)
+        genTypePartial(gen, field, index, ref);
+            else gen
+        ("w.uint32(%d).%s(%s)", (field.id << 3 | wireType) >>> 0, type, ref);
+
+        }
+    }
+
+    // oneofs
+    for (var i = 0; i < /* initializes */ mtype.oneofsArray.length; ++i) {
+        var oneof = mtype._oneofsArray[i]; gen
+        ("switch(%s){", "m" + util.safeProp(oneof.name));
+        for (var j = 0; j < /* direct */ oneof.fieldsArray.length; ++j) {
+            var field    = oneof.fieldsArray[j],
+                type     = field.resolvedType instanceof Enum ? "uint32" : field.type,
+                wireType = types.basic[type];
+                ref      = "m" + util.safeProp(field.name); gen
+            ("case%j:", field.name);
+            if (wireType === undefined)
+                genTypePartial(gen, field, mtype._fieldsArray.indexOf(field), ref);
+            else gen
+                ("w.uint32(%d).%s(%s)", (field.id << 3 | wireType) >>> 0, type, ref);
+            gen
+                ("break");
+        } gen
+        ("}");
+    }
+
+    return gen
+    ("return w");
+    /* eslint-enable no-unexpected-multiline, block-scoped-var, no-redeclare */
+}
+},{"15":15,"35":35,"36":36}],15:[function(require,module,exports){
+"use strict";
+module.exports = Enum;
+
+// extends ReflectionObject
+var ReflectionObject = require(24);
+((Enum.prototype = Object.create(ReflectionObject.prototype)).constructor = Enum).className = "Enum";
+
+var util = require(36);
+
+/**
+ * Constructs a new enum instance.
+ * @classdesc Reflected enum.
+ * @extends ReflectionObject
+ * @constructor
+ * @param {string} name Unique name within its namespace
+ * @param {Object.<string,number>} [values] Enum values as an object, by name
+ * @param {Object.<string,*>} [options] Declared options
+ */
+function Enum(name, values, options) {
+    ReflectionObject.call(this, name, options);
+
+    if (values && typeof values !== "object")
+        throw TypeError("values must be an object");
+
+    /**
+     * Enum values by id.
+     * @type {Object.<number,string>}
+     */
+    this.valuesById = {};
+
+    /**
+     * Enum values by name.
+     * @type {Object.<string,number>}
+     */
+    this.values = Object.create(this.valuesById); // toJSON, marker
+
+    /**
+     * Value comment texts, if any.
+     * @type {Object.<string,string>}
+     */
+    this.comments = {};
+
+    // Note that values inherit valuesById on their prototype which makes them a TypeScript-
+    // compatible enum. This is used by pbts to write actual enum definitions that work for
+    // static and reflection code alike instead of emitting generic object definitions.
+
+    if (values)
+        for (var keys = Object.keys(values), i = 0; i < keys.length; ++i)
+            this.valuesById[ this.values[keys[i]] = values[keys[i]] ] = keys[i];
+}
+
+/**
+ * Creates an enum from JSON.
+ * @param {string} name Enum name
+ * @param {Object.<string,*>} json JSON object
+ * @returns {Enum} Created enum
+ * @throws {TypeError} If arguments are invalid
+ */
+Enum.fromJSON = function fromJSON(name, json) {
+    return new Enum(name, json.values, json.options);
+};
+
+/**
+ * @override
+ */
+Enum.prototype.toJSON = function toJSON() {
+    return {
+        options : this.options,
+        values  : this.values
+    };
+};
+
+/**
+ * Adds a value to this enum.
+ * @param {string} name Value name
+ * @param {number} id Value id
+ * @param {?string} comment Comment, if any
+ * @returns {Enum} `this`
+ * @throws {TypeError} If arguments are invalid
+ * @throws {Error} If there is already a value with this name or id
+ */
+Enum.prototype.add = function(name, id, comment) {
+    // utilized by the parser but not by .fromJSON
+
+    if (!util.isString(name))
+        throw TypeError("name must be a string");
+
+    if (!util.isInteger(id))
+        throw TypeError("id must be an integer");
+
+    if (this.values[name] !== undefined)
+        throw Error("duplicate name");
+
+    if (this.valuesById[id] !== undefined) {
+        if (!(this.options && this.options.allow_alias))
+            throw Error("duplicate id");
+        this.values[name] = id;
+    } else
+        this.valuesById[this.values[name] = id] = name;
+
+    this.comments[name] = comment || null;
+    return this;
+};
+
+/**
+ * Removes a value from this enum
+ * @param {string} name Value name
+ * @returns {Enum} `this`
+ * @throws {TypeError} If arguments are invalid
+ * @throws {Error} If `name` is not a name of this enum
+ */
+Enum.prototype.remove = function(name) {
+
+    if (!util.isString(name))
+        throw TypeError("name must be a string");
+
+    var val = this.values[name];
+    if (val === undefined)
+        throw Error("name does not exist");
+
+    delete this.valuesById[val];
+    delete this.values[name];
+    delete this.comments[name];
+
+    return this;
+};
+
+},{"24":24,"36":36}],16:[function(require,module,exports){
+"use strict";
+module.exports = Field;
+
+// extends ReflectionObject
+var ReflectionObject = require(24);
+((Field.prototype = Object.create(ReflectionObject.prototype)).constructor = Field).className = "Field";
+
+var Enum  = require(15),
+    types = require(35),
+    util  = require(36);
+
+var Type; // cyclic
+
+var ruleRe = /^required|optional|repeated$/;
+
+/**
+ * Constructs a new message field instance. Note that {@link MapField|map fields} have their own class.
+ * @classdesc Reflected message field.
+ * @extends ReflectionObject
+ * @constructor
+ * @param {string} name Unique name within its namespace
+ * @param {number} id Unique id within its namespace
+ * @param {string} type Value type
+ * @param {string|Object.<string,*>} [rule="optional"] Field rule
+ * @param {string|Object.<string,*>} [extend] Extended type if different from parent
+ * @param {Object.<string,*>} [options] Declared options
+ */
+function Field(name, id, type, rule, extend, options) {
+
+    if (util.isObject(rule)) {
+        options = rule;
+        rule = extend = undefined;
+    } else if (util.isObject(extend)) {
+        options = extend;
+        extend = undefined;
+    }
+
+    ReflectionObject.call(this, name, options);
+
+    if (!util.isInteger(id) || id < 0)
+        throw TypeError("id must be a non-negative integer");
+
+    if (!util.isString(type))
+        throw TypeError("type must be a string");
+
+    if (rule !== undefined && !ruleRe.test(rule = rule.toString().toLowerCase()))
+        throw TypeError("rule must be a string rule");
+
+    if (extend !== undefined && !util.isString(extend))
+        throw TypeError("extend must be a string");
+
+    /**
+     * Field rule, if any.
+     * @type {string|undefined}
+     */
+    this.rule = rule && rule !== "optional" ? rule : undefined; // toJSON
+
+    /**
+     * Field type.
+     * @type {string}
+     */
+    this.type = type; // toJSON
+
+    /**
+     * Unique field id.
+     * @type {number}
+     */
+    this.id = id; // toJSON, marker
+
+    /**
+     * Extended type if different from parent.
+     * @type {string|undefined}
+     */
+    this.extend = extend || undefined; // toJSON
+
+    /**
+     * Whether this field is required.
+     * @type {boolean}
+     */
+    this.required = rule === "required";
+
+    /**
+     * Whether this field is optional.
+     * @type {boolean}
+     */
+    this.optional = !this.required;
+
+    /**
+     * Whether this field is repeated.
+     * @type {boolean}
+     */
+    this.repeated = rule === "repeated";
+
+    /**
+     * Whether this field is a map or not.
+     * @type {boolean}
+     */
+    this.map = false;
+
+    /**
+     * Message this field belongs to.
+     * @type {?Type}
+     */
+    this.message = null;
+
+    /**
+     * OneOf this field belongs to, if any,
+     * @type {?OneOf}
+     */
+    this.partOf = null;
+
+    /**
+     * The field type's default value.
+     * @type {*}
+     */
+    this.typeDefault = null;
+
+    /**
+     * The field's default value on prototypes.
+     * @type {*}
+     */
+    this.defaultValue = null;
+
+    /**
+     * Whether this field's value should be treated as a long.
+     * @type {boolean}
+     */
+    this.long = util.Long ? types.long[type] !== undefined : /* istanbul ignore next */ false;
+
+    /**
+     * Whether this field's value is a buffer.
+     * @type {boolean}
+     */
+    this.bytes = type === "bytes";
+
+    /**
+     * Resolved type if not a basic type.
+     * @type {?(Type|Enum)}
+     */
+    this.resolvedType = null;
+
+    /**
+     * Sister-field within the extended type if a declaring extension field.
+     * @type {?Field}
+     */
+    this.extensionField = null;
+
+    /**
+     * Sister-field within the declaring namespace if an extended field.
+     * @type {?Field}
+     */
+    this.declaringField = null;
+
+    /**
+     * Internally remembers whether this field is packed.
+     * @type {?boolean}
+     * @private
+     */
+    this._packed = null;
+}
+
+/**
+ * Determines whether this field is packed. Only relevant when repeated and working with proto2.
+ * @name Field#packed
+ * @type {boolean}
+ * @readonly
+ */
+Object.defineProperty(Field.prototype, "packed", {
+    get: function() {
+        // defaults to packed=true if not explicity set to false
+        if (this._packed === null)
+            this._packed = this.getOption("packed") !== false;
+        return this._packed;
+    }
+});
+
+/**
+ * @override
+ */
+Field.prototype.setOption = function setOption(name, value, ifNotSet) {
+    if (name === "packed") // clear cached before setting
+        this._packed = null;
+    return ReflectionObject.prototype.setOption.call(this, name, value, ifNotSet);
+};
+
+/**
+ * Constructs a field from JSON.
+ * @param {string} name Field name
+ * @param {Object.<string,*>} json JSON object
+ * @returns {Field} Created field
+ * @throws {TypeError} If arguments are invalid
+ */
+Field.fromJSON = function fromJSON(name, json) {
+    return new Field(name, json.id, json.type, json.rule, json.extend, json.options);
+};
+
+/**
+ * @override
+ */
+Field.prototype.toJSON = function toJSON() {
+    return {
+        rule    : this.rule !== "optional" && this.rule || undefined,
+        type    : this.type,
+        id      : this.id,
+        extend  : this.extend,
+        options : this.options
+    };
+};
+
+/**
+ * Resolves this field's type references.
+ * @returns {Field} `this`
+ * @throws {Error} If any reference cannot be resolved
+ */
+Field.prototype.resolve = function resolve() {
+
+    if (this.resolved)
+        return this;
+
+    if ((this.typeDefault = types.defaults[this.type]) === undefined) { // if not a basic type, resolve it
+
+        /* istanbul ignore if */
+        if (!Type)
+            Type = require(34);
+
+        var scope = this.declaringField ? this.declaringField.parent : this.parent;
+        if (this.resolvedType = scope.lookup(this.type, Type))
+            this.typeDefault = null;
+        else if (this.resolvedType = scope.lookup(this.type, Enum))
+            this.typeDefault = this.resolvedType.values[Object.keys(this.resolvedType.values)[0]]; // first defined
+        else
+            throw Error("unresolvable field type: " + this.type + " in " + scope);
+    }
+
+    // use explicitly set default value if present
+    if (this.options && this.options["default"] !== undefined) {
+        this.typeDefault = this.options["default"];
+        if (this.resolvedType instanceof Enum && typeof this.typeDefault === "string")
+            this.typeDefault = this.resolvedType.values[this.typeDefault];
+    }
+
+    // remove unnecessary packed option (parser adds this) if not referencing an enum
+    if (this.options && this.options.packed !== undefined && this.resolvedType && !(this.resolvedType instanceof Enum))
+        delete this.options.packed;
+
+    // convert to internal data type if necesssary
+    if (this.long) {
+        this.typeDefault = util.Long.fromNumber(this.typeDefault, this.type.charAt(0) === "u");
+
+        /* istanbul ignore else */
+        if (Object.freeze)
+            Object.freeze(this.typeDefault); // long instances are meant to be immutable anyway (i.e. use small int cache that even requires it)
+
+    } else if (this.bytes && typeof this.typeDefault === "string") {
+        var buf;
+        if (util.base64.test(this.typeDefault))
+            util.base64.decode(this.typeDefault, buf = util.newBuffer(util.base64.length(this.typeDefault)), 0);
+        else
+            util.utf8.write(this.typeDefault, buf = util.newBuffer(util.utf8.length(this.typeDefault)), 0);
+        this.typeDefault = buf;
+    }
+
+    // take special care of maps and repeated fields
+    if (this.map)
+        this.defaultValue = util.emptyObject;
+    else if (this.repeated)
+        this.defaultValue = util.emptyArray;
+    else
+        this.defaultValue = this.typeDefault;
+
+    return ReflectionObject.prototype.resolve.call(this);
+};
+
+},{"15":15,"24":24,"34":34,"35":35,"36":36}],17:[function(require,module,exports){
+"use strict";
+var protobuf = module.exports = require(18);
+
+protobuf.build = "light";
+
+/**
+ * A node-style callback as used by {@link load} and {@link Root#load}.
+ * @typedef LoadCallback
+ * @type {function}
+ * @param {?Error} error Error, if any, otherwise `null`
+ * @param {Root} [root] Root, if there hasn't been an error
+ * @returns {undefined}
+ */
+
+/**
+ * Loads one or multiple .proto or preprocessed .json files into a common root namespace and calls the callback.
+ * @param {string|string[]} filename One or multiple files to load
+ * @param {Root} root Root namespace, defaults to create a new one if omitted.
+ * @param {LoadCallback} callback Callback function
+ * @returns {undefined}
+ * @see {@link Root#load}
+ */
+function load(filename, root, callback) {
+    if (typeof root === "function") {
+        callback = root;
+        root = new protobuf.Root();
+    } else if (!root)
+        root = new protobuf.Root();
+    return root.load(filename, callback);
+}
+
+/**
+ * Loads one or multiple .proto or preprocessed .json files into a common root namespace and calls the callback.
+ * @name load
+ * @function
+ * @param {string|string[]} filename One or multiple files to load
+ * @param {LoadCallback} callback Callback function
+ * @returns {undefined}
+ * @see {@link Root#load}
+ * @variation 2
+ */
+// function load(filename:string, callback:LoadCallback):undefined
+
+/**
+ * Loads one or multiple .proto or preprocessed .json files into a common root namespace and returns a promise.
+ * @name load
+ * @function
+ * @param {string|string[]} filename One or multiple files to load
+ * @param {Root} [root] Root namespace, defaults to create a new one if omitted.
+ * @returns {Promise<Root>} Promise
+ * @see {@link Root#load}
+ * @variation 3
+ */
+// function load(filename:string, [root:Root]):Promise<Root>
+
+protobuf.load = load;
+
+/**
+ * Synchronously loads one or multiple .proto or preprocessed .json files into a common root namespace (node only).
+ * @param {string|string[]} filename One or multiple files to load
+ * @param {Root} [root] Root namespace, defaults to create a new one if omitted.
+ * @returns {Root} Root namespace
+ * @throws {Error} If synchronous fetching is not supported (i.e. in browsers) or if a file's syntax is invalid
+ * @see {@link Root#loadSync}
+ */
+function loadSync(filename, root) {
+    if (!root)
+        root = new protobuf.Root();
+    return root.loadSync(filename);
+}
+
+protobuf.loadSync = loadSync;
+
+// Serialization
+protobuf.encoder          = require(14);
+protobuf.decoder          = require(13);
+protobuf.verifier         = require(39);
+protobuf.converter        = require(12);
+
+// Reflection
+protobuf.ReflectionObject = require(24);
+protobuf.Namespace        = require(23);
+protobuf.Root             = require(29);
+protobuf.Enum             = require(15);
+protobuf.Type             = require(34);
+protobuf.Field            = require(16);
+protobuf.OneOf            = require(25);
+protobuf.MapField         = require(20);
+protobuf.Service          = require(32);
+protobuf.Method           = require(22);
+
+// Runtime
+protobuf.Class            = require(10);
+protobuf.Message          = require(21);
+
+// Utility
+protobuf.types            = require(35);
+protobuf.util             = require(36);
+
+// Configure reflection
+protobuf.ReflectionObject._configure(protobuf.Root);
+protobuf.Namespace._configure(protobuf.Type, protobuf.Service);
+protobuf.Root._configure(protobuf.Type);
+
+},{"10":10,"12":12,"13":13,"14":14,"15":15,"16":16,"18":18,"20":20,"21":21,"22":22,"23":23,"24":24,"25":25,"29":29,"32":32,"34":34,"35":35,"36":36,"39":39}],18:[function(require,module,exports){
+"use strict";
+var protobuf = exports;
+
+/**
+ * Build type, one of `"full"`, `"light"` or `"minimal"`.
+ * @name build
+ * @type {string}
+ * @const
+ */
+protobuf.build = "minimal";
+
+/**
+ * Named roots.
+ * This is where pbjs stores generated structures (the option `-r, --root` specifies a name).
+ * Can also be used manually to make roots available accross modules.
+ * @name roots
+ * @type {Object.<string,Root>}
+ * @example
+ * // pbjs -r myroot -o compiled.js ...
+ *
+ * // in another module:
+ * require("./compiled.js");
+ *
+ * // in any subsequent module:
+ * var root = protobuf.roots["myroot"];
+ */
+protobuf.roots = {};
+
+// Serialization
+protobuf.Writer       = require(40);
+protobuf.BufferWriter = require(41);
+protobuf.Reader       = require(27);
+protobuf.BufferReader = require(28);
+
+// Utility
+protobuf.util         = require(38);
+protobuf.rpc          = require(30);
+protobuf.configure    = configure;
+
+/* istanbul ignore next */
+/**
+ * Reconfigures the library according to the environment.
+ * @returns {undefined}
+ */
+function configure() {
+    protobuf.Reader._configure(protobuf.BufferReader);
+    protobuf.util._configure();
+}
+
+// Configure serialization
+protobuf.Writer._configure(protobuf.BufferWriter);
+configure();
+
+},{"27":27,"28":28,"30":30,"38":38,"40":40,"41":41}],19:[function(require,module,exports){
+"use strict";
+var protobuf = module.exports = require(17);
+
+protobuf.build = "full";
+
+// Parser
+protobuf.tokenize         = require(33);
+protobuf.parse            = require(26);
+protobuf.common           = require(11);
+
+// Configure parser
+protobuf.Root._configure(protobuf.Type, protobuf.parse, protobuf.common);
+
+},{"11":11,"17":17,"26":26,"33":33}],20:[function(require,module,exports){
+"use strict";
+module.exports = MapField;
+
+// extends Field
+var Field = require(16);
+((MapField.prototype = Object.create(Field.prototype)).constructor = MapField).className = "MapField";
+
+var types   = require(35),
+    util    = require(36);
+
+/**
+ * Constructs a new map field instance.
+ * @classdesc Reflected map field.
+ * @extends Field
+ * @constructor
+ * @param {string} name Unique name within its namespace
+ * @param {number} id Unique id within its namespace
+ * @param {string} keyType Key type
+ * @param {string} type Value type
+ * @param {Object.<string,*>} [options] Declared options
+ */
+function MapField(name, id, keyType, type, options) {
+    Field.call(this, name, id, type, options);
+
+    /* istanbul ignore next */
+    if (!util.isString(keyType))
+        throw TypeError("keyType must be a string");
+
+    /**
+     * Key type.
+     * @type {string}
+     */
+    this.keyType = keyType; // toJSON, marker
+
+    /**
+     * Resolved key type if not a basic type.
+     * @type {?ReflectionObject}
+     */
+    this.resolvedKeyType = null;
+
+    // Overrides Field#map
+    this.map = true;
+}
+
+/**
+ * Constructs a map field from JSON.
+ * @param {string} name Field name
+ * @param {Object.<string,*>} json JSON object
+ * @returns {MapField} Created map field
+ * @throws {TypeError} If arguments are invalid
+ */
+MapField.fromJSON = function fromJSON(name, json) {
+    return new MapField(name, json.id, json.keyType, json.type, json.options);
+};
+
+/**
+ * @override
+ */
+MapField.prototype.toJSON = function toJSON() {
+    return {
+        keyType : this.keyType,
+        type    : this.type,
+        id      : this.id,
+        extend  : this.extend,
+        options : this.options
+    };
+};
+
+/**
+ * @override
+ */
+MapField.prototype.resolve = function resolve() {
+    if (this.resolved)
+        return this;
+
+    // Besides a value type, map fields have a key type that may be "any scalar type except for floating point types and bytes"
+    if (types.mapKey[this.keyType] === undefined)
+        throw Error("invalid key type: " + this.keyType);
+
+    return Field.prototype.resolve.call(this);
+};
+
+},{"16":16,"35":35,"36":36}],21:[function(require,module,exports){
+"use strict";
+module.exports = Message;
+
+var util = require(36);
+
+/**
+ * Constructs a new message instance.
+ *
+ * This function should also be called from your custom constructors, i.e. `Message.call(this, properties)`.
+ * @classdesc Abstract runtime message.
+ * @constructor
+ * @param {Object.<string,*>} [properties] Properties to set
+ * @see {@link Class.create}
+ */
+function Message(properties) {
+    if (properties)
+        for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+            this[keys[i]] = properties[keys[i]];
+}
+
+/**
+ * Reference to the reflected type.
+ * @name Message.$type
+ * @type {Type}
+ * @readonly
+ */
+
+/**
+ * Reference to the reflected type.
+ * @name Message#$type
+ * @type {Type}
+ * @readonly
+ */
+
+/**
+ * Encodes a message of this type.
+ * @param {Message|Object} message Message to encode
+ * @param {Writer} [writer] Writer to use
+ * @returns {Writer} Writer
+ */
+Message.encode = function encode(message, writer) {
+    return this.$type.encode(message, writer);
+};
+
+/**
+ * Encodes a message of this type preceeded by its length as a varint.
+ * @param {Message|Object} message Message to encode
+ * @param {Writer} [writer] Writer to use
+ * @returns {Writer} Writer
+ */
+Message.encodeDelimited = function encodeDelimited(message, writer) {
+    return this.$type.encodeDelimited(message, writer);
+};
+
+/**
+ * Decodes a message of this type.
+ * @name Message.decode
+ * @function
+ * @param {Reader|Uint8Array} reader Reader or buffer to decode
+ * @returns {Message} Decoded message
+ */
+Message.decode = function decode(reader) {
+    return this.$type.decode(reader);
+};
+
+/**
+ * Decodes a message of this type preceeded by its length as a varint.
+ * @name Message.decodeDelimited
+ * @function
+ * @param {Reader|Uint8Array} reader Reader or buffer to decode
+ * @returns {Message} Decoded message
+ */
+Message.decodeDelimited = function decodeDelimited(reader) {
+    return this.$type.decodeDelimited(reader);
+};
+
+/**
+ * Verifies a message of this type.
+ * @name Message.verify
+ * @function
+ * @param {Message|Object} message Message or plain object to verify
+ * @returns {?string} `null` if valid, otherwise the reason why it is not
+ */
+Message.verify = function verify(message) {
+    return this.$type.verify(message);
+};
+
+/**
+ * Creates a new message of this type from a plain object. Also converts values to their respective internal types.
+ * @param {Object.<string,*>} object Plain object
+ * @returns {Message} Message instance
+ */
+Message.fromObject = function fromObject(object) {
+    return this.$type.fromObject(object);
+};
+
+/**
+ * Creates a new message of this type from a plain object. Also converts values to their respective internal types.
+ * This is an alias of {@link Message.fromObject}.
+ * @function
+ * @param {Object.<string,*>} object Plain object
+ * @returns {Message} Message instance
+ */
+Message.from = Message.fromObject;
+
+/**
+ * Creates a plain object from a message of this type. Also converts values to other types if specified.
+ * @param {Message} message Message instance
+ * @param {ConversionOptions} [options] Conversion options
+ * @returns {Object.<string,*>} Plain object
+ */
+Message.toObject = function toObject(message, options) {
+    return this.$type.toObject(message, options);
+};
+
+/**
+ * Creates a plain object from this message. Also converts values to other types if specified.
+ * @param {ConversionOptions} [options] Conversion options
+ * @returns {Object.<string,*>} Plain object
+ */
+Message.prototype.toObject = function toObject(options) {
+    return this.$type.toObject(this, options);
+};
+
+/**
+ * Converts this message to JSON.
+ * @returns {Object.<string,*>} JSON object
+ */
+Message.prototype.toJSON = function toJSON() {
+    return this.$type.toObject(this, util.toJSONOptions);
+};
+
+},{"36":36}],22:[function(require,module,exports){
+"use strict";
+module.exports = Method;
+
+// extends ReflectionObject
+var ReflectionObject = require(24);
+((Method.prototype = Object.create(ReflectionObject.prototype)).constructor = Method).className = "Method";
+
+var util = require(36);
+
+/**
+ * Constructs a new service method instance.
+ * @classdesc Reflected service method.
+ * @extends ReflectionObject
+ * @constructor
+ * @param {string} name Method name
+ * @param {string|undefined} type Method type, usually `"rpc"`
+ * @param {string} requestType Request message type
+ * @param {string} responseType Response message type
+ * @param {boolean|Object.<string,*>} [requestStream] Whether the request is streamed
+ * @param {boolean|Object.<string,*>} [responseStream] Whether the response is streamed
+ * @param {Object.<string,*>} [options] Declared options
+ */
+function Method(name, type, requestType, responseType, requestStream, responseStream, options) {
+
+    /* istanbul ignore next */
+    if (util.isObject(requestStream)) {
+        options = requestStream;
+        requestStream = responseStream = undefined;
+    /* istanbul ignore next */
+    } else if (util.isObject(responseStream)) {
+        options = responseStream;
+        responseStream = undefined;
+    }
+
+    /* istanbul ignore next */
+    if (!(type === undefined || util.isString(type)))
+        throw TypeError("type must be a string");
+    /* istanbul ignore next */
+    if (!util.isString(requestType))
+        throw TypeError("requestType must be a string");
+    /* istanbul ignore next */
+    if (!util.isString(responseType))
+        throw TypeError("responseType must be a string");
+
+    ReflectionObject.call(this, name, options);
+
+    /**
+     * Method type.
+     * @type {string}
+     */
+    this.type = type || "rpc"; // toJSON
+
+    /**
+     * Request type.
+     * @type {string}
+     */
+    this.requestType = requestType; // toJSON, marker
+
+    /**
+     * Whether requests are streamed or not.
+     * @type {boolean|undefined}
+     */
+    this.requestStream = requestStream ? true : undefined; // toJSON
+
+    /**
+     * Response type.
+     * @type {string}
+     */
+    this.responseType = responseType; // toJSON
+
+    /**
+     * Whether responses are streamed or not.
+     * @type {boolean|undefined}
+     */
+    this.responseStream = responseStream ? true : undefined; // toJSON
+
+    /**
+     * Resolved request type.
+     * @type {?Type}
+     */
+    this.resolvedRequestType = null;
+
+    /**
+     * Resolved response type.
+     * @type {?Type}
+     */
+    this.resolvedResponseType = null;
+}
+
+/**
+ * Constructs a service method from JSON.
+ * @param {string} name Method name
+ * @param {Object.<string,*>} json JSON object
+ * @returns {Method} Created method
+ * @throws {TypeError} If arguments are invalid
+ */
+Method.fromJSON = function fromJSON(name, json) {
+    return new Method(name, json.type, json.requestType, json.responseType, json.requestStream, json.responseStream, json.options);
+};
+
+/**
+ * @override
+ */
+Method.prototype.toJSON = function toJSON() {
+    return {
+        type           : this.type !== "rpc" && /* istanbul ignore next */ this.type || undefined,
+        requestType    : this.requestType,
+        requestStream  : this.requestStream,
+        responseType   : this.responseType,
+        responseStream : this.responseStream,
+        options        : this.options
+    };
+};
+
+/**
+ * @override
+ */
+Method.prototype.resolve = function resolve() {
+
+    /* istanbul ignore if */
+    if (this.resolved)
+        return this;
+
+    this.resolvedRequestType = this.parent.lookupType(this.requestType);
+    this.resolvedResponseType = this.parent.lookupType(this.responseType);
+
+    return ReflectionObject.prototype.resolve.call(this);
+};
+
+},{"24":24,"36":36}],23:[function(require,module,exports){
+"use strict";
+module.exports = Namespace;
+
+// extends ReflectionObject
+var ReflectionObject = require(24);
+((Namespace.prototype = Object.create(ReflectionObject.prototype)).constructor = Namespace).className = "Namespace";
+
+var Enum     = require(15),
+    Field    = require(16),
+    util     = require(36);
+
+var Type,    // cyclic
+    Service; // "
+
+/**
+ * Constructs a new namespace instance.
+ * @name Namespace
+ * @classdesc Reflected namespace.
+ * @extends NamespaceBase
+ * @constructor
+ * @param {string} name Namespace name
+ * @param {Object.<string,*>} [options] Declared options
+ */
+
+/**
+ * Constructs a namespace from JSON.
+ * @memberof Namespace
+ * @function
+ * @param {string} name Namespace name
+ * @param {Object.<string,*>} json JSON object
+ * @returns {Namespace} Created namespace
+ * @throws {TypeError} If arguments are invalid
+ */
+Namespace.fromJSON = function fromJSON(name, json) {
+    return new Namespace(name, json.options).addJSON(json.nested);
+};
+
+/**
+ * Converts an array of reflection objects to JSON.
+ * @memberof Namespace
+ * @param {ReflectionObject[]} array Object array
+ * @returns {Object.<string,*>|undefined} JSON object or `undefined` when array is empty
+ */
+function arrayToJSON(array) {
+    if (!(array && array.length))
+        return undefined;
+    var obj = {};
+    for (var i = 0; i < array.length; ++i)
+        obj[array[i].name] = array[i].toJSON();
+    return obj;
+}
+
+Namespace.arrayToJSON = arrayToJSON;
+
+/**
+ * Not an actual constructor. Use {@link Namespace} instead.
+ * @classdesc Base class of all reflection objects containing nested objects. This is not an actual class but here for the sake of having consistent type definitions.
+ * @exports NamespaceBase
+ * @extends ReflectionObject
+ * @abstract
+ * @constructor
+ * @param {string} name Namespace name
+ * @param {Object.<string,*>} [options] Declared options
+ * @see {@link Namespace}
+ */
+function Namespace(name, options) {
+    ReflectionObject.call(this, name, options);
+
+    /**
+     * Nested objects by name.
+     * @type {Object.<string,ReflectionObject>|undefined}
+     */
+    this.nested = undefined; // toJSON
+
+    /**
+     * Cached nested objects as an array.
+     * @type {?ReflectionObject[]}
+     * @private
+     */
+    this._nestedArray = null;
+}
+
+function clearCache(namespace) {
+    namespace._nestedArray = null;
+    return namespace;
+}
+
+/**
+ * Nested objects of this namespace as an array for iteration.
+ * @name NamespaceBase#nestedArray
+ * @type {ReflectionObject[]}
+ * @readonly
+ */
+Object.defineProperty(Namespace.prototype, "nestedArray", {
+    get: function() {
+        return this._nestedArray || (this._nestedArray = util.toArray(this.nested));
+    }
+});
+
+/**
+ * @override
+ */
+Namespace.prototype.toJSON = function toJSON() {
+    return {
+        options : this.options,
+        nested  : arrayToJSON(this.nestedArray)
+    };
+};
+
+/**
+ * Adds nested elements to this namespace from JSON.
+ * @param {Object.<string,*>} nestedJson Nested JSON
+ * @returns {Namespace} `this`
+ */
+Namespace.prototype.addJSON = function addJSON(nestedJson) {
+    var ns = this;
+    /* istanbul ignore else */
+    if (nestedJson) {
+        for (var names = Object.keys(nestedJson), i = 0, nested; i < names.length; ++i) {
+            nested = nestedJson[names[i]];
+            ns.add( // most to least likely
+                ( nested.fields !== undefined
+                ? Type.fromJSON
+                : nested.values !== undefined
+                ? Enum.fromJSON
+                : nested.methods !== undefined
+                ? Service.fromJSON
+                : nested.id !== undefined
+                ? Field.fromJSON
+                : Namespace.fromJSON )(names[i], nested)
+            );
+        }
+    }
+    return this;
+};
+
+/**
+ * Gets the nested object of the specified name.
+ * @param {string} name Nested object name
+ * @returns {?ReflectionObject} The reflection object or `null` if it doesn't exist
+ */
+Namespace.prototype.get = function get(name) {
+    return this.nested && this.nested[name]
+        || null;
+};
+
+/**
+ * Gets the values of the nested {@link Enum|enum} of the specified name.
+ * This methods differs from {@link Namespace#get|get} in that it returns an enum's values directly and throws instead of returning `null`.
+ * @param {string} name Nested enum name
+ * @returns {Object.<string,number>} Enum values
+ * @throws {Error} If there is no such enum
+ */
+Namespace.prototype.getEnum = function getEnum(name) {
+    if (this.nested && this.nested[name] instanceof Enum)
+        return this.nested[name].values;
+    throw Error("no such enum");
+};
+
+/**
+ * Adds a nested object to this namespace.
+ * @param {ReflectionObject} object Nested object to add
+ * @returns {Namespace} `this`
+ * @throws {TypeError} If arguments are invalid
+ * @throws {Error} If there is already a nested object with this name
+ */
+Namespace.prototype.add = function add(object) {
+
+    if (!(object instanceof Field && object.extend !== undefined || object instanceof Type || object instanceof Enum || object instanceof Service || object instanceof Namespace))
+        throw TypeError("object must be a valid nested object");
+
+    if (!this.nested)
+        this.nested = {};
+    else {
+        var prev = this.get(object.name);
+        if (prev) {
+            if (prev instanceof Namespace && object instanceof Namespace && !(prev instanceof Type || prev instanceof Service)) {
+                // replace plain namespace but keep existing nested elements and options
+                var nested = prev.nestedArray;
+                for (var i = 0; i < nested.length; ++i)
+                    object.add(nested[i]);
+                this.remove(prev);
+                if (!this.nested)
+                    this.nested = {};
+                object.setOptions(prev.options, true);
+
+            } else
+                throw Error("duplicate name '" + object.name + "' in " + this);
+        }
+    }
+    this.nested[object.name] = object;
+    object.onAdd(this);
+    return clearCache(this);
+};
+
+/**
+ * Removes a nested object from this namespace.
+ * @param {ReflectionObject} object Nested object to remove
+ * @returns {Namespace} `this`
+ * @throws {TypeError} If arguments are invalid
+ * @throws {Error} If `object` is not a member of this namespace
+ */
+Namespace.prototype.remove = function remove(object) {
+
+    if (!(object instanceof ReflectionObject))
+        throw TypeError("object must be a ReflectionObject");
+    if (object.parent !== this)
+        throw Error(object + " is not a member of " + this);
+
+    delete this.nested[object.name];
+    if (!Object.keys(this.nested).length)
+        this.nested = undefined;
+
+    object.onRemove(this);
+    return clearCache(this);
+};
+
+/**
+ * Defines additial namespaces within this one if not yet existing.
+ * @param {string|string[]} path Path to create
+ * @param {*} [json] Nested types to create from JSON
+ * @returns {Namespace} Pointer to the last namespace created or `this` if path is empty
+ */
+Namespace.prototype.define = function define(path, json) {
+
+    if (util.isString(path))
+        path = path.split(".");
+    else if (!Array.isArray(path))
+        throw TypeError("illegal path");
+    if (path && path.length && path[0] === "")
+        throw Error("path must be relative");
+
+    var ptr = this;
+    while (path.length > 0) {
+        var part = path.shift();
+        if (ptr.nested && ptr.nested[part]) {
+            ptr = ptr.nested[part];
+            if (!(ptr instanceof Namespace))
+                throw Error("path conflicts with non-namespace objects");
+        } else
+            ptr.add(ptr = new Namespace(part));
+    }
+    if (json)
+        ptr.addJSON(json);
+    return ptr;
+};
+
+/**
+ * Resolves this namespace's and all its nested objects' type references. Useful to validate a reflection tree, but comes at a cost.
+ * @returns {Namespace} `this`
+ */
+Namespace.prototype.resolveAll = function resolveAll() {
+    var nested = this.nestedArray, i = 0;
+    while (i < nested.length)
+        if (nested[i] instanceof Namespace)
+            nested[i++].resolveAll();
+        else
+            nested[i++].resolve();
+    return this.resolve();
+};
+
+/**
+ * Looks up the reflection object at the specified path, relative to this namespace.
+ * @param {string|string[]} path Path to look up
+ * @param {function(new: ReflectionObject)} filterType Filter type, one of `protobuf.Type`, `protobuf.Enum`, `protobuf.Service` etc.
+ * @param {boolean} [parentAlreadyChecked=false] If known, whether the parent has already been checked
+ * @returns {?ReflectionObject} Looked up object or `null` if none could be found
+ */
+Namespace.prototype.lookup = function lookup(path, filterType, parentAlreadyChecked) {
+
+    /* istanbul ignore next */
+    if (typeof filterType === "boolean") {
+        parentAlreadyChecked = filterType;
+        filterType = undefined;
+    }
+
+    if (util.isString(path) && path.length) {
+        if (path === ".")
+            return this.root;
+        path = path.split(".");
+    } else if (!path.length)
+        return this;
+
+    // Start at root if path is absolute
+    if (path[0] === "")
+        return this.root.lookup(path.slice(1), filterType);
+    // Test if the first part matches any nested object, and if so, traverse if path contains more
+    var found = this.get(path[0]);
+    if (found) {
+        if (path.length === 1) {
+            if (!filterType || found instanceof filterType)
+                return found;
+        } else if (found instanceof Namespace && (found = found.lookup(path.slice(1), filterType, true)))
+            return found;
+    }
+    // If there hasn't been a match, try again at the parent
+    if (this.parent === null || parentAlreadyChecked)
+        return null;
+    return this.parent.lookup(path, filterType);
+};
+
+/**
+ * Looks up the reflection object at the specified path, relative to this namespace.
+ * @name NamespaceBase#lookup
+ * @function
+ * @param {string|string[]} path Path to look up
+ * @param {boolean} [parentAlreadyChecked=false] Whether the parent has already been checked
+ * @returns {?ReflectionObject} Looked up object or `null` if none could be found
+ * @variation 2
+ */
+// lookup(path: string, [parentAlreadyChecked: boolean])
+
+/**
+ * Looks up the {@link Type|type} at the specified path, relative to this namespace.
+ * Besides its signature, this methods differs from {@link Namespace#lookup|lookup} in that it throws instead of returning `null`.
+ * @param {string|string[]} path Path to look up
+ * @returns {Type} Looked up type
+ * @throws {Error} If `path` does not point to a type
+ */
+Namespace.prototype.lookupType = function lookupType(path) {
+    var found = this.lookup(path, Type);
+    if (!found)
+        throw Error("no such type");
+    return found;
+};
+
+/**
+ * Looks up the {@link Service|service} at the specified path, relative to this namespace.
+ * Besides its signature, this methods differs from {@link Namespace#lookup|lookup} in that it throws instead of returning `null`.
+ * @param {string|string[]} path Path to look up
+ * @returns {Service} Looked up service
+ * @throws {Error} If `path` does not point to a service
+ */
+Namespace.prototype.lookupService = function lookupService(path) {
+    var found = this.lookup(path, Service);
+    if (!found)
+        throw Error("no such service");
+    return found;
+};
+
+/**
+ * Looks up the values of the {@link Enum|enum} at the specified path, relative to this namespace.
+ * Besides its signature, this methods differs from {@link Namespace#lookup|lookup} in that it returns the enum's values directly and throws instead of returning `null`.
+ * @param {string|string[]} path Path to look up
+ * @returns {Object.<string,number>} Enum values
+ * @throws {Error} If `path` does not point to an enum
+ */
+Namespace.prototype.lookupEnum = function lookupEnum(path) {
+    var found = this.lookup(path, Enum);
+    if (!found)
+        throw Error("no such enum");
+    return found.values;
+};
+
+Namespace._configure = function(Type_, Service_) {
+    Type    = Type_;
+    Service = Service_;
+};
+
+},{"15":15,"16":16,"24":24,"36":36}],24:[function(require,module,exports){
+"use strict";
+module.exports = ReflectionObject;
+
+ReflectionObject.className = "ReflectionObject";
+
+var util = require(36);
+
+var Root; // cyclic
+
+/**
+ * Constructs a new reflection object instance.
+ * @classdesc Base class of all reflection objects.
+ * @constructor
+ * @param {string} name Object name
+ * @param {Object.<string,*>} [options] Declared options
+ * @abstract
+ */
+function ReflectionObject(name, options) {
+
+    if (!util.isString(name))
+        throw TypeError("name must be a string");
+
+    if (options && !util.isObject(options))
+        throw TypeError("options must be an object");
+
+    /**
+     * Options.
+     * @type {Object.<string,*>|undefined}
+     */
+    this.options = options; // toJSON
+
+    /**
+     * Unique name within its namespace.
+     * @type {string}
+     */
+    this.name = name;
+
+    /**
+     * Parent namespace.
+     * @type {?Namespace}
+     */
+    this.parent = null;
+
+    /**
+     * Whether already resolved or not.
+     * @type {boolean}
+     */
+    this.resolved = false;
+
+    /**
+     * Comment text, if any.
+     * @type {?string}
+     */
+    this.comment = null;
+
+    /**
+     * Defining file name.
+     * @type {?string}
+     */
+    this.filename = null;
+}
+
+Object.defineProperties(ReflectionObject.prototype, {
+
+    /**
+     * Reference to the root namespace.
+     * @name ReflectionObject#root
+     * @type {Root}
+     * @readonly
+     */
+    root: {
+        get: function() {
+            var ptr = this;
+            while (ptr.parent !== null)
+                ptr = ptr.parent;
+            return ptr;
+        }
+    },
+
+    /**
+     * Full name including leading dot.
+     * @name ReflectionObject#fullName
+     * @type {string}
+     * @readonly
+     */
+    fullName: {
+        get: function() {
+            var path = [ this.name ],
+                ptr = this.parent;
+            while (ptr) {
+                path.unshift(ptr.name);
+                ptr = ptr.parent;
+            }
+            return path.join(".");
+        }
+    }
+});
+
+/**
+ * Converts this reflection object to its JSON representation.
+ * @returns {Object.<string,*>} JSON object
+ * @abstract
+ */
+ReflectionObject.prototype.toJSON = /* istanbul ignore next */ function toJSON() {
+    throw Error(); // not implemented, shouldn't happen
+};
+
+/**
+ * Called when this object is added to a parent.
+ * @param {ReflectionObject} parent Parent added to
+ * @returns {undefined}
+ */
+ReflectionObject.prototype.onAdd = function onAdd(parent) {
+    if (this.parent && this.parent !== parent)
+        this.parent.remove(this);
+    this.parent = parent;
+    this.resolved = false;
+    var root = parent.root;
+    if (root instanceof Root)
+        root._handleAdd(this);
+};
+
+/**
+ * Called when this object is removed from a parent.
+ * @param {ReflectionObject} parent Parent removed from
+ * @returns {undefined}
+ */
+ReflectionObject.prototype.onRemove = function onRemove(parent) {
+    var root = parent.root;
+    if (root instanceof Root)
+        root._handleRemove(this);
+    this.parent = null;
+    this.resolved = false;
+};
+
+/**
+ * Resolves this objects type references.
+ * @returns {ReflectionObject} `this`
+ */
+ReflectionObject.prototype.resolve = function resolve() {
+    if (this.resolved)
+        return this;
+    if (this.root instanceof Root)
+        this.resolved = true; // only if part of a root
+    return this;
+};
+
+/**
+ * Gets an option value.
+ * @param {string} name Option name
+ * @returns {*} Option value or `undefined` if not set
+ */
+ReflectionObject.prototype.getOption = function getOption(name) {
+    if (this.options)
+        return this.options[name];
+    return undefined;
+};
+
+/**
+ * Sets an option.
+ * @param {string} name Option name
+ * @param {*} value Option value
+ * @param {boolean} [ifNotSet] Sets the option only if it isn't currently set
+ * @returns {ReflectionObject} `this`
+ */
+ReflectionObject.prototype.setOption = function setOption(name, value, ifNotSet) {
+    if (!ifNotSet || !this.options || this.options[name] === undefined)
+        (this.options || (this.options = {}))[name] = value;
+    return this;
+};
+
+/**
+ * Sets multiple options.
+ * @param {Object.<string,*>} options Options to set
+ * @param {boolean} [ifNotSet] Sets an option only if it isn't currently set
+ * @returns {ReflectionObject} `this`
+ */
+ReflectionObject.prototype.setOptions = function setOptions(options, ifNotSet) {
+    if (options)
+        for (var keys = Object.keys(options), i = 0; i < keys.length; ++i)
+            this.setOption(keys[i], options[keys[i]], ifNotSet);
+    return this;
+};
+
+/**
+ * Converts this instance to its string representation.
+ * @returns {string} Class name[, space, full name]
+ */
+ReflectionObject.prototype.toString = function toString() {
+    var className = this.constructor.className,
+        fullName  = this.fullName;
+    if (fullName.length)
+        return className + " " + fullName;
+    return className;
+};
+
+ReflectionObject._configure = function(Root_) {
+    Root = Root_;
+};
+
+},{"36":36}],25:[function(require,module,exports){
+"use strict";
+module.exports = OneOf;
+
+// extends ReflectionObject
+var ReflectionObject = require(24);
+((OneOf.prototype = Object.create(ReflectionObject.prototype)).constructor = OneOf).className = "OneOf";
+
+var Field = require(16);
+
+/**
+ * Constructs a new oneof instance.
+ * @classdesc Reflected oneof.
+ * @extends ReflectionObject
+ * @constructor
+ * @param {string} name Oneof name
+ * @param {string[]|Object} [fieldNames] Field names
+ * @param {Object.<string,*>} [options] Declared options
+ */
+function OneOf(name, fieldNames, options) {
+    if (!Array.isArray(fieldNames)) {
+        options = fieldNames;
+        fieldNames = undefined;
+    }
+    ReflectionObject.call(this, name, options);
+
+    /* istanbul ignore next */
+    if (!(fieldNames === undefined || Array.isArray(fieldNames)))
+        throw TypeError("fieldNames must be an Array");
+
+    /**
+     * Field names that belong to this oneof.
+     * @type {string[]}
+     */
+    this.oneof = fieldNames || []; // toJSON, marker
+
+    /**
+     * Fields that belong to this oneof as an array for iteration.
+     * @type {Field[]}
+     * @readonly
+     */
+    this.fieldsArray = []; // declared readonly for conformance, possibly not yet added to parent
+}
+
+/**
+ * Constructs a oneof from JSON.
+ * @param {string} name Oneof name
+ * @param {Object.<string,*>} json JSON object
+ * @returns {MapField} Created oneof
+ * @throws {TypeError} If arguments are invalid
+ */
+OneOf.fromJSON = function fromJSON(name, json) {
+    return new OneOf(name, json.oneof, json.options);
+};
+
+/**
+ * @override
+ */
+OneOf.prototype.toJSON = function toJSON() {
+    return {
+        oneof   : this.oneof,
+        options : this.options
+    };
+};
+
+/**
+ * Adds the fields of the specified oneof to the parent if not already done so.
+ * @param {OneOf} oneof The oneof
+ * @returns {undefined}
+ * @inner
+ * @ignore
+ */
+function addFieldsToParent(oneof) {
+    if (oneof.parent)
+        for (var i = 0; i < oneof.fieldsArray.length; ++i)
+            if (!oneof.fieldsArray[i].parent)
+                oneof.parent.add(oneof.fieldsArray[i]);
+}
+
+/**
+ * Adds a field to this oneof and removes it from its current parent, if any.
+ * @param {Field} field Field to add
+ * @returns {OneOf} `this`
+ */
+OneOf.prototype.add = function add(field) {
+
+    /* istanbul ignore next */
+    if (!(field instanceof Field))
+        throw TypeError("field must be a Field");
+    if (field.parent && field.parent !== this.parent)
+        field.parent.remove(field);
+    this.oneof.push(field.name);
+    this.fieldsArray.push(field);
+    field.partOf = this; // field.parent remains null
+    addFieldsToParent(this);
+    return this;
+};
+
+/**
+ * Removes a field from this oneof and puts it back to the oneof's parent.
+ * @param {Field} field Field to remove
+ * @returns {OneOf} `this`
+ */
+OneOf.prototype.remove = function remove(field) {
+
+    /* istanbul ignore next */
+    if (!(field instanceof Field))
+        throw TypeError("field must be a Field");
+
+    var index = this.fieldsArray.indexOf(field);
+    /* istanbul ignore next */
+    if (index < 0)
+        throw Error(field + " is not a member of " + this);
+
+    this.fieldsArray.splice(index, 1);
+    index = this.oneof.indexOf(field.name);
+    /* istanbul ignore else */
+    if (index > -1) // theoretical
+        this.oneof.splice(index, 1);
+    field.partOf = null;
+    return this;
+};
+
+/**
+ * @override
+ */
+OneOf.prototype.onAdd = function onAdd(parent) {
+    ReflectionObject.prototype.onAdd.call(this, parent);
+    var self = this;
+    // Collect present fields
+    for (var i = 0; i < this.oneof.length; ++i) {
+        var field = parent.get(this.oneof[i]);
+        if (field && !field.partOf) {
+            field.partOf = self;
+            self.fieldsArray.push(field);
+        }
+    }
+    // Add not yet present fields
+    addFieldsToParent(this);
+};
+
+/**
+ * @override
+ */
+OneOf.prototype.onRemove = function onRemove(parent) {
+    for (var i = 0, field; i < this.fieldsArray.length; ++i)
+        if ((field = this.fieldsArray[i]).parent)
+            field.parent.remove(field);
+    ReflectionObject.prototype.onRemove.call(this, parent);
+};
+
+},{"16":16,"24":24}],26:[function(require,module,exports){
+"use strict";
+module.exports = parse;
+
+parse.filename = null;
+parse.defaults = { keepCase: false };
+
+var tokenize  = require(33),
+    Root      = require(29),
+    Type      = require(34),
+    Field     = require(16),
+    MapField  = require(20),
+    OneOf     = require(25),
+    Enum      = require(15),
+    Service   = require(32),
+    Method    = require(22),
+    types     = require(35),
+    util      = require(36);
+
+var base10Re    = /^[1-9][0-9]*$/,
+    base10NegRe = /^-?[1-9][0-9]*$/,
+    base16Re    = /^0[x][0-9a-f]+$/,
+    base16NegRe = /^-?0[x][0-9a-f]+$/,
+    base8Re     = /^0[0-7]+$/,
+    base8NegRe  = /^-?0[0-7]+$/,
+    numberRe    = /^(?!e)[0-9]*(?:\.[0-9]*)?(?:[e][+-]?[0-9]+)?$/,
+    nameRe      = /^[a-zA-Z_][a-zA-Z_0-9]*$/,
+    typeRefRe   = /^(?:\.?[a-zA-Z_][a-zA-Z_0-9]*)+$/,
+    fqTypeRefRe = /^(?:\.[a-zA-Z][a-zA-Z_0-9]*)+$/;
+
+function lower(token) {
+    return token === null ? null : token.toLowerCase();
+}
+
+var camelCaseRe = /_([a-z])(?=[a-z]|$)/g;
+
+function camelCase(str) {
+    return str.substring(0,1)
+         + str.substring(1)
+               .replace(camelCaseRe, function($0, $1) { return $1.toUpperCase(); });
+}
+
+/**
+ * Result object returned from {@link parse}.
+ * @typedef ParserResult
+ * @type {Object.<string,*>}
+ * @property {string|undefined} package Package name, if declared
+ * @property {string[]|undefined} imports Imports, if any
+ * @property {string[]|undefined} weakImports Weak imports, if any
+ * @property {string|undefined} syntax Syntax, if specified (either `"proto2"` or `"proto3"`)
+ * @property {Root} root Populated root instance
+ */
+
+/**
+ * Options modifying the behavior of {@link parse}.
+ * @typedef ParseOptions
+ * @type {Object.<string,*>}
+ * @property {boolean} [keepCase=false] Keeps field casing instead of converting to camel case
+ */
+
+/**
+ * Parses the given .proto source and returns an object with the parsed contents.
+ * @function
+ * @param {string} source Source contents
+ * @param {Root} root Root to populate
+ * @param {ParseOptions} [options] Parse options. Defaults to {@link parse.defaults} when omitted.
+ * @returns {ParserResult} Parser result
+ * @property {string} filename=null Currently processing file name for error reporting, if known
+ * @property {ParseOptions} defaults Default {@link ParseOptions}
+ */
+function parse(source, root, options) {
+    /* eslint-disable callback-return */
+    if (!(root instanceof Root)) {
+        options = root;
+        root = new Root();
+    }
+    if (!options)
+        options = parse.defaults;
+
+    var tn = tokenize(source),
+        next = tn.next,
+        push = tn.push,
+        peek = tn.peek,
+        skip = tn.skip,
+        cmnt = tn.cmnt;
+
+    var head = true,
+        pkg,
+        imports,
+        weakImports,
+        syntax,
+        isProto3 = false;
+
+    var ptr = root;
+
+    var applyCase = options.keepCase ? function(name) { return name; } : camelCase;
+
+    /* istanbul ignore next */
+    function illegal(token, name, insideTryCatch) {
+        var filename = parse.filename;
+        if (!insideTryCatch)
+            parse.filename = null;
+        return Error("illegal " + (name || "token") + " '" + token + "' (" + (filename ? filename + ", " : "") + "line " + tn.line() + ")");
+    }
+
+    function readString() {
+        var values = [],
+            token;
+        /* istanbul ignore next */
+        do {
+            if ((token = next()) !== "\"" && token !== "'")
+                throw illegal(token);
+            values.push(next());
+            skip(token);
+            token = peek();
+        } while (token === "\"" || token === "'");
+        return values.join("");
+    }
+
+    function readValue(acceptTypeRef) {
+        var token = next();
+        switch (lower(token)) {
+            case "'":
+            case "\"":
+                push(token);
+                return readString();
+            case "true":
+                return true;
+            case "false":
+                return false;
+        }
+        try {
+            return parseNumber(token, /* insideTryCatch */ true);
+        } catch (e) {
+            /* istanbul ignore else */
+            if (acceptTypeRef && typeRefRe.test(token))
+                return token;
+            /* istanbul ignore next */
+            throw illegal(token, "value");
+        }
+    }
+
+    function readRanges(target, acceptStrings) {
+        var token, start;
+        do {
+            if (acceptStrings && ((token = peek()) === "\"" || token === "'"))
+                target.push(readString());
+            else
+                target.push([ start = parseId(next()), skip("to", true) ? parseId(next()) : start ]);
+        } while (skip(",", true));
+        skip(";");
+    }
+
+    function parseNumber(token, insideTryCatch) {
+        var sign = 1;
+        if (token.charAt(0) === "-") {
+            sign = -1;
+            token = token.substring(1);
+        }
+        var tokenLower = lower(token);
+        switch (tokenLower) {
+            case "inf": return sign * Infinity;
+            case "nan": return NaN;
+            case "0": return 0;
+        }
+        if (base10Re.test(token))
+            return sign * parseInt(token, 10);
+        if (base16Re.test(tokenLower))
+            return sign * parseInt(token, 16);
+        if (base8Re.test(token))
+            return sign * parseInt(token, 8);
+        if (numberRe.test(tokenLower))
+            return sign * parseFloat(token);
+        /* istanbul ignore next */
+        throw illegal(token, "number", insideTryCatch);
+    }
+
+    function parseId(token, acceptNegative) {
+        var tokenLower = lower(token);
+        switch (tokenLower) {
+            case "max": return 536870911;
+            case "0": return 0;
+        }
+        /* istanbul ignore next */
+        if (token.charAt(0) === "-" && !acceptNegative)
+            throw illegal(token, "id");
+        if (base10NegRe.test(token))
+            return parseInt(token, 10);
+        if (base16NegRe.test(tokenLower))
+            return parseInt(token, 16);
+        /* istanbul ignore else */
+        if (base8NegRe.test(token))
+            return parseInt(token, 8);
+        /* istanbul ignore next */
+        throw illegal(token, "id");
+    }
+
+    function parsePackage() {
+        /* istanbul ignore next */
+        if (pkg !== undefined)
+            throw illegal("package");
+        pkg = next();
+        /* istanbul ignore next */
+        if (!typeRefRe.test(pkg))
+            throw illegal(pkg, "name");
+        ptr = ptr.define(pkg);
+        skip(";");
+    }
+
+    function parseImport() {
+        var token = peek();
+        var whichImports;
+        switch (token) {
+            case "weak":
+                whichImports = weakImports || (weakImports = []);
+                next();
+                break;
+            case "public":
+                next();
+                // eslint-disable-line no-fallthrough
+            default:
+                whichImports = imports || (imports = []);
+                break;
+        }
+        token = readString();
+        skip(";");
+        whichImports.push(token);
+    }
+
+    function parseSyntax() {
+        skip("=");
+        syntax = lower(readString());
+        isProto3 = syntax === "proto3";
+        /* istanbul ignore next */
+        if (!isProto3 && syntax !== "proto2")
+            throw illegal(syntax, "syntax");
+        skip(";");
+    }
+
+    function parseCommon(parent, token) {
+        switch (token) {
+
+            case "option":
+                parseOption(parent, token);
+                skip(";");
+                return true;
+
+            case "message":
+                parseType(parent, token);
+                return true;
+
+            case "enum":
+                parseEnum(parent, token);
+                return true;
+
+            case "service":
+                parseService(parent, token);
+                return true;
+
+            case "extend":
+                parseExtension(parent, token);
+                return true;
+        }
+        return false;
+    }
+
+    function parseType(parent, token) {
+        var name = next();
+        /* istanbul ignore next */
+        if (!nameRe.test(name))
+            throw illegal(name, "type name");
+        var type = new Type(name);
+        type.comment = cmnt();
+        type.filename = parse.filename;
+        if (skip("{", true)) {
+            while ((token = next()) !== "}") {
+                var tokenLower = lower(token);
+                if (parseCommon(type, token))
+                    continue;
+                switch (tokenLower) {
+
+                    case "map":
+                        parseMapField(type, tokenLower);
+                        break;
+
+                    case "required":
+                    case "optional":
+                    case "repeated":
+                        parseField(type, tokenLower);
+                        break;
+
+                    case "oneof":
+                        parseOneOf(type, tokenLower);
+                        break;
+
+                    case "extensions":
+                        readRanges(type.extensions || (type.extensions = []));
+                        break;
+
+                    case "reserved":
+                        readRanges(type.reserved || (type.reserved = []), true);
+                        break;
+
+                    default:
+                        /* istanbul ignore next */
+                        if (!isProto3 || !typeRefRe.test(token))
+                            throw illegal(token);
+                        push(token);
+                        parseField(type, "optional");
+                        break;
+                }
+            }
+            skip(";", true);
+        } else
+            skip(";");
+        parent.add(type);
+    }
+
+    function parseField(parent, rule, extend) {
+        var type = next();
+        if (type === "group") {
+            parseGroup(parent, rule);
+            return;
+        }
+        /* istanbul ignore next */
+        if (!typeRefRe.test(type))
+            throw illegal(type, "type");
+        var name = next();
+        /* istanbul ignore next */
+        if (!nameRe.test(name))
+            throw illegal(name, "name");
+        name = applyCase(name);
+        skip("=");
+        var field = new Field(name, parseId(next()), type, rule, extend),
+            trailingLine = tn.line();
+        field.comment = cmnt();
+        field.filename = parse.filename;
+        parseInlineOptions(field);
+        if (!field.comment)
+            field.comment = cmnt(trailingLine);
+        // JSON defaults to packed=true if not set so we have to set packed=false explicity when
+        // parsing proto2 descriptors without the option, where applicable. This must be done for
+        // any type (not just packable types) because enums also use varint encoding and it is not
+        // yet known whether a type is an enum or not.
+        if (!isProto3 && field.repeated)
+            field.setOption("packed", false, /* ifNotSet */ true);
+        parent.add(field);
+    }
+
+    function parseGroup(parent, rule) {
+        var name = next();
+        /* istanbul ignore next */
+        if (!nameRe.test(name))
+            throw illegal(name, "name");
+        var fieldName = util.lcFirst(name);
+        if (name === fieldName)
+            name = util.ucFirst(name);
+        skip("=");
+        var id = parseId(next());
+        var type = new Type(name);
+        type.group = true;
+        type.comment = cmnt();
+        var field = new Field(fieldName, id, name, rule);
+        type.filename = field.filename = parse.filename;
+        skip("{");
+        while ((token = next()) !== "}") {
+            switch (token = lower(token)) {
+                case "option":
+                    parseOption(type, token);
+                    skip(";");
+                    break;
+                case "required":
+                case "optional":
+                case "repeated":
+                    parseField(type, token);
+                    break;
+
+                /* istanbul ignore next */
+                default:
+                    throw illegal(token); // there are no groups with proto3 semantics
+            }
+        }
+        skip(";", true);
+        parent.add(type).add(field);
+    }
+
+    function parseMapField(parent) {
+        skip("<");
+        var keyType = next();
+
+        /* istanbul ignore next */
+        if (types.mapKey[keyType] === undefined)
+            throw illegal(keyType, "type");
+        skip(",");
+        var valueType = next();
+        /* istanbul ignore next */
+        if (!typeRefRe.test(valueType))
+            throw illegal(valueType, "type");
+        skip(">");
+        var name = next();
+        /* istanbul ignore next */
+        if (!nameRe.test(name))
+            throw illegal(name, "name");
+
+        name = applyCase(name);
+        skip("=");
+        var field = new MapField(name, parseId(next()), keyType, valueType),
+            trailingLine = tn.line();
+        field.comment = cmnt();
+        field.filename = parse.filename;
+        parseInlineOptions(field);
+        if (!field.comment)
+            field.comment = cmnt(trailingLine);
+        parent.add(field);
+    }
+
+    function parseOneOf(parent, token) {
+        var name = next();
+
+        /* istanbul ignore next */
+        if (!nameRe.test(name))
+            throw illegal(name, "name");
+
+        name = applyCase(name);
+        var oneof = new OneOf(name),
+            trailingLine = tn.line();
+        oneof.comment = cmnt();
+        oneof.filename = parse.filename;
+        if (skip("{", true)) {
+            while ((token = next()) !== "}") {
+                if (token === "option") {
+                    parseOption(oneof, token);
+                    skip(";");
+                } else {
+                    push(token);
+                    parseField(oneof, "optional");
+                }
+            }
+            skip(";", true);
+        } else {
+            skip(";");
+            if (!oneof.comment)
+                oneof.comment = cmnt(trailingLine);
+        }
+        parent.add(oneof);
+    }
+
+    function parseEnum(parent, token) {
+        var name = next();
+
+        /* istanbul ignore next */
+        if (!nameRe.test(name))
+            throw illegal(name, "name");
+
+        var enm = new Enum(name);
+        enm.comment = cmnt();
+        enm.filename = parse.filename;
+        if (skip("{", true)) {
+            while ((token = next()) !== "}") {
+                if (lower(token) === "option") {
+                    parseOption(enm, token);
+                    skip(";");
+                } else
+                    parseEnumValue(enm, token);
+            }
+            skip(";", true);
+        } else
+            skip(";");
+        parent.add(enm);
+    }
+
+    function parseEnumValue(parent, token) {
+
+        /* istanbul ignore next */
+        if (!nameRe.test(token))
+            throw illegal(token, "name");
+
+        var name = token;
+        skip("=");
+        var value = parseId(next(), true),
+            trailingLine = tn.line();
+        parent.add(name, value, cmnt());
+        parseInlineOptions({}); // skips enum value options
+        if (!parent.comments[name])
+            parent.comments[name] = cmnt(trailingLine);
+    }
+
+    function parseOption(parent, token) {
+        var custom = skip("(", true);
+        var name = next();
+
+        /* istanbul ignore next */
+        if (!typeRefRe.test(name))
+            throw illegal(name, "name");
+
+        if (custom) {
+            skip(")");
+            name = "(" + name + ")";
+            token = peek();
+            if (fqTypeRefRe.test(token)) {
+                name += token;
+                next();
+            }
+        }
+        skip("=");
+        parseOptionValue(parent, name);
+    }
+
+    function parseOptionValue(parent, name) {
+        if (skip("{", true)) { // { a: "foo" b { c: "bar" } }
+            /* istanbul ignore next */
+            do {
+                if (!nameRe.test(token = next()))
+                    throw illegal(token, "name");
+                if (peek() === "{")
+                    parseOptionValue(parent, name + "." + token);
+                else {
+                    skip(":");
+                    setOption(parent, name + "." + token, readValue(true));
+                }
+            } while (!skip("}", true));
+        } else
+            setOption(parent, name, readValue(true));
+        // Does not enforce a delimiter to be universal
+    }
+
+    function setOption(parent, name, value) {
+        if (parent.setOption)
+            parent.setOption(name, value);
+    }
+
+    function parseInlineOptions(parent) {
+        if (skip("[", true)) {
+            do {
+                parseOption(parent, "option");
+            } while (skip(",", true));
+            skip("]");
+        }
+        skip(";");
+        return parent;
+    }
+
+    function parseService(parent, token) {
+        token = next();
+
+        /* istanbul ignore next */
+        if (!nameRe.test(token))
+            throw illegal(token, "service name");
+
+        var name = token;
+        var service = new Service(name);
+        service.comment = cmnt();
+        service.filename = parse.filename;
+        if (skip("{", true)) {
+            while ((token = next()) !== "}") {
+                var tokenLower = lower(token);
+                switch (tokenLower) {
+                    case "option":
+                        parseOption(service, tokenLower);
+                        skip(";");
+                        break;
+                    case "rpc":
+                        parseMethod(service, tokenLower);
+                        break;
+
+                    /* istanbul ignore next */
+                    default:
+                        throw illegal(token);
+                }
+            }
+            skip(";", true);
+        } else
+            skip(";");
+        parent.add(service);
+    }
+
+    function parseMethod(parent, token) {
+        var type = token;
+        var name = next();
+
+        /* istanbul ignore next */
+        if (!nameRe.test(name))
+            throw illegal(name, "name");
+        var requestType, requestStream,
+            responseType, responseStream;
+        skip("(");
+        if (skip("stream", true))
+            requestStream = true;
+        /* istanbul ignore next */
+        if (!typeRefRe.test(token = next()))
+            throw illegal(token);
+        requestType = token;
+        skip(")"); skip("returns"); skip("(");
+        if (skip("stream", true))
+            responseStream = true;
+        /* istanbul ignore next */
+        if (!typeRefRe.test(token = next()))
+            throw illegal(token);
+
+        responseType = token;
+        skip(")");
+        var method = new Method(name, type, requestType, responseType, requestStream, responseStream),
+            trailingLine = tn.line();
+        method.comment = cmnt();
+        method.filename = parse.filename;
+        if (skip("{", true)) {
+            while ((token = next()) !== "}") {
+                var tokenLower = lower(token);
+                switch (tokenLower) {
+                    case "option":
+                        parseOption(method, tokenLower);
+                        skip(";");
+                        break;
+
+                    /* istanbul ignore next */
+                    default:
+                        throw illegal(token);
+                }
+            }
+            skip(";", true);
+        } else {
+            skip(";");
+            if (!method.comment)
+                method.comment = cmnt(trailingLine);
+        }
+        parent.add(method);
+    }
+
+    function parseExtension(parent, token) {
+        var reference = next();
+
+        /* istanbul ignore next */
+        if (!typeRefRe.test(reference))
+            throw illegal(reference, "reference");
+
+        if (skip("{", true)) {
+            while ((token = next()) !== "}") {
+                var tokenLower = lower(token);
+                switch (tokenLower) {
+                    case "required":
+                    case "repeated":
+                    case "optional":
+                        parseField(parent, tokenLower, reference);
+                        break;
+                    default:
+                        /* istanbul ignore next */
+                        if (!isProto3 || !typeRefRe.test(token))
+                            throw illegal(token);
+                        push(token);
+                        parseField(parent, "optional", reference);
+                        break;
+                }
+            }
+            skip(";", true);
+        } else
+            skip(";");
+    }
+
+    var token;
+    while ((token = next()) !== null) {
+        var tokenLower = lower(token);
+        switch (tokenLower) {
+
+            case "package":
+                /* istanbul ignore next */
+                if (!head)
+                    throw illegal(token);
+                parsePackage();
+                break;
+
+            case "import":
+                /* istanbul ignore next */
+                if (!head)
+                    throw illegal(token);
+                parseImport();
+                break;
+
+            case "syntax":
+                /* istanbul ignore next */
+                if (!head)
+                    throw illegal(token);
+                parseSyntax();
+                break;
+
+            case "option":
+                /* istanbul ignore next */
+                if (!head)
+                    throw illegal(token);
+                parseOption(ptr, token);
+                skip(";");
+                break;
+
+            default:
+                /* istanbul ignore else */
+                if (parseCommon(ptr, token)) {
+                    head = false;
+                    continue;
+                }
+                /* istanbul ignore next */
+                throw illegal(token);
+        }
+    }
+
+    parse.filename = null;
+    return {
+        "package"     : pkg,
+        "imports"     : imports,
+         weakImports  : weakImports,
+         syntax       : syntax,
+         root         : root
+    };
+}
+
+/**
+ * Parses the given .proto source and returns an object with the parsed contents.
+ * @name parse
+ * @function
+ * @param {string} source Source contents
+ * @param {ParseOptions} [options] Parse options. Defaults to {@link parse.defaults} when omitted.
+ * @returns {ParserResult} Parser result
+ * @property {string} filename=null Currently processing file name for error reporting, if known
+ * @property {ParseOptions} defaults Default {@link ParseOptions}
+ * @variation 2
+ */
+
+},{"15":15,"16":16,"20":20,"22":22,"25":25,"29":29,"32":32,"33":33,"34":34,"35":35,"36":36}],27:[function(require,module,exports){
+"use strict";
+module.exports = Reader;
+
+var util      = require(38);
+
+var BufferReader; // cyclic
+
+var LongBits  = util.LongBits,
+    utf8      = util.utf8;
+
+/* istanbul ignore next */
+function indexOutOfRange(reader, writeLength) {
+    return RangeError("index out of range: " + reader.pos + " + " + (writeLength || 1) + " > " + reader.len);
+}
+
+/**
+ * Constructs a new reader instance using the specified buffer.
+ * @classdesc Wire format reader using `Uint8Array` if available, otherwise `Array`.
+ * @constructor
+ * @param {Uint8Array} buffer Buffer to read from
+ */
+function Reader(buffer) {
+
+    /**
+     * Read buffer.
+     * @type {Uint8Array}
+     */
+    this.buf = buffer;
+
+    /**
+     * Read buffer position.
+     * @type {number}
+     */
+    this.pos = 0;
+
+    /**
+     * Read buffer length.
+     * @type {number}
+     */
+    this.len = buffer.length;
+}
+
+var create_array = typeof Uint8Array !== "undefined"
+    ? function create_typed_array(buffer) {
+        if (buffer instanceof Uint8Array || Array.isArray(buffer))
+            return new Reader(buffer);
+        throw Error("illegal buffer");
+    }
+    /* istanbul ignore next */
+    : function create_array(buffer) {
+        if (Array.isArray(buffer))
+            return new Reader(buffer);
+        throw Error("illegal buffer");
+    };
+
+/**
+ * Creates a new reader using the specified buffer.
+ * @function
+ * @param {Uint8Array|Buffer} buffer Buffer to read from
+ * @returns {Reader|BufferReader} A {@link BufferReader} if `buffer` is a Buffer, otherwise a {@link Reader}
+ * @throws {Error} If `buffer` is not a valid buffer
+ */
+Reader.create = util.Buffer
+    ? function create_buffer_setup(buffer) {
+        return (Reader.create = function create_buffer(buffer) {
+            return util.Buffer.isBuffer(buffer)
+                ? new BufferReader(buffer)
+                /* istanbul ignore next */
+                : create_array(buffer);
+        })(buffer);
+    }
+    /* istanbul ignore next */
+    : create_array;
+
+Reader.prototype._slice = util.Array.prototype.subarray || /* istanbul ignore next */ util.Array.prototype.slice;
+
+/**
+ * Reads a varint as an unsigned 32 bit value.
+ * @function
+ * @returns {number} Value read
+ */
+Reader.prototype.uint32 = (function read_uint32_setup() {
+    var value = 4294967295; // optimizer type-hint, tends to deopt otherwise (?!)
+    return function read_uint32() {
+        value = (         this.buf[this.pos] & 127       ) >>> 0; if (this.buf[this.pos++] < 128) return value;
+        value = (value | (this.buf[this.pos] & 127) <<  7) >>> 0; if (this.buf[this.pos++] < 128) return value;
+        value = (value | (this.buf[this.pos] & 127) << 14) >>> 0; if (this.buf[this.pos++] < 128) return value;
+        value = (value | (this.buf[this.pos] & 127) << 21) >>> 0; if (this.buf[this.pos++] < 128) return value;
+        value = (value | (this.buf[this.pos] &  15) << 28) >>> 0; if (this.buf[this.pos++] < 128) return value;
+
+        /* istanbul ignore next */
+        if ((this.pos += 5) > this.len) {
+            this.pos = this.len;
+            throw indexOutOfRange(this, 10);
+        }
+        return value;
+    };
+})();
+
+/**
+ * Reads a varint as a signed 32 bit value.
+ * @returns {number} Value read
+ */
+Reader.prototype.int32 = function read_int32() {
+    return this.uint32() | 0;
+};
+
+/**
+ * Reads a zig-zag encoded varint as a signed 32 bit value.
+ * @returns {number} Value read
+ */
+Reader.prototype.sint32 = function read_sint32() {
+    var value = this.uint32();
+    return value >>> 1 ^ -(value & 1) | 0;
+};
+
+/* eslint-disable no-invalid-this */
+
+function readLongVarint() {
+    // tends to deopt with local vars for octet etc.
+    var bits = new LongBits(0, 0);
+    var i = 0;
+    if (this.len - this.pos > 4) { // fast route (lo)
+        for (; i < 4; ++i) {
+            // 1st..4th
+            bits.lo = (bits.lo | (this.buf[this.pos] & 127) << i * 7) >>> 0;
+            if (this.buf[this.pos++] < 128)
+                return bits;
+        }
+        // 5th
+        bits.lo = (bits.lo | (this.buf[this.pos] & 127) << 28) >>> 0;
+        bits.hi = (bits.hi | (this.buf[this.pos] & 127) >>  4) >>> 0;
+        if (this.buf[this.pos++] < 128)
+            return bits;
+        i = 0;
+    } else {
+        for (; i < 3; ++i) {
+            /* istanbul ignore next */
+            if (this.pos >= this.len)
+                throw indexOutOfRange(this);
+            // 1st..3th
+            bits.lo = (bits.lo | (this.buf[this.pos] & 127) << i * 7) >>> 0;
+            if (this.buf[this.pos++] < 128)
+                return bits;
+        }
+        // 4th
+        bits.lo = (bits.lo | (this.buf[this.pos++] & 127) << i * 7) >>> 0;
+        return bits;
+    }
+    if (this.len - this.pos > 4) { // fast route (hi)
+        for (; i < 5; ++i) {
+            // 6th..10th
+            bits.hi = (bits.hi | (this.buf[this.pos] & 127) << i * 7 + 3) >>> 0;
+            if (this.buf[this.pos++] < 128)
+                return bits;
+        }
+    } else {
+        for (; i < 5; ++i) {
+            /* istanbul ignore next */
+            if (this.pos >= this.len)
+                throw indexOutOfRange(this);
+            // 6th..10th
+            bits.hi = (bits.hi | (this.buf[this.pos] & 127) << i * 7 + 3) >>> 0;
+            if (this.buf[this.pos++] < 128)
+                return bits;
+        }
+    }
+    /* istanbul ignore next */
+    throw Error("invalid varint encoding");
+}
+
+/* eslint-enable no-invalid-this */
+
+/**
+ * Reads a varint as a signed 64 bit value.
+ * @name Reader#int64
+ * @function
+ * @returns {Long|number} Value read
+ */
+
+/**
+ * Reads a varint as an unsigned 64 bit value.
+ * @name Reader#uint64
+ * @function
+ * @returns {Long|number} Value read
+ */
+
+/**
+ * Reads a zig-zag encoded varint as a signed 64 bit value.
+ * @name Reader#sint64
+ * @function
+ * @returns {Long|number} Value read
+ */
+
+/**
+ * Reads a varint as a boolean.
+ * @returns {boolean} Value read
+ */
+Reader.prototype.bool = function read_bool() {
+    return this.uint32() !== 0;
+};
+
+function readFixed32(buf, end) {
+    return (buf[end - 4]
+          | buf[end - 3] << 8
+          | buf[end - 2] << 16
+          | buf[end - 1] << 24) >>> 0;
+}
+
+/**
+ * Reads fixed 32 bits as an unsigned 32 bit integer.
+ * @returns {number} Value read
+ */
+Reader.prototype.fixed32 = function read_fixed32() {
+
+    /* istanbul ignore next */
+    if (this.pos + 4 > this.len)
+        throw indexOutOfRange(this, 4);
+
+    return readFixed32(this.buf, this.pos += 4);
+};
+
+/**
+ * Reads fixed 32 bits as a signed 32 bit integer.
+ * @returns {number} Value read
+ */
+Reader.prototype.sfixed32 = function read_sfixed32() {
+
+    /* istanbul ignore next */
+    if (this.pos + 4 > this.len)
+        throw indexOutOfRange(this, 4);
+
+    return readFixed32(this.buf, this.pos += 4) | 0;
+};
+
+/* eslint-disable no-invalid-this */
+
+function readFixed64(/* this: Reader */) {
+
+    /* istanbul ignore next */
+    if (this.pos + 8 > this.len)
+        throw indexOutOfRange(this, 8);
+
+    return new LongBits(readFixed32(this.buf, this.pos += 4), readFixed32(this.buf, this.pos += 4));
+}
+
+/* eslint-enable no-invalid-this */
+
+/**
+ * Reads fixed 64 bits.
+ * @name Reader#fixed64
+ * @function
+ * @returns {Long|number} Value read
+ */
+
+/**
+ * Reads zig-zag encoded fixed 64 bits.
+ * @name Reader#sfixed64
+ * @function
+ * @returns {Long|number} Value read
+ */
+
+var readFloat = typeof Float32Array !== "undefined"
+    ? (function() {
+        var f32 = new Float32Array(1),
+            f8b = new Uint8Array(f32.buffer);
+        f32[0] = -0;
+        return f8b[3] // already le?
+            ? function readFloat_f32(buf, pos) {
+                f8b[0] = buf[pos    ];
+                f8b[1] = buf[pos + 1];
+                f8b[2] = buf[pos + 2];
+                f8b[3] = buf[pos + 3];
+                return f32[0];
+            }
+            /* istanbul ignore next */
+            : function readFloat_f32_le(buf, pos) {
+                f8b[0] = buf[pos + 3];
+                f8b[1] = buf[pos + 2];
+                f8b[2] = buf[pos + 1];
+                f8b[3] = buf[pos    ];
+                return f32[0];
+            };
+    })()
+    /* istanbul ignore next */
+    : function readFloat_ieee754(buf, pos) {
+        var uint = readFixed32(buf, pos + 4),
+            sign = (uint >> 31) * 2 + 1,
+            exponent = uint >>> 23 & 255,
+            mantissa = uint & 8388607;
+        return exponent === 255
+            ? mantissa
+              ? NaN
+              : sign * Infinity
+            : exponent === 0 // denormal
+              ? sign * 1.401298464324817e-45 * mantissa
+              : sign * Math.pow(2, exponent - 150) * (mantissa + 8388608);
+    };
+
+/**
+ * Reads a float (32 bit) as a number.
+ * @function
+ * @returns {number} Value read
+ */
+Reader.prototype.float = function read_float() {
+
+    /* istanbul ignore next */
+    if (this.pos + 4 > this.len)
+        throw indexOutOfRange(this, 4);
+
+    var value = readFloat(this.buf, this.pos);
+    this.pos += 4;
+    return value;
+};
+
+var readDouble = typeof Float64Array !== "undefined"
+    ? (function() {
+        var f64 = new Float64Array(1),
+            f8b = new Uint8Array(f64.buffer);
+        f64[0] = -0;
+        return f8b[7] // already le?
+            ? function readDouble_f64(buf, pos) {
+                f8b[0] = buf[pos    ];
+                f8b[1] = buf[pos + 1];
+                f8b[2] = buf[pos + 2];
+                f8b[3] = buf[pos + 3];
+                f8b[4] = buf[pos + 4];
+                f8b[5] = buf[pos + 5];
+                f8b[6] = buf[pos + 6];
+                f8b[7] = buf[pos + 7];
+                return f64[0];
+            }
+            /* istanbul ignore next */
+            : function readDouble_f64_le(buf, pos) {
+                f8b[0] = buf[pos + 7];
+                f8b[1] = buf[pos + 6];
+                f8b[2] = buf[pos + 5];
+                f8b[3] = buf[pos + 4];
+                f8b[4] = buf[pos + 3];
+                f8b[5] = buf[pos + 2];
+                f8b[6] = buf[pos + 1];
+                f8b[7] = buf[pos    ];
+                return f64[0];
+            };
+    })()
+    /* istanbul ignore next */
+    : function readDouble_ieee754(buf, pos) {
+        var lo = readFixed32(buf, pos + 4),
+            hi = readFixed32(buf, pos + 8);
+        var sign = (hi >> 31) * 2 + 1,
+            exponent = hi >>> 20 & 2047,
+            mantissa = 4294967296 * (hi & 1048575) + lo;
+        return exponent === 2047
+            ? mantissa
+              ? NaN
+              : sign * Infinity
+            : exponent === 0 // denormal
+              ? sign * 5e-324 * mantissa
+              : sign * Math.pow(2, exponent - 1075) * (mantissa + 4503599627370496);
+    };
+
+/**
+ * Reads a double (64 bit float) as a number.
+ * @function
+ * @returns {number} Value read
+ */
+Reader.prototype.double = function read_double() {
+
+    /* istanbul ignore next */
+    if (this.pos + 8 > this.len)
+        throw indexOutOfRange(this, 4);
+
+    var value = readDouble(this.buf, this.pos);
+    this.pos += 8;
+    return value;
+};
+
+/**
+ * Reads a sequence of bytes preceeded by its length as a varint.
+ * @returns {Uint8Array} Value read
+ */
+Reader.prototype.bytes = function read_bytes() {
+    var length = this.uint32(),
+        start  = this.pos,
+        end    = this.pos + length;
+
+    /* istanbul ignore next */
+    if (end > this.len)
+        throw indexOutOfRange(this, length);
+
+    this.pos += length;
+    return start === end // fix for IE 10/Win8 and others' subarray returning array of size 1
+        ? new this.buf.constructor(0)
+        : this._slice.call(this.buf, start, end);
+};
+
+/**
+ * Reads a string preceeded by its byte length as a varint.
+ * @returns {string} Value read
+ */
+Reader.prototype.string = function read_string() {
+    var bytes = this.bytes();
+    return utf8.read(bytes, 0, bytes.length);
+};
+
+/**
+ * Skips the specified number of bytes if specified, otherwise skips a varint.
+ * @param {number} [length] Length if known, otherwise a varint is assumed
+ * @returns {Reader} `this`
+ */
+Reader.prototype.skip = function skip(length) {
+    if (typeof length === "number") {
+        /* istanbul ignore next */
+        if (this.pos + length > this.len)
+            throw indexOutOfRange(this, length);
+        this.pos += length;
+    } else {
+        /* istanbul ignore next */
+        do {
+            if (this.pos >= this.len)
+                throw indexOutOfRange(this);
+        } while (this.buf[this.pos++] & 128);
+    }
+    return this;
+};
+
+/**
+ * Skips the next element of the specified wire type.
+ * @param {number} wireType Wire type received
+ * @returns {Reader} `this`
+ */
+Reader.prototype.skipType = function(wireType) {
+    switch (wireType) {
+        case 0:
+            this.skip();
+            break;
+        case 1:
+            this.skip(8);
+            break;
+        case 2:
+            this.skip(this.uint32());
+            break;
+        case 3:
+            do { // eslint-disable-line no-constant-condition
+                if ((wireType = this.uint32() & 7) === 4)
+                    break;
+                this.skipType(wireType);
+            } while (true);
+            break;
+        case 5:
+            this.skip(4);
+            break;
+
+        /* istanbul ignore next */
+        default:
+            throw Error("invalid wire type " + wireType + " at offset " + this.pos);
+    }
+    return this;
+};
+
+Reader._configure = function(BufferReader_) {
+    BufferReader = BufferReader_;
+
+    var fn = util.Long ? "toLong" : /* istanbul ignore next */ "toNumber";
+    util.merge(Reader.prototype, {
+
+        int64: function read_int64() {
+            return readLongVarint.call(this)[fn](false);
+        },
+
+        uint64: function read_uint64() {
+            return readLongVarint.call(this)[fn](true);
+        },
+
+        sint64: function read_sint64() {
+            return readLongVarint.call(this).zzDecode()[fn](false);
+        },
+
+        fixed64: function read_fixed64() {
+            return readFixed64.call(this)[fn](true);
+        },
+
+        sfixed64: function read_sfixed64() {
+            return readFixed64.call(this)[fn](false);
+        }
+
+    });
+};
+
+},{"38":38}],28:[function(require,module,exports){
+"use strict";
+module.exports = BufferReader;
+
+// extends Reader
+var Reader = require(27);
+(BufferReader.prototype = Object.create(Reader.prototype)).constructor = BufferReader;
+
+var util = require(38);
+
+/**
+ * Constructs a new buffer reader instance.
+ * @classdesc Wire format reader using node buffers.
+ * @extends Reader
+ * @constructor
+ * @param {Buffer} buffer Buffer to read from
+ */
+function BufferReader(buffer) {
+    Reader.call(this, buffer);
+
+    /**
+     * Read buffer.
+     * @name BufferReader#buf
+     * @type {Buffer}
+     */
+}
+
+/* istanbul ignore else */
+if (util.Buffer)
+    BufferReader.prototype._slice = util.Buffer.prototype.slice;
+
+/**
+ * @override
+ */
+BufferReader.prototype.string = function read_string_buffer() {
+    var len = this.uint32(); // modifies pos
+    return this.buf.utf8Slice(this.pos, this.pos = Math.min(this.pos + len, this.len));
+};
+
+/**
+ * Reads a sequence of bytes preceeded by its length as a varint.
+ * @name BufferReader#bytes
+ * @function
+ * @returns {Buffer} Value read
+ */
+
+},{"27":27,"38":38}],29:[function(require,module,exports){
+"use strict";
+module.exports = Root;
+
+// extends Namespace
+var Namespace = require(23);
+((Root.prototype = Object.create(Namespace.prototype)).constructor = Root).className = "Root";
+
+var Field   = require(16),
+    Enum    = require(15),
+    util    = require(36);
+
+var Type,   // cyclic
+    parse,  // might be excluded
+    common; // "
+
+/**
+ * Constructs a new root namespace instance.
+ * @classdesc Root namespace wrapping all types, enums, services, sub-namespaces etc. that belong together.
+ * @extends NamespaceBase
+ * @constructor
+ * @param {Object.<string,*>} [options] Top level options
+ */
+function Root(options) {
+    Namespace.call(this, "", options);
+
+    /**
+     * Deferred extension fields.
+     * @type {Field[]}
+     */
+    this.deferred = [];
+
+    /**
+     * Resolved file names of loaded files.
+     * @type {string[]}
+     */
+    this.files = [];
+}
+
+/**
+ * Loads a JSON definition into a root namespace.
+ * @param {Object.<string,*>} json JSON definition
+ * @param {Root} [root] Root namespace, defaults to create a new one if omitted
+ * @returns {Root} Root namespace
+ */
+Root.fromJSON = function fromJSON(json, root) {
+    if (!root)
+        root = new Root();
+    if (json.options)
+        root.setOptions(json.options);
+    return root.addJSON(json.nested);
+};
+
+/**
+ * Resolves the path of an imported file, relative to the importing origin.
+ * This method exists so you can override it with your own logic in case your imports are scattered over multiple directories.
+ * @function
+ * @param {string} origin The file name of the importing file
+ * @param {string} target The file name being imported
+ * @returns {?string} Resolved path to `target` or `null` to skip the file
+ */
+Root.prototype.resolvePath = util.path.resolve;
+
+// A symbol-like function to safely signal synchronous loading
+/* istanbul ignore next */
+function SYNC() {} // eslint-disable-line no-empty-function
+
+/**
+ * Loads one or multiple .proto or preprocessed .json files into this root namespace and calls the callback.
+ * @param {string|string[]} filename Names of one or multiple files to load
+ * @param {ParseOptions} options Parse options
+ * @param {LoadCallback} callback Callback function
+ * @returns {undefined}
+ */
+Root.prototype.load = function load(filename, options, callback) {
+    if (typeof options === "function") {
+        callback = options;
+        options = undefined;
+    }
+    var self = this;
+    if (!callback)
+        return util.asPromise(load, self, filename, options);
+
+    var sync = callback === SYNC; // undocumented
+
+    // Finishes loading by calling the callback (exactly once)
+    function finish(err, root) {
+        /* istanbul ignore next */
+        if (!callback)
+            return;
+        var cb = callback;
+        callback = null;
+        if (sync)
+            throw err;
+        cb(err, root);
+    }
+
+    // Processes a single file
+    function process(filename, source) {
+        try {
+            if (util.isString(source) && source.charAt(0) === "{")
+                source = JSON.parse(source);
+            if (!util.isString(source))
+                self.setOptions(source.options).addJSON(source.nested);
+            else {
+                parse.filename = filename;
+                var parsed = parse(source, self, options),
+                    resolved,
+                    i = 0;
+                if (parsed.imports)
+                    for (; i < parsed.imports.length; ++i)
+                        if (resolved = self.resolvePath(filename, parsed.imports[i]))
+                            fetch(resolved);
+                if (parsed.weakImports)
+                    for (i = 0; i < parsed.weakImports.length; ++i)
+                        if (resolved = self.resolvePath(filename, parsed.weakImports[i]))
+                            fetch(resolved, true);
+            }
+        } catch (err) {
+            finish(err);
+        }
+        if (!sync && !queued)
+            finish(null, self); // only once anyway
+    }
+
+    // Fetches a single file
+    function fetch(filename, weak) {
+
+        // Strip path if this file references a bundled definition
+        var idx = filename.lastIndexOf("google/protobuf/");
+        if (idx > -1) {
+            var altname = filename.substring(idx);
+            if (altname in common)
+                filename = altname;
+        }
+
+        // Skip if already loaded / attempted
+        if (self.files.indexOf(filename) > -1)
+            return;
+        self.files.push(filename);
+
+        // Shortcut bundled definitions
+        if (filename in common) {
+            if (sync)
+                process(filename, common[filename]);
+            else {
+                ++queued;
+                setTimeout(function() {
+                    --queued;
+                    process(filename, common[filename]);
+                });
+            }
+            return;
+        }
+
+        // Otherwise fetch from disk or network
+        if (sync) {
+            var source;
+            try {
+                source = util.fs.readFileSync(filename).toString("utf8");
+            } catch (err) {
+                if (!weak)
+                    finish(err);
+                return;
+            }
+            process(filename, source);
+        } else {
+            ++queued;
+            util.fetch(filename, function(err, source) {
+                --queued;
+                /* istanbul ignore next */
+                if (!callback)
+                    return; // terminated meanwhile
+                if (err) {
+                    if (!weak)
+                        finish(err);
+                    else /* istanbul ignore next */ if (!queued) // can't be covered reliably
+                        finish(null, self);
+                    return;
+                }
+                process(filename, source);
+            });
+        }
+    }
+    var queued = 0;
+
+    // Assembling the root namespace doesn't require working type
+    // references anymore, so we can load everything in parallel
+    if (util.isString(filename))
+        filename = [ filename ];
+    for (var i = 0, resolved; i < filename.length; ++i)
+        if (resolved = self.resolvePath("", filename[i]))
+            fetch(resolved);
+
+    if (sync)
+        return self;
+    if (!queued)
+        finish(null, self);
+    return undefined;
+};
+// function load(filename:string, options:ParseOptions, callback:LoadCallback):undefined
+
+/**
+ * Loads one or multiple .proto or preprocessed .json files into this root namespace and calls the callback.
+ * @param {string|string[]} filename Names of one or multiple files to load
+ * @param {LoadCallback} callback Callback function
+ * @returns {undefined}
+ * @variation 2
+ */
+// function load(filename:string, callback:LoadCallback):undefined
+
+/**
+ * Loads one or multiple .proto or preprocessed .json files into this root namespace and returns a promise.
+ * @name Root#load
+ * @function
+ * @param {string|string[]} filename Names of one or multiple files to load
+ * @param {ParseOptions} [options] Parse options. Defaults to {@link parse.defaults} when omitted.
+ * @returns {Promise<Root>} Promise
+ * @variation 3
+ */
+// function load(filename:string, [options:ParseOptions]):Promise<Root>
+
+/**
+ * Synchronously loads one or multiple .proto or preprocessed .json files into this root namespace (node only).
+ * @name Root#loadSync
+ * @function
+ * @param {string|string[]} filename Names of one or multiple files to load
+ * @param {ParseOptions} [options] Parse options. Defaults to {@link parse.defaults} when omitted.
+ * @returns {Root} Root namespace
+ * @throws {Error} If synchronous fetching is not supported (i.e. in browsers) or if a file's syntax is invalid
+ */
+Root.prototype.loadSync = function loadSync(filename, options) {
+    if (!util.isNode)
+        throw Error("not supported");
+    return this.load(filename, options, SYNC);
+};
+
+/**
+ * @override
+ */
+Root.prototype.resolveAll = function resolveAll() {
+    if (this.deferred.length)
+        throw Error("unresolvable extensions: " + this.deferred.map(function(field) {
+            return "'extend " + field.extend + "' in " + field.parent.fullName;
+        }).join(", "));
+    return Namespace.prototype.resolveAll.call(this);
+};
+
+// only uppercased (and thus conflict-free) children are exposed, see below
+var exposeRe = /^[A-Z]/;
+
+/**
+ * Handles a deferred declaring extension field by creating a sister field to represent it within its extended type.
+ * @param {Root} root Root instance
+ * @param {Field} field Declaring extension field witin the declaring type
+ * @returns {boolean} `true` if successfully added to the extended type, `false` otherwise
+ * @inner
+ * @ignore
+ */
+function tryHandleExtension(root, field) {
+    var extendedType = field.parent.lookup(field.extend);
+    if (extendedType) {
+        var sisterField = new Field(field.fullName, field.id, field.type, field.rule, undefined, field.options);
+        sisterField.declaringField = field;
+        field.extensionField = sisterField;
+        extendedType.add(sisterField);
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Called when any object is added to this root or its sub-namespaces.
+ * @param {ReflectionObject} object Object added
+ * @returns {undefined}
+ * @private
+ */
+Root.prototype._handleAdd = function _handleAdd(object) {
+    if (object instanceof Field) {
+
+        if (/* an extension field (implies not part of a oneof) */ object.extend !== undefined && /* not already handled */ !object.extensionField)
+            if (!tryHandleExtension(this, object))
+                this.deferred.push(object);
+
+    } else if (object instanceof Enum) {
+
+        if (exposeRe.test(object.name))
+            object.parent[object.name] = object.values; // expose enum values as property of its parent
+
+    } else /* everything else is a namespace */ {
+
+        if (object instanceof Type) // Try to handle any deferred extensions
+            for (var i = 0; i < this.deferred.length;)
+                if (tryHandleExtension(this, this.deferred[i]))
+                    this.deferred.splice(i, 1);
+                else
+                    ++i;
+        for (var j = 0; j < /* initializes */ object.nestedArray.length; ++j) // recurse into the namespace
+            this._handleAdd(object._nestedArray[j]);
+        if (exposeRe.test(object.name))
+            object.parent[object.name] = object; // expose namespace as property of its parent
+    }
+
+    // The above also adds uppercased (and thus conflict-free) nested types, services and enums as
+    // properties of namespaces just like static code does. This allows using a .d.ts generated for
+    // a static module with reflection-based solutions where the condition is met.
+};
+
+/**
+ * Called when any object is removed from this root or its sub-namespaces.
+ * @param {ReflectionObject} object Object removed
+ * @returns {undefined}
+ * @private
+ */
+Root.prototype._handleRemove = function _handleRemove(object) {
+    if (object instanceof Field) {
+
+        if (/* an extension field */ object.extend !== undefined) {
+            if (/* already handled */ object.extensionField) { // remove its sister field
+                object.extensionField.parent.remove(object.extensionField);
+                object.extensionField = null;
+            } else { // cancel the extension
+                var index = this.deferred.indexOf(object);
+                /* istanbul ignore else */
+                if (index > -1)
+                    this.deferred.splice(index, 1);
+            }
+        }
+
+    } else if (object instanceof Enum) {
+
+        if (exposeRe.test(object.name))
+            delete object.parent[object.name]; // unexpose enum values
+
+    } else if (object instanceof Namespace) {
+
+        for (var i = 0; i < /* initializes */ object.nestedArray.length; ++i) // recurse into the namespace
+            this._handleRemove(object._nestedArray[i]);
+
+        if (exposeRe.test(object.name))
+            delete object.parent[object.name]; // unexpose namespaces
+
+    }
+};
+
+Root._configure = function(Type_, parse_, common_) {
+    Type = Type_;
+    parse = parse_;
+    common = common_;
+};
+
+},{"15":15,"16":16,"23":23,"36":36}],30:[function(require,module,exports){
+"use strict";
+
+/**
+ * Streaming RPC helpers.
+ * @namespace
+ */
+var rpc = exports;
+
+/**
+ * RPC implementation passed to {@link Service#create} performing a service request on network level, i.e. by utilizing http requests or websockets.
+ * @typedef RPCImpl
+ * @type {function}
+ * @param {Method|rpc.ServiceMethod} method Reflected or static method being called
+ * @param {Uint8Array} requestData Request data
+ * @param {RPCImplCallback} callback Callback function
+ * @returns {undefined}
+ * @example
+ * function rpcImpl(method, requestData, callback) {
+ *     if (protobuf.util.lcFirst(method.name) !== "myMethod") // compatible with static code
+ *         throw Error("no such method");
+ *     asynchronouslyObtainAResponse(requestData, function(err, responseData) {
+ *         callback(err, responseData);
+ *     });
+ * }
+ */
+
+/**
+ * Node-style callback as used by {@link RPCImpl}.
+ * @typedef RPCImplCallback
+ * @type {function}
+ * @param {?Error} error Error, if any, otherwise `null`
+ * @param {?Uint8Array} [response] Response data or `null` to signal end of stream, if there hasn't been an error
+ * @returns {undefined}
+ */
+
+rpc.Service = require(31);
+
+},{"31":31}],31:[function(require,module,exports){
+"use strict";
+module.exports = Service;
+
+var util = require(38);
+
+// Extends EventEmitter
+(Service.prototype = Object.create(util.EventEmitter.prototype)).constructor = Service;
+
+/**
+ * A service method callback as used by {@link rpc.ServiceMethod|ServiceMethod}.
+ *
+ * Differs from {@link RPCImplCallback} in that it is an actual callback of a service method which may not return `response = null`.
+ * @typedef rpc.ServiceMethodCallback
+ * @type {function}
+ * @param {?Error} error Error, if any
+ * @param {?Message} [response] Response message
+ * @returns {undefined}
+ */
+
+/**
+ * A service method part of a {@link rpc.ServiceMethodMixin|ServiceMethodMixin} and thus {@link rpc.Service} as created by {@link Service.create}.
+ * @typedef rpc.ServiceMethod
+ * @type {function}
+ * @param {Message|Object} request Request message or plain object
+ * @param {rpc.ServiceMethodCallback} [callback] Node-style callback called with the error, if any, and the response message
+ * @returns {Promise<Message>} Promise if `callback` has been omitted, otherwise `undefined`
+ */
+
+/**
+ * A service method mixin.
+ *
+ * When using TypeScript, mixed in service methods are only supported directly with a type definition of a static module (used with reflection). Otherwise, explicit casting is required.
+ * @typedef rpc.ServiceMethodMixin
+ * @type {Object.<string,rpc.ServiceMethod>}
+ * @example
+ * // Explicit casting with TypeScript
+ * (myRpcService["myMethod"] as protobuf.rpc.ServiceMethod)(...)
+ */
+
+/**
+ * Constructs a new RPC service instance.
+ * @classdesc An RPC service as returned by {@link Service#create}.
+ * @exports rpc.Service
+ * @extends util.EventEmitter
+ * @augments rpc.ServiceMethodMixin
+ * @constructor
+ * @param {RPCImpl} rpcImpl RPC implementation
+ * @param {boolean} [requestDelimited=false] Whether requests are length-delimited
+ * @param {boolean} [responseDelimited=false] Whether responses are length-delimited
+ */
+function Service(rpcImpl, requestDelimited, responseDelimited) {
+
+    if (typeof rpcImpl !== "function")
+        throw TypeError("rpcImpl must be a function");
+
+    util.EventEmitter.call(this);
+
+    /**
+     * RPC implementation. Becomes `null` once the service is ended.
+     * @type {?RPCImpl}
+     */
+    this.rpcImpl = rpcImpl;
+
+    /**
+     * Whether requests are length-delimited.
+     * @type {boolean}
+     */
+    this.requestDelimited = Boolean(requestDelimited);
+
+    /**
+     * Whether responses are length-delimited.
+     * @type {boolean}
+     */
+    this.responseDelimited = Boolean(responseDelimited);
+}
+
+/**
+ * Calls a service method through {@link rpc.Service#rpcImpl|rpcImpl}.
+ * @param {Method|rpc.ServiceMethod} method Reflected or static method
+ * @param {function} requestCtor Request constructor
+ * @param {function} responseCtor Response constructor
+ * @param {Message|Object} request Request message or plain object
+ * @param {rpc.ServiceMethodCallback} callback Service callback
+ * @returns {undefined}
+ */
+Service.prototype.rpcCall = function rpcCall(method, requestCtor, responseCtor, request, callback) {
+
+    if (!request)
+        throw TypeError("request must be specified");
+
+    var self = this;
+    if (!callback)
+        return util.asPromise(rpcCall, self, method, requestCtor, responseCtor, request);
+
+    if (!self.rpcImpl) {
+        setTimeout(function() { callback(Error("already ended")); }, 0);
+        return undefined;
+    }
+
+    try {
+        return self.rpcImpl(
+            method,
+            requestCtor[self.requestDelimited ? "encodeDelimited" : "encode"](request).finish(),
+            function rpcCallback(err, response) {
+
+                if (err) {
+                    self.emit("error", err, method);
+                    return callback(err);
+                }
+
+                if (response === null) {
+                    self.end(/* endedByRPC */ true);
+                    return undefined;
+                }
+
+                if (!(response instanceof responseCtor)) {
+                    try {
+                        response = responseCtor[self.responseDelimited ? "decodeDelimited" : "decode"](response);
+                    } catch (err) {
+                        self.emit("error", err, method);
+                        return callback(err);
+                    }
+                }
+
+                self.emit("data", response, method);
+                return callback(null, response);
+            }
+        );
+    } catch (err) {
+        self.emit("error", err, method);
+        setTimeout(function() { callback(err); }, 0);
+        return undefined;
+    }
+};
+
+/**
+ * Ends this service and emits the `end` event.
+ * @param {boolean} [endedByRPC=false] Whether the service has been ended by the RPC implementation.
+ * @returns {rpc.Service} `this`
+ */
+Service.prototype.end = function end(endedByRPC) {
+    if (this.rpcImpl) {
+        if (!endedByRPC) // signal end to rpcImpl
+            this.rpcImpl(null, null, null);
+        this.rpcImpl = null;
+        this.emit("end").off();
+    }
+    return this;
+};
+
+},{"38":38}],32:[function(require,module,exports){
+"use strict";
+module.exports = Service;
+
+// extends Namespace
+var Namespace = require(23);
+((Service.prototype = Object.create(Namespace.prototype)).constructor = Service).className = "Service";
+
+var Method = require(22),
+    util   = require(36),
+    rpc    = require(30);
+
+/**
+ * Constructs a new service instance.
+ * @classdesc Reflected service.
+ * @extends NamespaceBase
+ * @constructor
+ * @param {string} name Service name
+ * @param {Object.<string,*>} [options] Service options
+ * @throws {TypeError} If arguments are invalid
+ */
+function Service(name, options) {
+    Namespace.call(this, name, options);
+
+    /**
+     * Service methods.
+     * @type {Object.<string,Method>}
+     */
+    this.methods = {}; // toJSON, marker
+
+    /**
+     * Cached methods as an array.
+     * @type {?Method[]}
+     * @private
+     */
+    this._methodsArray = null;
+}
+
+/**
+ * Constructs a service from JSON.
+ * @param {string} name Service name
+ * @param {Object.<string,*>} json JSON object
+ * @returns {Service} Created service
+ * @throws {TypeError} If arguments are invalid
+ */
+Service.fromJSON = function fromJSON(name, json) {
+    var service = new Service(name, json.options);
+    /* istanbul ignore else */
+    if (json.methods)
+        for (var names = Object.keys(json.methods), i = 0; i < names.length; ++i)
+            service.add(Method.fromJSON(names[i], json.methods[names[i]]));
+    return service;
+};
+
+/**
+ * Methods of this service as an array for iteration.
+ * @name Service#methodsArray
+ * @type {Method[]}
+ * @readonly
+ */
+Object.defineProperty(Service.prototype, "methodsArray", {
+    get: function() {
+        return this._methodsArray || (this._methodsArray = util.toArray(this.methods));
+    }
+});
+
+function clearCache(service) {
+    service._methodsArray = null;
+    return service;
+}
+
+/**
+ * @override
+ */
+Service.prototype.toJSON = function toJSON() {
+    var inherited = Namespace.prototype.toJSON.call(this);
+    return {
+        options : inherited && inherited.options || undefined,
+        methods : Namespace.arrayToJSON(this.methodsArray) || /* istanbul ignore next */ {},
+        nested  : inherited && inherited.nested || undefined
+    };
+};
+
+/**
+ * @override
+ */
+Service.prototype.get = function get(name) {
+    return this.methods[name]
+        || Namespace.prototype.get.call(this, name);
+};
+
+/**
+ * @override
+ */
+Service.prototype.resolveAll = function resolveAll() {
+    var methods = this.methodsArray;
+    for (var i = 0; i < methods.length; ++i)
+        methods[i].resolve();
+    return Namespace.prototype.resolve.call(this);
+};
+
+/**
+ * @override
+ */
+Service.prototype.add = function add(object) {
+    /* istanbul ignore next */
+    if (this.get(object.name))
+        throw Error("duplicate name '" + object.name + "' in " + this);
+    if (object instanceof Method) {
+        this.methods[object.name] = object;
+        object.parent = this;
+        return clearCache(this);
+    }
+    return Namespace.prototype.add.call(this, object);
+};
+
+/**
+ * @override
+ */
+Service.prototype.remove = function remove(object) {
+    if (object instanceof Method) {
+
+        /* istanbul ignore next */
+        if (this.methods[object.name] !== object)
+            throw Error(object + " is not a member of " + this);
+
+        delete this.methods[object.name];
+        object.parent = null;
+        return clearCache(this);
+    }
+    return Namespace.prototype.remove.call(this, object);
+};
+
+/**
+ * Creates a runtime service using the specified rpc implementation.
+ * @param {RPCImpl} rpcImpl RPC implementation
+ * @param {boolean} [requestDelimited=false] Whether requests are length-delimited
+ * @param {boolean} [responseDelimited=false] Whether responses are length-delimited
+ * @returns {rpc.Service} RPC service. Useful where requests and/or responses are streamed.
+ */
+Service.prototype.create = function create(rpcImpl, requestDelimited, responseDelimited) {
+    var rpcService = new rpc.Service(rpcImpl, requestDelimited, responseDelimited);
+    for (var i = 0; i < /* initializes */ this.methodsArray.length; ++i) {
+        rpcService[util.lcFirst(this._methodsArray[i].resolve().name)] = util.codegen("r","c")("return this.rpcCall(m,q,s,r,c)").eof(util.lcFirst(this._methodsArray[i].name), {
+            m: this._methodsArray[i],
+            q: this._methodsArray[i].resolvedRequestType.ctor,
+            s: this._methodsArray[i].resolvedResponseType.ctor
+        });
+    }
+    return rpcService;
+};
+
+},{"22":22,"23":23,"30":30,"36":36}],33:[function(require,module,exports){
+"use strict";
+module.exports = tokenize;
+
+var delimRe        = /[\s{}=;:[\],'"()<>]/g,
+    stringDoubleRe = /(?:"([^"\\]*(?:\\.[^"\\]*)*)")/g,
+    stringSingleRe = /(?:'([^'\\]*(?:\\.[^'\\]*)*)')/g;
+
+var setCommentRe = /^ *[*/]+ */,
+    setCommentSplitRe = /\n/g,
+    whitespaceRe = /\s/,
+    unescapeRe = /\\(.?)/g;
+
+var unescapeMap = {
+    "0": "\0",
+    "r": "\r",
+    "n": "\n",
+    "t": "\t"
+};
+
+/**
+ * Unescapes a string.
+ * @param {string} str String to unescape
+ * @returns {string} Unescaped string
+ * @property {Object.<string,string>} map Special characters map
+ * @ignore
+ */
+function unescape(str) {
+    return str.replace(unescapeRe, function($0, $1) {
+        switch ($1) {
+            case "\\":
+            case "":
+                return $1;
+            default:
+                return unescapeMap[$1] || "";
+        }
+    });
+}
+
+tokenize.unescape = unescape;
+
+/**
+ * Handle object returned from {@link tokenize}.
+ * @typedef {Object.<string,*>} TokenizerHandle
+ * @property {function():number} line Gets the current line number
+ * @property {function():?string} next Gets the next token and advances (`null` on eof)
+ * @property {function():?string} peek Peeks for the next token (`null` on eof)
+ * @property {function(string)} push Pushes a token back to the stack
+ * @property {function(string, boolean=):boolean} skip Skips a token, returns its presence and advances or, if non-optional and not present, throws
+ * @property {function(number=):?string} cmnt Gets the comment on the previous line or the line comment on the specified line, if any
+ */
+
+/**
+ * Tokenizes the given .proto source and returns an object with useful utility functions.
+ * @param {string} source Source contents
+ * @returns {TokenizerHandle} Tokenizer handle
+ * @property {function(string):string} unescape Unescapes a string
+ */
+function tokenize(source) {
+    /* eslint-disable callback-return */
+    source = source.toString();
+
+    var offset = 0,
+        length = source.length,
+        line = 1,
+        commentType = null,
+        commentText = null,
+        commentLine = 0;
+
+    var stack = [];
+
+    var stringDelim = null;
+
+    /* istanbul ignore next */
+    /**
+     * Creates an error for illegal syntax.
+     * @param {string} subject Subject
+     * @returns {Error} Error created
+     * @inner
+     */
+    function illegal(subject) {
+        return Error("illegal " + subject + " (line " + line + ")");
+    }
+
+    /**
+     * Reads a string till its end.
+     * @returns {string} String read
+     * @inner
+     */
+    function readString() {
+        var re = stringDelim === "'" ? stringSingleRe : stringDoubleRe;
+        re.lastIndex = offset - 1;
+        var match = re.exec(source);
+        if (!match)
+            throw illegal("string");
+        offset = re.lastIndex;
+        push(stringDelim);
+        stringDelim = null;
+        return unescape(match[1]);
+    }
+
+    /**
+     * Gets the character at `pos` within the source.
+     * @param {number} pos Position
+     * @returns {string} Character
+     * @inner
+     */
+    function charAt(pos) {
+        return source.charAt(pos);
+    }
+
+    /**
+     * Sets the current comment text.
+     * @param {number} start Start offset
+     * @param {number} end End offset
+     * @returns {undefined}
+     * @inner
+     */
+    function setComment(start, end) {
+        commentType = source.charAt(start++);
+        commentLine = line;
+        var lines = source
+            .substring(start, end)
+            .split(setCommentSplitRe);
+        for (var i = 0; i < lines.length; ++i)
+            lines[i] = lines[i].replace(setCommentRe, "").trim();
+        commentText = lines
+            .join("\n")
+            .trim();
+    }
+
+    /**
+     * Obtains the next token.
+     * @returns {?string} Next token or `null` on eof
+     * @inner
+     */
+    function next() {
+        if (stack.length > 0)
+            return stack.shift();
+        if (stringDelim)
+            return readString();
+        var repeat,
+            prev,
+            curr,
+            start,
+            isComment;
+        do {
+            if (offset === length)
+                return null;
+            repeat = false;
+            while (whitespaceRe.test(curr = charAt(offset))) {
+                if (curr === "\n")
+                    ++line;
+                if (++offset === length)
+                    return null;
+            }
+            if (charAt(offset) === "/") {
+                if (++offset === length)
+                    throw illegal("comment");
+                if (charAt(offset) === "/") { // Line
+                    isComment = charAt(start = offset + 1) === "/";
+                    while (charAt(++offset) !== "\n")
+                        if (offset === length)
+                            return null;
+                    ++offset;
+                    if (isComment)
+                        setComment(start, offset - 1);
+                    ++line;
+                    repeat = true;
+                } else if ((curr = charAt(offset)) === "*") { /* Block */
+                    isComment = charAt(start = offset + 1) === "*";
+                    do {
+                        if (curr === "\n")
+                            ++line;
+                        if (++offset === length)
+                            throw illegal("comment");
+                        prev = curr;
+                        curr = charAt(offset);
+                    } while (prev !== "*" || curr !== "/");
+                    ++offset;
+                    if (isComment)
+                        setComment(start, offset - 2);
+                    repeat = true;
+                } else
+                    return "/";
+            }
+        } while (repeat);
+
+        // offset !== length if we got here
+
+        var end = offset;
+        delimRe.lastIndex = 0;
+        var delim = delimRe.test(charAt(end++));
+        if (!delim)
+            while (end < length && !delimRe.test(charAt(end)))
+                ++end;
+        var token = source.substring(offset, offset = end);
+        if (token === "\"" || token === "'")
+            stringDelim = token;
+        return token;
+    }
+
+    /**
+     * Pushes a token back to the stack.
+     * @param {string} token Token
+     * @returns {undefined}
+     * @inner
+     */
+    function push(token) {
+        stack.push(token);
+    }
+
+    /**
+     * Peeks for the next token.
+     * @returns {?string} Token or `null` on eof
+     * @inner
+     */
+    function peek() {
+        if (!stack.length) {
+            var token = next();
+            if (token === null)
+                return null;
+            push(token);
+        }
+        return stack[0];
+    }
+
+    /**
+     * Skips a token.
+     * @param {string} expected Expected token
+     * @param {boolean} [optional=false] Whether the token is optional
+     * @returns {boolean} `true` when skipped, `false` if not
+     * @throws {Error} When a required token is not present
+     * @inner
+     */
+    function skip(expected, optional) {
+        var actual = peek(),
+            equals = actual === expected;
+        if (equals) {
+            next();
+            return true;
+        }
+        if (!optional)
+            throw illegal("token '" + actual + "', '" + expected + "' expected");
+        return false;
+    }
+
+    return {
+        next: next,
+        peek: peek,
+        push: push,
+        skip: skip,
+        line: function() {
+            return line;
+        },
+        cmnt: function(trailingLine) {
+            var ret;
+            if (trailingLine === undefined)
+                ret = commentLine === line - 1 && commentText || null;
+            else {
+                if (!commentText)
+                    peek();
+                ret = commentLine === trailingLine && commentType === "/" && commentText || null;
+            }
+            if (ret) {
+                commentType = commentText = null;
+                commentLine = 0;
+            }
+            return ret;
+        }
+    };
+    /* eslint-enable callback-return */
+}
+
+},{}],34:[function(require,module,exports){
+"use strict";
+module.exports = Type;
+
+// extends Namespace
+var Namespace = require(23);
+((Type.prototype = Object.create(Namespace.prototype)).constructor = Type).className = "Type";
+
+var Enum      = require(15),
+    OneOf     = require(25),
+    Field     = require(16),
+    MapField  = require(20),
+    Service   = require(32),
+    Class     = require(10),
+    Message   = require(21),
+    Reader    = require(27),
+    Writer    = require(40),
+    util      = require(36),
+    encoder   = require(14),
+    decoder   = require(13),
+    verifier  = require(39),
+    converter = require(12);
+
+/**
+ * Creates a type from JSON.
+ * @param {string} name Message name
+ * @param {Object.<string,*>} json JSON object
+ * @returns {Type} Created message type
+ */
+Type.fromJSON = function fromJSON(name, json) {
+    var type = new Type(name, json.options);
+    type.extensions = json.extensions;
+    type.reserved = json.reserved;
+    var names = Object.keys(json.fields),
+        i = 0;
+    for (; i < names.length; ++i)
+        type.add(
+            ( typeof json.fields[names[i]].keyType !== "undefined"
+            ? MapField.fromJSON
+            : Field.fromJSON )(names[i], json.fields[names[i]])
+        );
+    if (json.oneofs)
+        for (names = Object.keys(json.oneofs), i = 0; i < names.length; ++i)
+            type.add(OneOf.fromJSON(names[i], json.oneofs[names[i]]));
+    if (json.nested)
+        for (names = Object.keys(json.nested), i = 0; i < names.length; ++i) {
+            var nested = json.nested[names[i]];
+            type.add( // most to least likely
+                ( nested.id !== undefined
+                ? Field.fromJSON
+                : nested.fields !== undefined
+                ? Type.fromJSON
+                : nested.values !== undefined
+                ? Enum.fromJSON
+                : nested.methods !== undefined
+                ? Service.fromJSON
+                : Namespace.fromJSON )(names[i], nested)
+            );
+        }
+    if (json.extensions && json.extensions.length)
+        type.extensions = json.extensions;
+    if (json.reserved && json.reserved.length)
+        type.reserved = json.reserved;
+    if (json.group)
+        type.group = true;
+    return type;
+};
+
+/**
+ * Constructs a new reflected message type instance.
+ * @classdesc Reflected message type.
+ * @extends NamespaceBase
+ * @constructor
+ * @param {string} name Message name
+ * @param {Object.<string,*>} [options] Declared options
+ */
+function Type(name, options) {
+    Namespace.call(this, name, options);
+
+    /**
+     * Message fields.
+     * @type {Object.<string,Field>}
+     */
+    this.fields = {};  // toJSON, marker
+
+    /**
+     * Oneofs declared within this namespace, if any.
+     * @type {Object.<string,OneOf>}
+     */
+    this.oneofs = undefined; // toJSON
+
+    /**
+     * Extension ranges, if any.
+     * @type {number[][]}
+     */
+    this.extensions = undefined; // toJSON
+
+    /**
+     * Reserved ranges, if any.
+     * @type {Array.<number[]|string>}
+     */
+    this.reserved = undefined; // toJSON
+
+    /*?
+     * Whether this type is a legacy group.
+     * @type {boolean|undefined}
+     */
+    this.group = undefined; // toJSON
+
+    /**
+     * Cached fields by id.
+     * @type {?Object.<number,Field>}
+     * @private
+     */
+    this._fieldsById = null;
+
+    /**
+     * Cached fields as an array.
+     * @type {?Field[]}
+     * @private
+     */
+    this._fieldsArray = null;
+
+    /**
+     * Cached oneofs as an array.
+     * @type {?OneOf[]}
+     * @private
+     */
+    this._oneofsArray = null;
+
+    /**
+     * Cached constructor.
+     * @type {*}
+     * @private
+     */
+    this._ctor = null;
+}
+
+Object.defineProperties(Type.prototype, {
+
+    /**
+     * Message fields by id.
+     * @name Type#fieldsById
+     * @type {Object.<number,Field>}
+     * @readonly
+     */
+    fieldsById: {
+        get: function() {
+            /* istanbul ignore next */
+            if (this._fieldsById)
+                return this._fieldsById;
+            this._fieldsById = {};
+            for (var names = Object.keys(this.fields), i = 0; i < names.length; ++i) {
+                var field = this.fields[names[i]],
+                    id = field.id;
+
+                /* istanbul ignore next */
+                if (this._fieldsById[id])
+                    throw Error("duplicate id " + id + " in " + this);
+
+                this._fieldsById[id] = field;
+            }
+            return this._fieldsById;
+        }
+    },
+
+    /**
+     * Fields of this message as an array for iteration.
+     * @name Type#fieldsArray
+     * @type {Field[]}
+     * @readonly
+     */
+    fieldsArray: {
+        get: function() {
+            return this._fieldsArray || (this._fieldsArray = util.toArray(this.fields));
+        }
+    },
+
+    /**
+     * Oneofs of this message as an array for iteration.
+     * @name Type#oneofsArray
+     * @type {OneOf[]}
+     * @readonly
+     */
+    oneofsArray: {
+        get: function() {
+            return this._oneofsArray || (this._oneofsArray = util.toArray(this.oneofs));
+        }
+    },
+
+    /**
+     * The registered constructor, if any registered, otherwise a generic constructor.
+     * @name Type#ctor
+     * @type {Class}
+     */
+    ctor: {
+        get: function() {
+            return this._ctor || (this._ctor = Class(this).constructor);
+        },
+        set: function(ctor) {
+            if (ctor && !(ctor.prototype instanceof Message))
+                throw TypeError("ctor must be a Message constructor");
+            if (!ctor.from)
+                ctor.from = Message.from;
+            this._ctor = ctor;
+        }
+    }
+});
+
+function clearCache(type) {
+    type._fieldsById = type._fieldsArray = type._oneofsArray = type._ctor = null;
+    delete type.encode;
+    delete type.decode;
+    delete type.verify;
+    return type;
+}
+
+/**
+ * @override
+ */
+Type.prototype.toJSON = function toJSON() {
+    var inherited = Namespace.prototype.toJSON.call(this);
+    return {
+        options    : inherited && inherited.options || undefined,
+        oneofs     : Namespace.arrayToJSON(this.oneofsArray),
+        fields     : Namespace.arrayToJSON(this.fieldsArray.filter(function(obj) { return !obj.declaringField; })) || {},
+        extensions : this.extensions && this.extensions.length ? this.extensions : undefined,
+        reserved   : this.reserved && this.reserved.length ? this.reserved : undefined,
+        group      : this.group || undefined,
+        nested     : inherited && inherited.nested || undefined
+    };
+};
+
+/**
+ * @override
+ */
+Type.prototype.resolveAll = function resolveAll() {
+    var fields = this.fieldsArray, i = 0;
+    while (i < fields.length)
+        fields[i++].resolve();
+    var oneofs = this.oneofsArray; i = 0;
+    while (i < oneofs.length)
+        oneofs[i++].resolve();
+    return Namespace.prototype.resolve.call(this);
+};
+
+/**
+ * @override
+ */
+Type.prototype.get = function get(name) {
+    return this.fields[name]
+        || this.oneofs && this.oneofs[name]
+        || this.nested && this.nested[name]
+        || null;
+};
+
+/**
+ * Adds a nested object to this type.
+ * @param {ReflectionObject} object Nested object to add
+ * @returns {Type} `this`
+ * @throws {TypeError} If arguments are invalid
+ * @throws {Error} If there is already a nested object with this name or, if a field, when there is already a field with this id
+ */
+Type.prototype.add = function add(object) {
+
+    if (this.get(object.name))
+        throw Error("duplicate name '" + object.name + "' in " + this);
+
+    if (object instanceof Field && object.extend === undefined) {
+        // NOTE: Extension fields aren't actual fields on the declaring type, but nested objects.
+        // The root object takes care of adding distinct sister-fields to the respective extended
+        // type instead.
+
+        // avoids calling the getter if not absolutely necessary because it's called quite frequently
+        if (this._fieldsById ? /* istanbul ignore next */ this._fieldsById[object.id] : this.fieldsById[object.id])
+            throw Error("duplicate id " + object.id + " in " + this);
+        if (this.isReservedId(object.id))
+            throw Error("id " + object.id + " is reserved in " + this);
+        if (this.isReservedName(object.name))
+            throw Error("name '" + object.name + "' is reserved in " + this);
+
+        if (object.parent)
+            object.parent.remove(object);
+        this.fields[object.name] = object;
+        object.message = this;
+        object.onAdd(this);
+        return clearCache(this);
+    }
+    if (object instanceof OneOf) {
+        if (!this.oneofs)
+            this.oneofs = {};
+        this.oneofs[object.name] = object;
+        object.onAdd(this);
+        return clearCache(this);
+    }
+    return Namespace.prototype.add.call(this, object);
+};
+
+/**
+ * Removes a nested object from this type.
+ * @param {ReflectionObject} object Nested object to remove
+ * @returns {Type} `this`
+ * @throws {TypeError} If arguments are invalid
+ * @throws {Error} If `object` is not a member of this type
+ */
+Type.prototype.remove = function remove(object) {
+    if (object instanceof Field && object.extend === undefined) {
+        // See Type#add for the reason why extension fields are excluded here.
+        /* istanbul ignore next */
+        if (!this.fields || this.fields[object.name] !== object)
+            throw Error(object + " is not a member of " + this);
+        delete this.fields[object.name];
+        object.parent = null;
+        object.onRemove(this);
+        return clearCache(this);
+    }
+    if (object instanceof OneOf) {
+        /* istanbul ignore next */
+        if (!this.oneofs || this.oneofs[object.name] !== object)
+            throw Error(object + " is not a member of " + this);
+        delete this.oneofs[object.name];
+        object.parent = null;
+        object.onRemove(this);
+        return clearCache(this);
+    }
+    return Namespace.prototype.remove.call(this, object);
+};
+
+/**
+ * Tests if the specified id is reserved.
+ * @param {number} id Id to test
+ * @returns {boolean} `true` if reserved, otherwise `false`
+ */
+Type.prototype.isReservedId = function isReservedId(id) {
+    if (this.reserved)
+        for (var i = 0; i < this.reserved.length; ++i)
+            if (typeof this.reserved[i] !== "string" && this.reserved[i][0] <= id && this.reserved[i][1] >= id)
+                return true;
+    return false;
+};
+
+/**
+ * Tests if the specified name is reserved.
+ * @param {string} name Name to test
+ * @returns {boolean} `true` if reserved, otherwise `false`
+ */
+Type.prototype.isReservedName = function isReservedName(name) {
+    if (this.reserved)
+        for (var i = 0; i < this.reserved.length; ++i)
+            if (this.reserved[i] === name)
+                return true;
+    return false;
+};
+
+/**
+ * Creates a new message of this type using the specified properties.
+ * @param {Object.<string,*>} [properties] Properties to set
+ * @returns {Message} Runtime message
+ */
+Type.prototype.create = function create(properties) {
+    return new this.ctor(properties);
+};
+
+/**
+ * Sets up {@link Type#encode|encode}, {@link Type#decode|decode} and {@link Type#verify|verify}.
+ * @returns {Type} `this`
+ */
+Type.prototype.setup = function setup() {
+    // Sets up everything at once so that the prototype chain does not have to be re-evaluated
+    // multiple times (V8, soft-deopt prototype-check).
+    var fullName = this.fullName,
+        types    = [];
+    for (var i = 0; i < /* initializes */ this.fieldsArray.length; ++i)
+        types.push(this._fieldsArray[i].resolve().resolvedType);
+    this.encode = encoder(this).eof(fullName + "$encode", {
+        Writer : Writer,
+        types  : types,
+        util   : util
+    });
+    this.decode = decoder(this).eof(fullName + "$decode", {
+        Reader : Reader,
+        types  : types,
+        util   : util
+    });
+    this.verify = verifier(this).eof(fullName + "$verify", {
+        types : types,
+        util  : util
+    });
+    this.fromObject = this.from = converter.fromObject(this).eof(fullName + "$fromObject", {
+        types : types,
+        util  : util
+    });
+    this.toObject = converter.toObject(this).eof(fullName + "$toObject", {
+        types : types,
+        util  : util
+    });
+    return this;
+};
+
+/**
+ * Encodes a message of this type. Does not implicitly {@link Type#verify|verify} messages.
+ * @param {Message|Object} message Message instance or plain object
+ * @param {Writer} [writer] Writer to encode to
+ * @returns {Writer} writer
+ */
+Type.prototype.encode = function encode_setup(message, writer) {
+    return this.setup().encode(message, writer); // overrides this method
+};
+
+/**
+ * Encodes a message of this type preceeded by its byte length as a varint. Does not implicitly {@link Type#verify|verify} messages.
+ * @param {Message|Object} message Message instance or plain object
+ * @param {Writer} [writer] Writer to encode to
+ * @returns {Writer} writer
+ */
+Type.prototype.encodeDelimited = function encodeDelimited(message, writer) {
+    return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+};
+
+/**
+ * Decodes a message of this type.
+ * @param {Reader|Uint8Array} reader Reader or buffer to decode from
+ * @param {number} [length] Length of the message, if known beforehand
+ * @returns {Message} Decoded message
+ * @throws {Error} If the payload is not a reader or valid buffer
+ * @throws {util.ProtocolError} If required fields are missing
+ */
+Type.prototype.decode = function decode_setup(reader, length) {
+    return this.setup().decode(reader, length); // overrides this method
+};
+
+/**
+ * Decodes a message of this type preceeded by its byte length as a varint.
+ * @param {Reader|Uint8Array} reader Reader or buffer to decode from
+ * @returns {Message} Decoded message
+ * @throws {Error} If the payload is not a reader or valid buffer
+ * @throws {util.ProtocolError} If required fields are missing
+ */
+Type.prototype.decodeDelimited = function decodeDelimited(reader) {
+    if (!(reader instanceof Reader))
+        reader = Reader.create(reader);
+    return this.decode(reader, reader.uint32());
+};
+
+/**
+ * Verifies that field values are valid and that required fields are present.
+ * @param {Message|Object} message Message to verify
+ * @returns {?string} `null` if valid, otherwise the reason why it is not
+ */
+Type.prototype.verify = function verify_setup(message) {
+    return this.setup().verify(message); // overrides this method
+};
+
+/**
+ * Creates a new message of this type from a plain object. Also converts values to their respective internal types.
+ * @param {Object.<string,*>} object Plain object
+ * @returns {Message} Message instance
+ */
+Type.prototype.fromObject = function fromObject(object) {
+    return this.setup().fromObject(object);
+};
+
+/**
+ * Creates a new message of this type from a plain object. Also converts values to their respective internal types.
+ * This is an alias of {@link Type#fromObject}.
+ * @function
+ * @param {Object.<string,*>} object Plain object
+ * @returns {Message} Message instance
+ */
+Type.prototype.from = Type.prototype.fromObject;
+
+/**
+ * Conversion options as used by {@link Type#toObject} and {@link Message.toObject}.
+ * @typedef ConversionOptions
+ * @type {Object}
+ * @property {*} [longs] Long conversion type.
+ * Valid values are `String` and `Number` (the global types).
+ * Defaults to copy the present value, which is a possibly unsafe number without and a {@link Long} with a long library.
+ * @property {*} [enums] Enum value conversion type.
+ * Only valid value is `String` (the global type).
+ * Defaults to copy the present value, which is the numeric id.
+ * @property {*} [bytes] Bytes value conversion type.
+ * Valid values are `Array` and (a base64 encoded) `String` (the global types).
+ * Defaults to copy the present value, which usually is a Buffer under node and an Uint8Array in the browser.
+ * @property {boolean} [defaults=false] Also sets default values on the resulting object
+ * @property {boolean} [arrays=false] Sets empty arrays for missing repeated fields even if `defaults=false`
+ * @property {boolean} [objects=false] Sets empty objects for missing map fields even if `defaults=false`
+ */
+
+/**
+ * Creates a plain object from a message of this type. Also converts values to other types if specified.
+ * @param {Message} message Message instance
+ * @param {ConversionOptions} [options] Conversion options
+ * @returns {Object.<string,*>} Plain object
+ */
+Type.prototype.toObject = function toObject(message, options) {
+    return this.setup().toObject(message, options);
+};
+
+},{"10":10,"12":12,"13":13,"14":14,"15":15,"16":16,"20":20,"21":21,"23":23,"25":25,"27":27,"32":32,"36":36,"39":39,"40":40}],35:[function(require,module,exports){
+"use strict";
+
+/**
+ * Common type constants.
+ * @namespace
+ */
+var types = exports;
+
+var util = require(36);
+
+var s = [
+    "double",   // 0
+    "float",    // 1
+    "int32",    // 2
+    "uint32",   // 3
+    "sint32",   // 4
+    "fixed32",  // 5
+    "sfixed32", // 6
+    "int64",    // 7
+    "uint64",   // 8
+    "sint64",   // 9
+    "fixed64",  // 10
+    "sfixed64", // 11
+    "bool",     // 12
+    "string",   // 13
+    "bytes"     // 14
+];
+
+function bake(values, offset) {
+    var i = 0, o = {};
+    offset |= 0;
+    while (i < values.length) o[s[i + offset]] = values[i++];
+    return o;
+}
+
+/**
+ * Basic type wire types.
+ * @type {Object.<string,number>}
+ * @property {number} double=1 Fixed64 wire type
+ * @property {number} float=5 Fixed32 wire type
+ * @property {number} int32=0 Varint wire type
+ * @property {number} uint32=0 Varint wire type
+ * @property {number} sint32=0 Varint wire type
+ * @property {number} fixed32=5 Fixed32 wire type
+ * @property {number} sfixed32=5 Fixed32 wire type
+ * @property {number} int64=0 Varint wire type
+ * @property {number} uint64=0 Varint wire type
+ * @property {number} sint64=0 Varint wire type
+ * @property {number} fixed64=1 Fixed64 wire type
+ * @property {number} sfixed64=1 Fixed64 wire type
+ * @property {number} bool=0 Varint wire type
+ * @property {number} string=2 Ldelim wire type
+ * @property {number} bytes=2 Ldelim wire type
+ */
+types.basic = bake([
+    /* double   */ 1,
+    /* float    */ 5,
+    /* int32    */ 0,
+    /* uint32   */ 0,
+    /* sint32   */ 0,
+    /* fixed32  */ 5,
+    /* sfixed32 */ 5,
+    /* int64    */ 0,
+    /* uint64   */ 0,
+    /* sint64   */ 0,
+    /* fixed64  */ 1,
+    /* sfixed64 */ 1,
+    /* bool     */ 0,
+    /* string   */ 2,
+    /* bytes    */ 2
+]);
+
+/**
+ * Basic type defaults.
+ * @type {Object.<string,*>}
+ * @property {number} double=0 Double default
+ * @property {number} float=0 Float default
+ * @property {number} int32=0 Int32 default
+ * @property {number} uint32=0 Uint32 default
+ * @property {number} sint32=0 Sint32 default
+ * @property {number} fixed32=0 Fixed32 default
+ * @property {number} sfixed32=0 Sfixed32 default
+ * @property {number} int64=0 Int64 default
+ * @property {number} uint64=0 Uint64 default
+ * @property {number} sint64=0 Sint32 default
+ * @property {number} fixed64=0 Fixed64 default
+ * @property {number} sfixed64=0 Sfixed64 default
+ * @property {boolean} bool=false Bool default
+ * @property {string} string="" String default
+ * @property {Array.<number>} bytes=Array(0) Bytes default
+ * @property {Message} message=null Message default
+ */
+types.defaults = bake([
+    /* double   */ 0,
+    /* float    */ 0,
+    /* int32    */ 0,
+    /* uint32   */ 0,
+    /* sint32   */ 0,
+    /* fixed32  */ 0,
+    /* sfixed32 */ 0,
+    /* int64    */ 0,
+    /* uint64   */ 0,
+    /* sint64   */ 0,
+    /* fixed64  */ 0,
+    /* sfixed64 */ 0,
+    /* bool     */ false,
+    /* string   */ "",
+    /* bytes    */ util.emptyArray,
+    /* message  */ null
+]);
+
+/**
+ * Basic long type wire types.
+ * @type {Object.<string,number>}
+ * @property {number} int64=0 Varint wire type
+ * @property {number} uint64=0 Varint wire type
+ * @property {number} sint64=0 Varint wire type
+ * @property {number} fixed64=1 Fixed64 wire type
+ * @property {number} sfixed64=1 Fixed64 wire type
+ */
+types.long = bake([
+    /* int64    */ 0,
+    /* uint64   */ 0,
+    /* sint64   */ 0,
+    /* fixed64  */ 1,
+    /* sfixed64 */ 1
+], 7);
+
+/**
+ * Allowed types for map keys with their associated wire type.
+ * @type {Object.<string,number>}
+ * @property {number} int32=0 Varint wire type
+ * @property {number} uint32=0 Varint wire type
+ * @property {number} sint32=0 Varint wire type
+ * @property {number} fixed32=5 Fixed32 wire type
+ * @property {number} sfixed32=5 Fixed32 wire type
+ * @property {number} int64=0 Varint wire type
+ * @property {number} uint64=0 Varint wire type
+ * @property {number} sint64=0 Varint wire type
+ * @property {number} fixed64=1 Fixed64 wire type
+ * @property {number} sfixed64=1 Fixed64 wire type
+ * @property {number} bool=0 Varint wire type
+ * @property {number} string=2 Ldelim wire type
+ */
+types.mapKey = bake([
+    /* int32    */ 0,
+    /* uint32   */ 0,
+    /* sint32   */ 0,
+    /* fixed32  */ 5,
+    /* sfixed32 */ 5,
+    /* int64    */ 0,
+    /* uint64   */ 0,
+    /* sint64   */ 0,
+    /* fixed64  */ 1,
+    /* sfixed64 */ 1,
+    /* bool     */ 0,
+    /* string   */ 2
+], 2);
+
+/**
+ * Allowed types for packed repeated fields with their associated wire type.
+ * @type {Object.<string,number>}
+ * @property {number} double=1 Fixed64 wire type
+ * @property {number} float=5 Fixed32 wire type
+ * @property {number} int32=0 Varint wire type
+ * @property {number} uint32=0 Varint wire type
+ * @property {number} sint32=0 Varint wire type
+ * @property {number} fixed32=5 Fixed32 wire type
+ * @property {number} sfixed32=5 Fixed32 wire type
+ * @property {number} int64=0 Varint wire type
+ * @property {number} uint64=0 Varint wire type
+ * @property {number} sint64=0 Varint wire type
+ * @property {number} fixed64=1 Fixed64 wire type
+ * @property {number} sfixed64=1 Fixed64 wire type
+ * @property {number} bool=0 Varint wire type
+ */
+types.packed = bake([
+    /* double   */ 1,
+    /* float    */ 5,
+    /* int32    */ 0,
+    /* uint32   */ 0,
+    /* sint32   */ 0,
+    /* fixed32  */ 5,
+    /* sfixed32 */ 5,
+    /* int64    */ 0,
+    /* uint64   */ 0,
+    /* sint64   */ 0,
+    /* fixed64  */ 1,
+    /* sfixed64 */ 1,
+    /* bool     */ 0
+]);
+
+},{"36":36}],36:[function(require,module,exports){
+"use strict";
+
+/**
+ * Various utility functions.
+ * @namespace
+ */
+var util = module.exports = require(38);
+
+util.codegen = require(3);
+util.fetch   = require(5);
+util.path    = require(7);
+
+/**
+ * Node's fs module if available.
+ * @type {Object.<string,*>}
+ */
+util.fs = util.inquire("fs");
+
+/**
+ * Converts an object's values to an array.
+ * @param {Object.<string,*>} object Object to convert
+ * @returns {Array.<*>} Converted array
+ */
+util.toArray = function toArray(object) {
+    var array = [];
+    if (object)
+        for (var keys = Object.keys(object), i = 0; i < keys.length; ++i)
+            array.push(object[keys[i]]);
+    return array;
+};
+
+var safePropBackslashRe = /\\/g,
+    safePropQuoteRe     = /"/g;
+
+/**
+ * Returns a safe property accessor for the specified properly name.
+ * @param {string} prop Property name
+ * @returns {string} Safe accessor
+ */
+util.safeProp = function safeProp(prop) {
+    return "[\"" + prop.replace(safePropBackslashRe, "\\\\").replace(safePropQuoteRe, "\\\"") + "\"]";
+};
+
+/**
+ * Converts the first character of a string to upper case.
+ * @param {string} str String to convert
+ * @returns {string} Converted string
+ */
+util.ucFirst = function ucFirst(str) {
+    return str.charAt(0).toUpperCase() + str.substring(1);
+};
+
+},{"3":3,"38":38,"5":5,"7":7}],37:[function(require,module,exports){
+"use strict";
+module.exports = LongBits;
+
+var util = require(38);
+
+/**
+ * Any compatible Long instance.
+ *
+ * This is a minimal stand-alone definition of a Long instance. The actual type is that exported by long.js.
+ * @typedef Long
+ * @type {Object}
+ * @property {number} low Low bits
+ * @property {number} high High bits
+ * @property {boolean} unsigned Whether unsigned or not
+ */
+
+/**
+ * Constructs new long bits.
+ * @classdesc Helper class for working with the low and high bits of a 64 bit value.
+ * @memberof util
+ * @constructor
+ * @param {number} lo Low 32 bits, unsigned
+ * @param {number} hi High 32 bits, unsigned
+ */
+function LongBits(lo, hi) {
+
+    // note that the casts below are theoretically unnecessary as of today, but older statically
+    // generated converter code might still call the ctor with signed 32bits. kept for compat.
+
+    /**
+     * Low bits.
+     * @type {number}
+     */
+    this.lo = lo >>> 0;
+
+    /**
+     * High bits.
+     * @type {number}
+     */
+    this.hi = hi >>> 0;
+}
+
+/**
+ * Zero bits.
+ * @memberof util.LongBits
+ * @type {util.LongBits}
+ */
+var zero = LongBits.zero = new LongBits(0, 0);
+
+zero.toNumber = function() { return 0; };
+zero.zzEncode = zero.zzDecode = function() { return this; };
+zero.length = function() { return 1; };
+
+/**
+ * Zero hash.
+ * @memberof util.LongBits
+ * @type {string}
+ */
+var zeroHash = LongBits.zeroHash = "\0\0\0\0\0\0\0\0";
+
+/**
+ * Constructs new long bits from the specified number.
+ * @param {number} value Value
+ * @returns {util.LongBits} Instance
+ */
+LongBits.fromNumber = function fromNumber(value) {
+    if (value === 0)
+        return zero;
+    var sign = value < 0;
+    if (sign)
+        value = -value;
+    var lo = value >>> 0,
+        hi = (value - lo) / 4294967296 >>> 0;
+    if (sign) {
+        hi = ~hi >>> 0;
+        lo = ~lo >>> 0;
+        if (++lo > 4294967295) {
+            lo = 0;
+            if (++hi > 4294967295)
+                hi = 0;
+        }
+    }
+    return new LongBits(lo, hi);
+};
+
+/**
+ * Constructs new long bits from a number, long or string.
+ * @param {Long|number|string} value Value
+ * @returns {util.LongBits} Instance
+ */
+LongBits.from = function from(value) {
+    if (typeof value === "number")
+        return LongBits.fromNumber(value);
+    if (util.isString(value)) {
+        /* istanbul ignore else */
+        if (util.Long)
+            value = util.Long.fromString(value);
+        else
+            return LongBits.fromNumber(parseInt(value, 10));
+    }
+    return value.low || value.high ? new LongBits(value.low >>> 0, value.high >>> 0) : zero;
+};
+
+/**
+ * Converts this long bits to a possibly unsafe JavaScript number.
+ * @param {boolean} [unsigned=false] Whether unsigned or not
+ * @returns {number} Possibly unsafe number
+ */
+LongBits.prototype.toNumber = function toNumber(unsigned) {
+    if (!unsigned && this.hi >>> 31) {
+        var lo = ~this.lo + 1 >>> 0,
+            hi = ~this.hi     >>> 0;
+        if (!lo)
+            hi = hi + 1 >>> 0;
+        return -(lo + hi * 4294967296);
+    }
+    return this.lo + this.hi * 4294967296;
+};
+
+/**
+ * Converts this long bits to a long.
+ * @param {boolean} [unsigned=false] Whether unsigned or not
+ * @returns {Long} Long
+ */
+LongBits.prototype.toLong = function toLong(unsigned) {
+    return util.Long
+        ? new util.Long(this.lo | 0, this.hi | 0, Boolean(unsigned))
+        /* istanbul ignore next */
+        : { low: this.lo | 0, high: this.hi | 0, unsigned: Boolean(unsigned) };
+};
+
+var charCodeAt = String.prototype.charCodeAt;
+
+/**
+ * Constructs new long bits from the specified 8 characters long hash.
+ * @param {string} hash Hash
+ * @returns {util.LongBits} Bits
+ */
+LongBits.fromHash = function fromHash(hash) {
+    if (hash === zeroHash)
+        return zero;
+    return new LongBits(
+        ( charCodeAt.call(hash, 0)
+        | charCodeAt.call(hash, 1) << 8
+        | charCodeAt.call(hash, 2) << 16
+        | charCodeAt.call(hash, 3) << 24) >>> 0
+    ,
+        ( charCodeAt.call(hash, 4)
+        | charCodeAt.call(hash, 5) << 8
+        | charCodeAt.call(hash, 6) << 16
+        | charCodeAt.call(hash, 7) << 24) >>> 0
+    );
+};
+
+/**
+ * Converts this long bits to a 8 characters long hash.
+ * @returns {string} Hash
+ */
+LongBits.prototype.toHash = function toHash() {
+    return String.fromCharCode(
+        this.lo        & 255,
+        this.lo >>> 8  & 255,
+        this.lo >>> 16 & 255,
+        this.lo >>> 24      ,
+        this.hi        & 255,
+        this.hi >>> 8  & 255,
+        this.hi >>> 16 & 255,
+        this.hi >>> 24
+    );
+};
+
+/**
+ * Zig-zag encodes this long bits.
+ * @returns {util.LongBits} `this`
+ */
+LongBits.prototype.zzEncode = function zzEncode() {
+    var mask =   this.hi >> 31;
+    this.hi  = ((this.hi << 1 | this.lo >>> 31) ^ mask) >>> 0;
+    this.lo  = ( this.lo << 1                   ^ mask) >>> 0;
+    return this;
+};
+
+/**
+ * Zig-zag decodes this long bits.
+ * @returns {util.LongBits} `this`
+ */
+LongBits.prototype.zzDecode = function zzDecode() {
+    var mask = -(this.lo & 1);
+    this.lo  = ((this.lo >>> 1 | this.hi << 31) ^ mask) >>> 0;
+    this.hi  = ( this.hi >>> 1                  ^ mask) >>> 0;
+    return this;
+};
+
+/**
+ * Calculates the length of this longbits when encoded as a varint.
+ * @returns {number} Length
+ */
+LongBits.prototype.length = function length() {
+    var part0 =  this.lo,
+        part1 = (this.lo >>> 28 | this.hi << 4) >>> 0,
+        part2 =  this.hi >>> 24;
+    return part2 === 0
+         ? part1 === 0
+           ? part0 < 16384
+             ? part0 < 128 ? 1 : 2
+             : part0 < 2097152 ? 3 : 4
+           : part1 < 16384
+             ? part1 < 128 ? 5 : 6
+             : part1 < 2097152 ? 7 : 8
+         : part2 < 128 ? 9 : 10;
+};
+
+},{"38":38}],38:[function(require,module,exports){
+"use strict";
+var util = exports;
+
+// used to return a Promise where callback is omitted
+util.asPromise = require(1);
+
+// converts to / from base64 encoded strings
+util.base64 = require(2);
+
+// base class of rpc.Service
+util.EventEmitter = require(4);
+
+// requires modules optionally and hides the call from bundlers
+util.inquire = require(6);
+
+// converts to / from utf8 encoded strings
+util.utf8 = require(9);
+
+// provides a node-like buffer pool in the browser
+util.pool = require(8);
+
+// utility to work with the low and high bits of a 64 bit value
+util.LongBits = require(37);
+
+/**
+ * An immuable empty array.
+ * @memberof util
+ * @type {Array.<*>}
+ */
+util.emptyArray = Object.freeze ? Object.freeze([]) : /* istanbul ignore next */ []; // used on prototypes
+
+/**
+ * An immutable empty object.
+ * @type {Object}
+ */
+util.emptyObject = Object.freeze ? Object.freeze({}) : /* istanbul ignore next */ {}; // used on prototypes
+
+/**
+ * Whether running within node or not.
+ * @memberof util
+ * @type {boolean}
+ */
+util.isNode = Boolean(global.process && global.process.versions && global.process.versions.node);
+
+/**
+ * Tests if the specified value is an integer.
+ * @function
+ * @param {*} value Value to test
+ * @returns {boolean} `true` if the value is an integer
+ */
+util.isInteger = Number.isInteger || /* istanbul ignore next */ function isInteger(value) {
+    return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
+};
+
+/**
+ * Tests if the specified value is a string.
+ * @param {*} value Value to test
+ * @returns {boolean} `true` if the value is a string
+ */
+util.isString = function isString(value) {
+    return typeof value === "string" || value instanceof String;
+};
+
+/**
+ * Tests if the specified value is a non-null object.
+ * @param {*} value Value to test
+ * @returns {boolean} `true` if the value is a non-null object
+ */
+util.isObject = function isObject(value) {
+    return value && typeof value === "object";
+};
+
+/**
+ * Node's Buffer class if available.
+ * @type {?function(new: Buffer)}
+ */
+util.Buffer = (function() {
+    try {
+        var Buffer = util.inquire("buffer").Buffer;
+        // refuse to use non-node buffers if not explicitly assigned (perf reasons):
+        return Buffer.prototype.utf8Write ? Buffer : /* istanbul ignore next */ null;
+    } catch (e) {
+        /* istanbul ignore next */
+        return null;
+    }
+})();
+
+/**
+ * Internal alias of or polyfull for Buffer.from.
+ * @type {?function}
+ * @param {string|number[]} value Value
+ * @param {string} [encoding] Encoding if value is a string
+ * @returns {Uint8Array}
+ * @private
+ */
+util._Buffer_from = null;
+
+/**
+ * Internal alias of or polyfill for Buffer.allocUnsafe.
+ * @type {?function}
+ * @param {number} size Buffer size
+ * @returns {Uint8Array}
+ * @private
+ */
+util._Buffer_allocUnsafe = null;
+
+/**
+ * Creates a new buffer of whatever type supported by the environment.
+ * @param {number|number[]} [sizeOrArray=0] Buffer size or number array
+ * @returns {Uint8Array|Buffer} Buffer
+ */
+util.newBuffer = function newBuffer(sizeOrArray) {
+    /* istanbul ignore next */
+    return typeof sizeOrArray === "number"
+        ? util.Buffer
+            ? util._Buffer_allocUnsafe(sizeOrArray)
+            : new util.Array(sizeOrArray)
+        : util.Buffer
+            ? util._Buffer_from(sizeOrArray)
+            : typeof Uint8Array === "undefined"
+                ? sizeOrArray
+                : new Uint8Array(sizeOrArray);
+};
+
+/**
+ * Array implementation used in the browser. `Uint8Array` if supported, otherwise `Array`.
+ * @type {?function(new: Uint8Array, *)}
+ */
+util.Array = typeof Uint8Array !== "undefined" ? Uint8Array /* istanbul ignore next */ : Array;
+
+/**
+ * Long.js's Long class if available.
+ * @type {?function(new: Long)}
+ */
+util.Long = /* istanbul ignore next */ global.dcodeIO && /* istanbul ignore next */ global.dcodeIO.Long || util.inquire("long");
+
+/**
+ * Regular expression used to verify 2 bit (`bool`) map keys.
+ * @type {RegExp}
+ */
+util.key2Re = /^true|false|0|1$/;
+
+/**
+ * Regular expression used to verify 32 bit (`int32` etc.) map keys.
+ * @type {RegExp}
+ */
+util.key32Re = /^-?(?:0|[1-9][0-9]*)$/;
+
+/**
+ * Regular expression used to verify 64 bit (`int64` etc.) map keys.
+ * @type {RegExp}
+ */
+util.key64Re = /^(?:[\\x00-\\xff]{8}|-?(?:0|[1-9][0-9]*))$/;
+
+/**
+ * Converts a number or long to an 8 characters long hash string.
+ * @param {Long|number} value Value to convert
+ * @returns {string} Hash
+ */
+util.longToHash = function longToHash(value) {
+    return value
+        ? util.LongBits.from(value).toHash()
+        : util.LongBits.zeroHash;
+};
+
+/**
+ * Converts an 8 characters long hash string to a long or number.
+ * @param {string} hash Hash
+ * @param {boolean} [unsigned=false] Whether unsigned or not
+ * @returns {Long|number} Original value
+ */
+util.longFromHash = function longFromHash(hash, unsigned) {
+    var bits = util.LongBits.fromHash(hash);
+    if (util.Long)
+        return util.Long.fromBits(bits.lo, bits.hi, unsigned);
+    return bits.toNumber(Boolean(unsigned));
+};
+
+/**
+ * Merges the properties of the source object into the destination object.
+ * @memberof util
+ * @param {Object.<string,*>} dst Destination object
+ * @param {Object.<string,*>} src Source object
+ * @param {boolean} [ifNotSet=false] Merges only if the key is not already set
+ * @returns {Object.<string,*>} Destination object
+ */
+function merge(dst, src, ifNotSet) { // used by converters
+    for (var keys = Object.keys(src), i = 0; i < keys.length; ++i)
+        if (dst[keys[i]] === undefined || !ifNotSet)
+            dst[keys[i]] = src[keys[i]];
+    return dst;
+}
+
+util.merge = merge;
+
+/**
+ * Converts the first character of a string to lower case.
+ * @param {string} str String to convert
+ * @returns {string} Converted string
+ */
+util.lcFirst = function lcFirst(str) {
+    return str.charAt(0).toLowerCase() + str.substring(1);
+};
+
+/**
+ * Creates a custom error constructor.
+ * @memberof util
+ * @param {string} name Error name
+ * @returns {function} Custom error constructor
+ */
+function newError(name) {
+
+    function CustomError(message, properties) {
+
+        if (!(this instanceof CustomError))
+            return new CustomError(message, properties);
+
+        // Error.call(this, message);
+        // ^ just returns a new error instance because the ctor can be called as a function
+
+        Object.defineProperty(this, "message", { get: function() { return message; } });
+
+        /* istanbul ignore next */
+        if (Error.captureStackTrace) // node
+            Error.captureStackTrace(this, CustomError);
+        else
+            Object.defineProperty(this, "stack", { value: (new Error()).stack || "" });
+
+        if (properties)
+            merge(this, properties);
+    }
+
+    (CustomError.prototype = Object.create(Error.prototype)).constructor = CustomError;
+
+    Object.defineProperty(CustomError.prototype, "name", { get: function() { return name; } });
+
+    CustomError.prototype.toString = function toString() {
+        return this.name + ": " + this.message;
+    };
+
+    return CustomError;
+}
+
+util.newError = newError;
+
+/**
+ * Constructs a new protocol error.
+ * @classdesc Error subclass indicating a protocol specifc error.
+ * @memberof util
+ * @extends Error
+ * @constructor
+ * @param {string} message Error message
+ * @param {Object.<string,*>=} properties Additional properties
+ * @example
+ * try {
+ *     MyMessage.decode(someBuffer); // throws if required fields are missing
+ * } catch (e) {
+ *     if (e instanceof ProtocolError && e.instance)
+ *         console.log("decoded so far: " + JSON.stringify(e.instance));
+ * }
+ */
+util.ProtocolError = newError("ProtocolError");
+
+/**
+ * So far decoded message instance.
+ * @name util.ProtocolError#instance
+ * @type {Message}
+ */
+
+/**
+ * Builds a getter for a oneof's present field name.
+ * @param {string[]} fieldNames Field names
+ * @returns {function():string|undefined} Unbound getter
+ */
+util.oneOfGetter = function getOneOf(fieldNames) {
+    var fieldMap = {};
+    for (var i = 0; i < fieldNames.length; ++i)
+        fieldMap[fieldNames[i]] = 1;
+
+    /**
+     * @returns {string|undefined} Set field name, if any
+     * @this Object
+     * @ignore
+     */
+    return function() { // eslint-disable-line consistent-return
+        for (var keys = Object.keys(this), i = keys.length - 1; i > -1; --i)
+            if (fieldMap[keys[i]] === 1 && this[keys[i]] !== undefined && this[keys[i]] !== null)
+                return keys[i];
+    };
+};
+
+/**
+ * Builds a setter for a oneof's present field name.
+ * @param {string[]} fieldNames Field names
+ * @returns {function(?string):undefined} Unbound setter
+ */
+util.oneOfSetter = function setOneOf(fieldNames) {
+
+    /**
+     * @param {string} name Field name
+     * @returns {undefined}
+     * @this Object
+     * @ignore
+     */
+    return function(name) {
+        for (var i = 0; i < fieldNames.length; ++i)
+            if (fieldNames[i] !== name)
+                delete this[fieldNames[i]];
+    };
+};
+
+/**
+ * Lazily resolves fully qualified type names against the specified root.
+ * @param {Root} root Root instanceof
+ * @param {Object.<number,string|ReflectionObject>} lazyTypes Type names
+ * @returns {undefined}
+ */
+util.lazyResolve = function lazyResolve(root, lazyTypes) {
+    for (var i = 0; i < lazyTypes.length; ++i) {
+        for (var keys = Object.keys(lazyTypes[i]), j = 0; j < keys.length; ++j) {
+            var path = lazyTypes[i][keys[j]].split("."),
+                ptr  = root;
+            while (path.length)
+                ptr = ptr[path.shift()];
+            lazyTypes[i][keys[j]] = ptr;
+        }
+    }
+};
+
+/**
+ * Default conversion options used for toJSON implementations. Converts longs, enums and bytes to strings.
+ * @type {ConversionOptions}
+ */
+util.toJSONOptions = {
+    longs: String,
+    enums: String,
+    bytes: String
+};
+
+util._configure = function() {
+    var Buffer = util.Buffer;
+    /* istanbul ignore if */
+    if (!Buffer) {
+        util._Buffer_from = util._Buffer_allocUnsafe = null;
+        return;
+    }
+    // because node 4.x buffers are incompatible & immutable
+    // see: https://github.com/dcodeIO/protobuf.js/pull/665
+    util._Buffer_from = Buffer.from !== Uint8Array.from && Buffer.from ||
+        /* istanbul ignore next */
+        function Buffer_from(value, encoding) {
+            return new Buffer(value, encoding);
+        };
+    util._Buffer_allocUnsafe = Buffer.allocUnsafe ||
+        /* istanbul ignore next */
+        function Buffer_allocUnsafe(size) {
+            return new Buffer(size);
+        };
+};
+
+},{"1":1,"2":2,"37":37,"4":4,"6":6,"8":8,"9":9}],39:[function(require,module,exports){
+"use strict";
+module.exports = verifier;
+
+var Enum      = require(15),
+    util      = require(36);
+
+function invalid(field, expected) {
+    return field.name + ": " + expected + (field.repeated && expected !== "array" ? "[]" : field.map && expected !== "object" ? "{k:"+field.keyType+"}" : "") + " expected";
+}
+
+/**
+ * Generates a partial value verifier.
+ * @param {Codegen} gen Codegen instance
+ * @param {Field} field Reflected field
+ * @param {number} fieldIndex Field index
+ * @param {string} ref Variable reference
+ * @returns {Codegen} Codegen instance
+ * @ignore
+ */
+function genVerifyValue(gen, field, fieldIndex, ref) {
+    /* eslint-disable no-unexpected-multiline */
+    if (field.resolvedType) {
+        if (field.resolvedType instanceof Enum) { gen
+            ("switch(%s){", ref)
+                ("default:")
+                    ("return%j", invalid(field, "enum value"));
+            for (var keys = Object.keys(field.resolvedType.values), j = 0; j < keys.length; ++j) gen
+                ("case %d:", field.resolvedType.values[keys[j]]);
+            gen
+                    ("break")
+            ("}");
+        } else gen
+            ("var e=types[%d].verify(%s);", fieldIndex, ref)
+            ("if(e)")
+                ("return%j+e", field.name + ".");
+    } else {
+        switch (field.type) {
+            case "int32":
+            case "uint32":
+            case "sint32":
+            case "fixed32":
+            case "sfixed32": gen
+                ("if(!util.isInteger(%s))", ref)
+                    ("return%j", invalid(field, "integer"));
+                break;
+            case "int64":
+            case "uint64":
+            case "sint64":
+            case "fixed64":
+            case "sfixed64": gen
+                ("if(!util.isInteger(%s)&&!(%s&&util.isInteger(%s.low)&&util.isInteger(%s.high)))", ref, ref, ref, ref)
+                    ("return%j", invalid(field, "integer|Long"));
+                break;
+            case "float":
+            case "double": gen
+                ("if(typeof %s!==\"number\")", ref)
+                    ("return%j", invalid(field, "number"));
+                break;
+            case "bool": gen
+                ("if(typeof %s!==\"boolean\")", ref)
+                    ("return%j", invalid(field, "boolean"));
+                break;
+            case "string": gen
+                ("if(!util.isString(%s))", ref)
+                    ("return%j", invalid(field, "string"));
+                break;
+            case "bytes": gen
+                ("if(!(%s&&typeof %s.length===\"number\"||util.isString(%s)))", ref, ref, ref)
+                    ("return%j", invalid(field, "buffer"));
+                break;
+        }
+    }
+    return gen;
+    /* eslint-enable no-unexpected-multiline */
+}
+
+/**
+ * Generates a partial key verifier.
+ * @param {Codegen} gen Codegen instance
+ * @param {Field} field Reflected field
+ * @param {string} ref Variable reference
+ * @returns {Codegen} Codegen instance
+ * @ignore
+ */
+function genVerifyKey(gen, field, ref) {
+    /* eslint-disable no-unexpected-multiline */
+    switch (field.keyType) {
+        case "int32":
+        case "uint32":
+        case "sint32":
+        case "fixed32":
+        case "sfixed32": gen
+            ("if(!util.key32Re.test(%s))", ref)
+                ("return%j", invalid(field, "integer key"));
+            break;
+        case "int64":
+        case "uint64":
+        case "sint64":
+        case "fixed64":
+        case "sfixed64": gen
+            ("if(!util.key64Re.test(%s))", ref) // see comment above: x is ok, d is not
+                ("return%j", invalid(field, "integer|Long key"));
+            break;
+        case "bool": gen
+            ("if(!util.key2Re.test(%s))", ref)
+                ("return%j", invalid(field, "boolean key"));
+            break;
+    }
+    return gen;
+    /* eslint-enable no-unexpected-multiline */
+}
+
+/**
+ * Generates a verifier specific to the specified message type.
+ * @param {Type} mtype Message type
+ * @returns {Codegen} Codegen instance
+ */
+function verifier(mtype) {
+    /* eslint-disable no-unexpected-multiline */
+
+    var gen = util.codegen("m")
+    ("if(typeof m!==\"object\"||m===null)")
+        ("return%j", "object expected");
+
+    for (var i = 0; i < /* initializes */ mtype.fieldsArray.length; ++i) {
+        var field = mtype._fieldsArray[i].resolve(),
+            ref   = "m" + util.safeProp(field.name);
+
+        // map fields
+        if (field.map) { gen
+            ("if(%s!==undefined){", ref)
+                ("if(!util.isObject(%s))", ref)
+                    ("return%j", invalid(field, "object"))
+                ("var k=Object.keys(%s)", ref)
+                ("for(var i=0;i<k.length;++i){");
+                    genVerifyKey(gen, field, "k[i]");
+                    genVerifyValue(gen, field, i, ref + "[k[i]]")
+                ("}")
+            ("}");
+
+        // repeated fields
+        } else if (field.repeated) { gen
+            ("if(%s!==undefined){", ref)
+                ("if(!Array.isArray(%s))", ref)
+                    ("return%j", invalid(field, "array"))
+                ("for(var i=0;i<%s.length;++i){", ref);
+                    genVerifyValue(gen, field, i, ref + "[i]")
+                ("}")
+            ("}");
+
+        // required or present fields
+        } else {
+            if (!field.required) {
+                if (field.resolvedType && !(field.resolvedType instanceof Enum)) gen
+            ("if(%s!==undefined&&%s!==null){", ref, ref);
+                else gen
+            ("if(%s!==undefined){", ref);
+            }
+                genVerifyValue(gen, field, i, ref);
+            if (!field.required) gen
+            ("}");
+        }
+    } return gen
+    ("return null");
+    /* eslint-enable no-unexpected-multiline */
+}
+},{"15":15,"36":36}],40:[function(require,module,exports){
+"use strict";
+module.exports = Writer;
+
+var util      = require(38);
+
+var BufferWriter; // cyclic
+
+var LongBits  = util.LongBits,
+    base64    = util.base64,
+    utf8      = util.utf8;
+
+/**
+ * Constructs a new writer operation instance.
+ * @classdesc Scheduled writer operation.
+ * @constructor
+ * @param {function(*, Uint8Array, number)} fn Function to call
+ * @param {number} len Value byte length
+ * @param {*} val Value to write
+ * @ignore
+ */
+function Op(fn, len, val) {
+
+    /**
+     * Function to call.
+     * @type {function(Uint8Array, number, *)}
+     */
+    this.fn = fn;
+
+    /**
+     * Value byte length.
+     * @type {number}
+     */
+    this.len = len;
+
+    /**
+     * Next operation.
+     * @type {Writer.Op|undefined}
+     */
+    this.next = undefined;
+
+    /**
+     * Value to write.
+     * @type {*}
+     */
+    this.val = val; // type varies
+}
+
+/* istanbul ignore next */
+function noop() {} // eslint-disable-line no-empty-function
+
+/**
+ * Constructs a new writer state instance.
+ * @classdesc Copied writer state.
+ * @memberof Writer
+ * @constructor
+ * @param {Writer} writer Writer to copy state from
+ * @private
+ * @ignore
+ */
+function State(writer) {
+
+    /**
+     * Current head.
+     * @type {Writer.Op}
+     */
+    this.head = writer.head;
+
+    /**
+     * Current tail.
+     * @type {Writer.Op}
+     */
+    this.tail = writer.tail;
+
+    /**
+     * Current buffer length.
+     * @type {number}
+     */
+    this.len = writer.len;
+
+    /**
+     * Next state.
+     * @type {?State}
+     */
+    this.next = writer.states;
+}
+
+/**
+ * Constructs a new writer instance.
+ * @classdesc Wire format writer using `Uint8Array` if available, otherwise `Array`.
+ * @constructor
+ */
+function Writer() {
+
+    /**
+     * Current length.
+     * @type {number}
+     */
+    this.len = 0;
+
+    /**
+     * Operations head.
+     * @type {Object}
+     */
+    this.head = new Op(noop, 0, 0);
+
+    /**
+     * Operations tail
+     * @type {Object}
+     */
+    this.tail = this.head;
+
+    /**
+     * Linked forked states.
+     * @type {?Object}
+     */
+    this.states = null;
+
+    // When a value is written, the writer calculates its byte length and puts it into a linked
+    // list of operations to perform when finish() is called. This both allows us to allocate
+    // buffers of the exact required size and reduces the amount of work we have to do compared
+    // to first calculating over objects and then encoding over objects. In our case, the encoding
+    // part is just a linked list walk calling operations with already prepared values.
+}
+
+/**
+ * Creates a new writer.
+ * @function
+ * @returns {BufferWriter|Writer} A {@link BufferWriter} when Buffers are supported, otherwise a {@link Writer}
+ */
+Writer.create = util.Buffer
+    ? function create_buffer_setup() {
+        return (Writer.create = function create_buffer() {
+            return new BufferWriter();
+        })();
+    }
+    /* istanbul ignore next */
+    : function create_array() {
+        return new Writer();
+    };
+
+/**
+ * Allocates a buffer of the specified size.
+ * @param {number} size Buffer size
+ * @returns {Uint8Array} Buffer
+ */
+Writer.alloc = function alloc(size) {
+    return new util.Array(size);
+};
+
+// Use Uint8Array buffer pool in the browser, just like node does with buffers
+/* istanbul ignore else */
+if (util.Array !== Array)
+    Writer.alloc = util.pool(Writer.alloc, util.Array.prototype.subarray);
+
+/**
+ * Pushes a new operation to the queue.
+ * @param {function(Uint8Array, number, *)} fn Function to call
+ * @param {number} len Value byte length
+ * @param {number} val Value to write
+ * @returns {Writer} `this`
+ */
+Writer.prototype.push = function push(fn, len, val) {
+    this.tail = this.tail.next = new Op(fn, len, val);
+    this.len += len;
+    return this;
+};
+
+function writeByte(val, buf, pos) {
+    buf[pos] = val & 255;
+}
+
+function writeVarint32(val, buf, pos) {
+    while (val > 127) {
+        buf[pos++] = val & 127 | 128;
+        val >>>= 7;
+    }
+    buf[pos] = val;
+}
+
+/**
+ * Constructs a new varint writer operation instance.
+ * @classdesc Scheduled varint writer operation.
+ * @extends Op
+ * @constructor
+ * @param {number} len Value byte length
+ * @param {number} val Value to write
+ * @ignore
+ */
+function VarintOp(len, val) {
+    this.len = len;
+    this.next = undefined;
+    this.val = val;
+}
+
+VarintOp.prototype = Object.create(Op.prototype);
+VarintOp.prototype.fn = writeVarint32;
+
+/**
+ * Writes an unsigned 32 bit value as a varint.
+ * @param {number} value Value to write
+ * @returns {Writer} `this`
+ */
+Writer.prototype.uint32 = function write_uint32(value) {
+    // here, the call to this.push has been inlined and a varint specific Op subclass is used.
+    // uint32 is by far the most frequently used operation and benefits significantly from this.
+    this.len += (this.tail = this.tail.next = new VarintOp(
+        (value = value >>> 0)
+                < 128       ? 1
+        : value < 16384     ? 2
+        : value < 2097152   ? 3
+        : value < 268435456 ? 4
+        :                     5,
+    value)).len;
+    return this;
+};
+
+/**
+ * Writes a signed 32 bit value as a varint.
+ * @function
+ * @param {number} value Value to write
+ * @returns {Writer} `this`
+ */
+Writer.prototype.int32 = function write_int32(value) {
+    return value < 0
+        ? this.push(writeVarint64, 10, LongBits.fromNumber(value)) // 10 bytes per spec
+        : this.uint32(value);
+};
+
+/**
+ * Writes a 32 bit value as a varint, zig-zag encoded.
+ * @param {number} value Value to write
+ * @returns {Writer} `this`
+ */
+Writer.prototype.sint32 = function write_sint32(value) {
+    return this.uint32((value << 1 ^ value >> 31) >>> 0);
+};
+
+function writeVarint64(val, buf, pos) {
+    while (val.hi) {
+        buf[pos++] = val.lo & 127 | 128;
+        val.lo = (val.lo >>> 7 | val.hi << 25) >>> 0;
+        val.hi >>>= 7;
+    }
+    while (val.lo > 127) {
+        buf[pos++] = val.lo & 127 | 128;
+        val.lo = val.lo >>> 7;
+    }
+    buf[pos++] = val.lo;
+}
+
+/**
+ * Writes an unsigned 64 bit value as a varint.
+ * @param {Long|number|string} value Value to write
+ * @returns {Writer} `this`
+ * @throws {TypeError} If `value` is a string and no long library is present.
+ */
+Writer.prototype.uint64 = function write_uint64(value) {
+    var bits = LongBits.from(value);
+    return this.push(writeVarint64, bits.length(), bits);
+};
+
+/**
+ * Writes a signed 64 bit value as a varint.
+ * @function
+ * @param {Long|number|string} value Value to write
+ * @returns {Writer} `this`
+ * @throws {TypeError} If `value` is a string and no long library is present.
+ */
+Writer.prototype.int64 = Writer.prototype.uint64;
+
+/**
+ * Writes a signed 64 bit value as a varint, zig-zag encoded.
+ * @param {Long|number|string} value Value to write
+ * @returns {Writer} `this`
+ * @throws {TypeError} If `value` is a string and no long library is present.
+ */
+Writer.prototype.sint64 = function write_sint64(value) {
+    var bits = LongBits.from(value).zzEncode();
+    return this.push(writeVarint64, bits.length(), bits);
+};
+
+/**
+ * Writes a boolish value as a varint.
+ * @param {boolean} value Value to write
+ * @returns {Writer} `this`
+ */
+Writer.prototype.bool = function write_bool(value) {
+    return this.push(writeByte, 1, value ? 1 : 0);
+};
+
+function writeFixed32(val, buf, pos) {
+    buf[pos++] =  val         & 255;
+    buf[pos++] =  val >>> 8   & 255;
+    buf[pos++] =  val >>> 16  & 255;
+    buf[pos  ] =  val >>> 24;
+}
+
+/**
+ * Writes an unsigned 32 bit value as fixed 32 bits.
+ * @param {number} value Value to write
+ * @returns {Writer} `this`
+ */
+Writer.prototype.fixed32 = function write_fixed32(value) {
+    return this.push(writeFixed32, 4, value >>> 0);
+};
+
+/**
+ * Writes a signed 32 bit value as fixed 32 bits.
+ * @function
+ * @param {number} value Value to write
+ * @returns {Writer} `this`
+ */
+Writer.prototype.sfixed32 = Writer.prototype.fixed32;
+
+/**
+ * Writes an unsigned 64 bit value as fixed 64 bits.
+ * @param {Long|number|string} value Value to write
+ * @returns {Writer} `this`
+ * @throws {TypeError} If `value` is a string and no long library is present.
+ */
+Writer.prototype.fixed64 = function write_fixed64(value) {
+    var bits = LongBits.from(value);
+    return this.push(writeFixed32, 4, bits.lo).push(writeFixed32, 4, bits.hi);
+};
+
+/**
+ * Writes a signed 64 bit value as fixed 64 bits.
+ * @function
+ * @param {Long|number|string} value Value to write
+ * @returns {Writer} `this`
+ * @throws {TypeError} If `value` is a string and no long library is present.
+ */
+Writer.prototype.sfixed64 = Writer.prototype.fixed64;
+
+var writeFloat = typeof Float32Array !== "undefined"
+    ? (function() {
+        var f32 = new Float32Array(1),
+            f8b = new Uint8Array(f32.buffer);
+        f32[0] = -0;
+        return f8b[3] // already le?
+            ? function writeFloat_f32(val, buf, pos) {
+                f32[0] = val;
+                buf[pos++] = f8b[0];
+                buf[pos++] = f8b[1];
+                buf[pos++] = f8b[2];
+                buf[pos  ] = f8b[3];
+            }
+            /* istanbul ignore next */
+            : function writeFloat_f32_le(val, buf, pos) {
+                f32[0] = val;
+                buf[pos++] = f8b[3];
+                buf[pos++] = f8b[2];
+                buf[pos++] = f8b[1];
+                buf[pos  ] = f8b[0];
+            };
+    })()
+    /* istanbul ignore next */
+    : function writeFloat_ieee754(value, buf, pos) {
+        var sign = value < 0 ? 1 : 0;
+        if (sign)
+            value = -value;
+        if (value === 0)
+            writeFixed32(1 / value > 0 ? /* positive */ 0 : /* negative 0 */ 2147483648, buf, pos);
+        else if (isNaN(value))
+            writeFixed32(2147483647, buf, pos);
+        else if (value > 3.4028234663852886e+38) // +-Infinity
+            writeFixed32((sign << 31 | 2139095040) >>> 0, buf, pos);
+        else if (value < 1.1754943508222875e-38) // denormal
+            writeFixed32((sign << 31 | Math.round(value / 1.401298464324817e-45)) >>> 0, buf, pos);
+        else {
+            var exponent = Math.floor(Math.log(value) / Math.LN2),
+                mantissa = Math.round(value * Math.pow(2, -exponent) * 8388608) & 8388607;
+            writeFixed32((sign << 31 | exponent + 127 << 23 | mantissa) >>> 0, buf, pos);
+        }
+    };
+
+/**
+ * Writes a float (32 bit).
+ * @function
+ * @param {number} value Value to write
+ * @returns {Writer} `this`
+ */
+Writer.prototype.float = function write_float(value) {
+    return this.push(writeFloat, 4, value);
+};
+
+var writeDouble = typeof Float64Array !== "undefined"
+    ? (function() {
+        var f64 = new Float64Array(1),
+            f8b = new Uint8Array(f64.buffer);
+        f64[0] = -0;
+        return f8b[7] // already le?
+            ? function writeDouble_f64(val, buf, pos) {
+                f64[0] = val;
+                buf[pos++] = f8b[0];
+                buf[pos++] = f8b[1];
+                buf[pos++] = f8b[2];
+                buf[pos++] = f8b[3];
+                buf[pos++] = f8b[4];
+                buf[pos++] = f8b[5];
+                buf[pos++] = f8b[6];
+                buf[pos  ] = f8b[7];
+            }
+            /* istanbul ignore next */
+            : function writeDouble_f64_le(val, buf, pos) {
+                f64[0] = val;
+                buf[pos++] = f8b[7];
+                buf[pos++] = f8b[6];
+                buf[pos++] = f8b[5];
+                buf[pos++] = f8b[4];
+                buf[pos++] = f8b[3];
+                buf[pos++] = f8b[2];
+                buf[pos++] = f8b[1];
+                buf[pos  ] = f8b[0];
+            };
+    })()
+    /* istanbul ignore next */
+    : function writeDouble_ieee754(value, buf, pos) {
+        var sign = value < 0 ? 1 : 0;
+        if (sign)
+            value = -value;
+        if (value === 0) {
+            writeFixed32(0, buf, pos);
+            writeFixed32(1 / value > 0 ? /* positive */ 0 : /* negative 0 */ 2147483648, buf, pos + 4);
+        } else if (isNaN(value)) {
+            writeFixed32(4294967295, buf, pos);
+            writeFixed32(2147483647, buf, pos + 4);
+        } else if (value > 1.7976931348623157e+308) { // +-Infinity
+            writeFixed32(0, buf, pos);
+            writeFixed32((sign << 31 | 2146435072) >>> 0, buf, pos + 4);
+        } else {
+            var mantissa;
+            if (value < 2.2250738585072014e-308) { // denormal
+                mantissa = value / 5e-324;
+                writeFixed32(mantissa >>> 0, buf, pos);
+                writeFixed32((sign << 31 | mantissa / 4294967296) >>> 0, buf, pos + 4);
+            } else {
+                var exponent = Math.floor(Math.log(value) / Math.LN2);
+                if (exponent === 1024)
+                    exponent = 1023;
+                mantissa = value * Math.pow(2, -exponent);
+                writeFixed32(mantissa * 4503599627370496 >>> 0, buf, pos);
+                writeFixed32((sign << 31 | exponent + 1023 << 20 | mantissa * 1048576 & 1048575) >>> 0, buf, pos + 4);
+            }
+        }
+    };
+
+/**
+ * Writes a double (64 bit float).
+ * @function
+ * @param {number} value Value to write
+ * @returns {Writer} `this`
+ */
+Writer.prototype.double = function write_double(value) {
+    return this.push(writeDouble, 8, value);
+};
+
+var writeBytes = util.Array.prototype.set
+    ? function writeBytes_set(val, buf, pos) {
+        buf.set(val, pos); // also works for plain array values
+    }
+    /* istanbul ignore next */
+    : function writeBytes_for(val, buf, pos) {
+        for (var i = 0; i < val.length; ++i)
+            buf[pos + i] = val[i];
+    };
+
+/**
+ * Writes a sequence of bytes.
+ * @param {Uint8Array|string} value Buffer or base64 encoded string to write
+ * @returns {Writer} `this`
+ */
+Writer.prototype.bytes = function write_bytes(value) {
+    var len = value.length >>> 0;
+    if (!len)
+        return this.push(writeByte, 1, 0);
+    if (util.isString(value)) {
+        var buf = Writer.alloc(len = base64.length(value));
+        base64.decode(value, buf, 0);
+        value = buf;
+    }
+    return this.uint32(len).push(writeBytes, len, value);
+};
+
+/**
+ * Writes a string.
+ * @param {string} value Value to write
+ * @returns {Writer} `this`
+ */
+Writer.prototype.string = function write_string(value) {
+    var len = utf8.length(value);
+    return len
+        ? this.uint32(len).push(utf8.write, len, value)
+        : this.push(writeByte, 1, 0);
+};
+
+/**
+ * Forks this writer's state by pushing it to a stack.
+ * Calling {@link Writer#reset|reset} or {@link Writer#ldelim|ldelim} resets the writer to the previous state.
+ * @returns {Writer} `this`
+ */
+Writer.prototype.fork = function fork() {
+    this.states = new State(this);
+    this.head = this.tail = new Op(noop, 0, 0);
+    this.len = 0;
+    return this;
+};
+
+/**
+ * Resets this instance to the last state.
+ * @returns {Writer} `this`
+ */
+Writer.prototype.reset = function reset() {
+    if (this.states) {
+        this.head   = this.states.head;
+        this.tail   = this.states.tail;
+        this.len    = this.states.len;
+        this.states = this.states.next;
+    } else {
+        this.head = this.tail = new Op(noop, 0, 0);
+        this.len  = 0;
+    }
+    return this;
+};
+
+/**
+ * Resets to the last state and appends the fork state's current write length as a varint followed by its operations.
+ * @returns {Writer} `this`
+ */
+Writer.prototype.ldelim = function ldelim() {
+    var head = this.head,
+        tail = this.tail,
+        len  = this.len;
+    this.reset().uint32(len);
+    if (len) {
+        this.tail.next = head.next; // skip noop
+        this.tail = tail;
+        this.len += len;
+    }
+    return this;
+};
+
+/**
+ * Finishes the write operation.
+ * @returns {Uint8Array} Finished buffer
+ */
+Writer.prototype.finish = function finish() {
+    var head = this.head.next, // skip noop
+        buf  = this.constructor.alloc(this.len),
+        pos  = 0;
+    while (head) {
+        head.fn(head.val, buf, pos);
+        pos += head.len;
+        head = head.next;
+    }
+    // this.head = this.tail = null;
+    return buf;
+};
+
+Writer._configure = function(BufferWriter_) {
+    BufferWriter = BufferWriter_;
+};
+
+},{"38":38}],41:[function(require,module,exports){
+"use strict";
+module.exports = BufferWriter;
+
+// extends Writer
+var Writer = require(40);
+(BufferWriter.prototype = Object.create(Writer.prototype)).constructor = BufferWriter;
+
+var util = require(38);
+
+var Buffer = util.Buffer;
+
+/**
+ * Constructs a new buffer writer instance.
+ * @classdesc Wire format writer using node buffers.
+ * @extends Writer
+ * @constructor
+ */
+function BufferWriter() {
+    Writer.call(this);
+}
+
+/**
+ * Allocates a buffer of the specified size.
+ * @param {number} size Buffer size
+ * @returns {Buffer} Buffer
+ */
+BufferWriter.alloc = function alloc_buffer(size) {
+    return (BufferWriter.alloc = util._Buffer_allocUnsafe)(size);
+};
+
+var writeBytesBuffer = Buffer && Buffer.prototype instanceof Uint8Array && Buffer.prototype.set.name === "set"
+    ? function writeBytesBuffer_set(val, buf, pos) {
+        buf.set(val, pos); // faster than copy (requires node >= 4 where Buffers extend Uint8Array and set is properly inherited)
+                           // also works for plain array values
+    }
+    /* istanbul ignore next */
+    : function writeBytesBuffer_copy(val, buf, pos) {
+        if (val.copy) // Buffer values
+            val.copy(buf, pos, 0, val.length);
+        else for (var i = 0; i < val.length;) // plain array values
+            buf[pos++] = val[i++];
+    };
+
+/**
+ * @override
+ */
+BufferWriter.prototype.bytes = function write_bytes_buffer(value) {
+    if (util.isString(value))
+        value = util._Buffer_from(value, "base64");
+    var len = value.length >>> 0;
+    this.uint32(len);
+    if (len)
+        this.push(writeBytesBuffer, len, value);
+    return this;
+};
+
+function writeStringBuffer(val, buf, pos) {
+    if (val.length < 40) // plain js is faster for short strings (probably due to redundant assertions)
+        util.utf8.write(val, buf, pos);
+    else
+        buf.utf8Write(val, pos);
+}
+
+/**
+ * @override
+ */
+BufferWriter.prototype.string = function write_string_buffer(value) {
+    var len = Buffer.byteLength(value);
+    this.uint32(len);
+    if (len)
+        this.push(writeStringBuffer, len, value);
+    return this;
+};
+
+
+/**
+ * Finishes the write operation.
+ * @name BufferWriter#finish
+ * @function
+ * @returns {Buffer} Finished buffer
+ */
+
+},{"38":38,"40":40}]},{},[19])
+
+})(typeof window==="object"&&window||typeof self==="object"&&self||this);
+//# sourceMappingURL=protobuf.js.map
