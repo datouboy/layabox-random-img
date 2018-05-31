@@ -53542,6 +53542,7 @@ if (typeof define === 'function' && define.amd){
         var picArray = ['z_1.jpg','z_2.jpg','z_3.jpg','z_4.jpg','z_5.jpg','z_6.jpg','z_7.jpg','z_8.jpg','z_9.jpg','z_10.jpg','z_11.jpg','z_12.jpg','z_13.jpg','z_14.jpg','z_15.jpg','z_16.jpg','z_17.jpg','z_18.jpg','z_19.jpg','z_20.jpg','z_21.jpg','z_22.jpg','z_23.jpg','z_24.jpg','z_25.jpg','z_26.jpg','z_27.jpg','z_28.jpg','z_29.jpg'];
 
         //开始主时间循环
+        $('#nameText').show();
         Laya.timer.loop(1, _this, gameRunPlay);
         //主时间循环
         var num = 0;//用于控制循环中的切换间隔
