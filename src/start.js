@@ -63,7 +63,7 @@
 
         //加载装饰6
         start_hua_6 = new Sprite();
-        start_hua_6.loadImage(ossUrl+"res/images/hua_6.png", pageWidth*0.25, pageHeight*0.77, pageWidth*0.5, (pageWidth*0.5)*(37/375));
+        start_hua_6.loadImage(ossUrl+"res/images/hua_6.png", pageWidth*0.18, pageHeight*0.77, pageWidth*0.64, (pageWidth*0.64)*(37/482));
         Laya.stage.addChild(start_hua_6);
 
         //加载QRCode
